@@ -1,8 +1,387 @@
 #+title: Doom Emacs Configuration
 #+author: Vedant "cupkax" Sansare
 #+startup: fold
-#+property: header-args:emacs-lisp :tangle "init1.el" :results silent
+#+property: header-args:emacs-lisp :tangle "config.el" :results silent
+
+* Doom Core Configuration
+** =init.el=
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle no
+:END:
+#+name: init.el
+#+begin_src emacs-lisp :tangle "init.el" :noweb no-export :comments none
+;;; init.el -*- lexical-binding: t; -*-
+(doom!
+ :completion
+ <<doom-completion>>
+
+ :ui
+ <<doom-ui>>
+
+ :editor
+ <<doom-editor>>
+
+ :emacs
+ <<doom-emacs>>
+
+ :term
+ <<doom-term>>
+
+ :checkers
+ <<doom-checkers>>
+
+ :tools
+ <<doom-tools>>
+
+ :os
+ <<doom-os>>
+
+ :lang
+ <<doom-lang>>
+
+ :email
+ <<doom-email>>
+
+ :app
+ <<doom-app>>
+
+ :config
+ <<doom-config>>
+ )
+#+end_src
+
+*** doom-completion
+#+name: doom-completion
+#+begin_src emacs-lisp
+(company
+ +childframe)
+(ivy
+ +childframe
+ +prescient
+ +icons
+ +fuzzy)
+#+end_src
+*** doom-ui
+#+name: doom-ui
+#+begin_src emacs-lisp
+deft
+doom
+doom-dashboard
+doom-quit
+hl-todo
+hydra
+ligatures
+modeline
+nav-flash
+ophints
+(popup
+ +all
+ +defaults)
+treemacs
+unicode
+vc-gutter
+vi-tilde-fringe
+(window-select
+ +numbers)
+workspaces
+zen
+#+end_src
+*** doom-editor
+#+name: doom-editor
+#+begin_src emacs-lisp
+(evil
+ +everywhere)
+file-templates
+fold
+(format
+ +onsave)
+multiple-cursors
+rotate-text
+snippets
+word-wrap
+#+end_src
+*** doom-emacs
+#+name: doom-emacs
+#+begin_src emacs-lisp
+(dired
+ +ranger
+ +icons)
+electric
+(ibuffer +icons)
+(undo +tree)
+vc
+#+end_src
+*** doom-term
+#+name: doom-term
+#+begin_src emacs-lisp
+vterm
+#+end_src
+*** doom-checkers
+#+name: doom-checkers
+#+begin_src emacs-lisp
+(syntax
+ +childframe)
+spell
+grammar
+#+end_src
+*** doom-tools
+#+name: doom-tools
+#+begin_src emacs-lisp
+direnv
+editorconfig
+(eval
+ +overlay)
+gist
+(lookup
+ +offline
+ +dictionary
+ +docsets)
+lsp
+(magit)
+make
+pdf
+rgb
+#+end_src
+*** doom-os
+#+name: doom-os
+#+begin_src emacs-lisp
+tty
+#+end_src
+*** doom-lang
+#+name: doom-lang
+#+begin_src emacs-lisp
+(csharp
+ +lsp)
+data
+emacs-lisp
+json
+(javascript
+ +lsp)
+ledger
+lua
+markdown
+(org
+ +dragndrop
+ +gnuplot
+ +hugo
+ +pandoc
+ +pretty
+ +roam)
+(python
+ +poetry
+ +lsp)
+scheme
+sh
+web
+yaml
+#+end_src
+*** doom-email
+#+name: doom-email
+#+begin_src emacs-lisp
+(mu4e
+ +org
+ +gmail)
+#+end_src
+*** doom-app
+#+name: doom-app
+#+begin_src emacs-lisp
+;;calendar
+;;irc               ; how neckbeards socialize
+;;(rss +org)        ; emacs as an RSS reader
+;;twitter           ; twitter client https://twitter.com/vnought
+;;write             ; emacs for writers (fiction, notes, papers, etc.)
+#+end_src
+*** doom-config
+#+name: doom-config
+#+begin_src emacs-lisp
+;literate
+(default
+  +bindings
+  +smartparens)
+#+end_src
+
+** =package.el=
+:PROPERTIES:
+:header-args:emacs-lisp: :tangle "packages.el" :comments no
+:END:
+*** Prevent Byte Compile
+#+begin_src emacs-lisp
+;; -*- no-byte-compile: t; -*-
+#+end_src
+*** Aesthetics
+**** Beacon
+#+begin_src emacs-lisp
+(package! beacon)
+#+end_src
+**** Bufler
+#+begin_src emacs-lisp
+(package! bufler)
+#+end_src
+**** Dired Icons
+#+begin_src emacs-lisp
+(package! all-the-icons-dired)
+#+end_src
+**** Evil Better Visual Line
+#+begin_src emacs-lisp
+(package! evil-better-visual-line)
+#+end_src
+**** Info Colors
+#+begin_src emacs-lisp
+(package! info-colors )
+#+end_src
+
+**** Rotate
+#+begin_src emacs-lisp
+(package! rotate)
+#+end_src
+*** Magit
+**** Magit Delta
+#+begin_src emacs-lisp
+(package! magit-delta
+  :recipe (:host github
+           :repo "dandavison/magit-delta"))
+#+end_src
+
+*** Flycheck
+#+begin_src emacs-lisp
+(package! package-lint)
+;(package! flycheck-package)
+#+end_src
+
+*** Ebooks
+**** EPUBS major mode =nov.el=
+#+begin_src emacs-lisp
+(package! nov)
+#+end_src
+
+**** Calibre
+#+begin_src emacs-lisp
+(package! calibredb)
+#+end_src
+
+*** Org
+**** Visuals
+***** Tables
+#+begin_src emacs-lisp
+(package! org-pretty-table-mode
+  :recipe (:host github
+           :repo "Fuco1/org-pretty-table"))
+#+end_src
+***** Tags
+#+begin_src emacs-lisp
+(package! org-pretty-tags)
+#+end_src
+
+***** Priorities
+#+begin_src emacs-lisp
+(package! org-fancy-priorities)
+#+end_src
+**** Org Capture
+#+begin_src emacs-lisp
+(package! doct)
+#+end_src
+**** Org Chef
+#+begin_src emacs-lisp
+(package! org-chef)
+#+end_src
+**** Org Download
+#+begin_src emacs-lisp
+(package! org-download
+  :recipe (:host github
+            :repo "abo-abo/org-download"))
+#+end_src
+
+**** Org Helm Rifle
+#+begin_src emacs-lisp
+(package! helm-org-rifle)
+#+end_src
 
 #+begin_src emacs-lisp
-testing
+(package! helm-org-rifle)
+#+end_src
+
+**** Org Mindmap
+#+begin_src emacs-lisp
+(package! org-mind-map
+  :recipe (:host github
+            :repo "theodorewiles/org-mind-map"))
+#+end_src
+**** Org Noter
+#+begin_src emacs-lisp
+(package! org-noter)
+#+end_src
+**** Org Pandoc
+#+begin_src emacs-lisp
+(package! ox-pandoc)
+#+end_src
+**** Org Protocol
+#+begin_src emacs-lisp
+(package! org-protocol-capture-html
+  :recipe (:host github
+           :repo "alphapapa/org-protocol-capture-html"))
+#+end_src
+**** Org Ref
+#+begin_src emacs-lisp
+(package! org-ref)
+#+end_src
+**** Org Roam
+***** Company Org Roam
+#+begin_src emacs-lisp
+(package! company-org-roam)
+#+end_src
+***** Org Roam Bibtex
+#+begin_src emacs-lisp
+(package! org-roam-bibtex)
+#+end_src
+***** Org Roam Server
+#+begin_src emacs-lisp
+(package! org-roam-server)
+#+end_src
+**** Org Super Agenda
+#+begin_src emacs-lisp
+(package! org-super-agenda)
+#+end_src
+
+*** Zotero
+#+begin_src emacs-lisp
+(package! zotxt)
+#+end_src
+
+* Lexical Bindings
+#+begin_src emacs-lisp
+;;; config.el -*- lexical-binding: t; -*-
+#+end_src
+
+* Personla Information
+#+begin_src emacs-lisp
+(setq user-full-name "Vedant Sansare (cupkax)"
+      user-mail-address "vedantsansare23@gmail.com")
+#+end_src
+
+* Startup
+** Better Defaults
+#+begin_src emacs-lisp
+(setq undo-limit 80000000)
+(setq evil-want-fine-undo t)
+(setq auto-save-default t)
+#+end_src
+** =custom.el=
+#+begin_src emacs-lisp
+(setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
+(when (file-exists-p custom-file)
+  (load custom-file))
+#+end_src
+
+** =utf-8-unix= System
+#+begin_src emacs-lisp
+(defun doom-modeline-conditional-buffer-encoding ()
+  "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
+  (setq-local doom-modeline-buffer-encoding
+              (unless (or (eq buffer-file-coding-system 'utf-8-unix)
+                          (eq buffer-file-coding-system 'utf-8)))))
+
+(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
+
+(prefer-coding-system 'utf-8-unix)
+(set-default-coding-systems 'utf-8)
 #+end_src
