@@ -24,7 +24,7 @@
   +all
   +defaults)
  treemacs
- unicode
+                                         ;unicode
  vc-gutter
  vi-tilde-fringe
  (window-select

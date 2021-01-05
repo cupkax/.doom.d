@@ -78,7 +78,7 @@ ophints
  +all
  +defaults)
 treemacs
-unicode
+                                        ;unicode
 vc-gutter
 vi-tilde-fringe
 (window-select
@@ -234,6 +234,10 @@ yaml
 #+begin_src emacs-lisp
 (package! rotate)
 #+end_src
+*** Keybindings
+#+begin_src emacs-lisp
+(package! general)
+#+end_src
 *** Magit
 **** Magit Delta
 #+begin_src emacs-lisp
@@ -352,7 +356,7 @@ yaml
 ;;; config.el -*- lexical-binding: t; -*-
 #+end_src
 
-* Personla Information
+* Personal Information
 #+begin_src emacs-lisp
 (setq user-full-name "Vedant Sansare (cupkax)"
       user-mail-address "vedantsansare23@gmail.com")
@@ -384,4 +388,179 @@ yaml
 
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8)
+#+end_src
+
+* Visual Settings
+** Fonts
+#+begin_src emacs-lisp
+(setq doom-font                (font-spec :family "FiraCode Nerd Font" :size 16))
+(setq doom-big-font            (font-spec :family "FiraCode Nerd Font" :size 20))
+(setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
+(setq doom-serif-font          (font-spec :family "BlexMono Nerd Font" :weight 'light))
+#+end_src
+
+** Theme
+#+begin_src emacs-lisp
+(setq doom-theme 'doom-palenight)
+#+end_src
+
+** Modeline
+*** Change red text
+#+begin_src emacs-lisp
+(custom-set-faces!
+  '(doom-modeline-buffer-modified :foreground "grey"))
+#+end_src
+
+*** Show time
+#+begin_src emacs-lisp
+(setq display-time-24hr-format t)
+(display-time-mode 1)
+#+end_src
+
+** Info Colors
+#+begin_src emacs-lisp
+(use-package! info-colors
+  :commands (info-colors-fontify-node))
+
+(add-hook 'Info-selection-hook 'info-colors-fontify-node)
+
+(add-hook 'Info-mode-hook #'mixed-pitch-mode)
+#+end_src
+
+* Keybindings
+** Change local leader
+#+begin_src emacs-lisp
+(setq doom-localleader-key ",")
+#+end_src
+
+** General
+*** Initial Config
+#+begin_src emacs-lisp
+(use-package! general)
+(defconst my-leader "SPC")
+(general-create-definer my-leader-def
+  :prefix my-leader)
+(general-create-definer my-local-leader-def
+  :prefix my-local-leader
+  :prefix ",")
+#+end_src
+*** Evil Setup and Error Handling
+#+begin_src emacs-lisp
+(general-evil-setup t)
+(general-auto-unbind-keys)
+#+end_src
+** Which-key
+*** Key delay
+#+begin_src emacs-lisp
+(setq which-key-idle-delay 0.0)
+#+end_src
+
+*** Replace =evil= with unicode symbols
+#+begin_src emacs-lisp
+(setq which-key-allow-multiple-replacements t)
+(after! which-key
+  (pushnew!
+   which-key-replacement-alist
+   '(("" . "\\`+?evil[-:]?\\(?:a-\\)?\\(.*\\)") . (nil . "◂\\1"))
+   '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . "◃\\1"))
+   ))
+#+end_src
+
+* Navigation
+** Deft
+#+begin_src emacs-lisp
+(use-package deft
+      :after org
+      :bind
+      ("C-c n d" . deft)
+      :custom
+      (deft-recursive t)
+      (deft-use-filter-string-for-filename t)
+      (deft-default-extension "org")
+      (deft-directory "~/git/phd/notes/"))
+#+end_src
+
+* Buffer, Frame and Window Configuration
+** Buffer Config
+*** Better Buffers
+#+begin_src emacs-lisp
+(use-package! bufler
+  :general
+  (:keymaps 'doom-leader-map
+   "b b" 'bufler-workspace-switch-buffer
+   "b B" 'bufler-switch-buffer)
+  :config
+  (setq bufler-workspace-switch-buffer-sets-workspace t))
+#+end_src
+** Window Config
+*** Window Resize
+#+begin_src emacs-lisp
+(setq-default window-combination-resize t)
+#+end_src
+
+* Development
+** Language
+*** Plaintext
+#+begin_src emacs-lisp
+(after! text-mode
+  (add-hook! 'text-mode-hook
+    (with-silent-modifications
+      (ansi-color-apply-on-region (point-min) (point-max)))))
+#+end_src
+
+** Productivity
+*** Company
+**** Company mode
+#+begin_src emacs-lisp
+(after! company
+  (setq company-idle-delay 0.5
+        company-minimum-prefix-length 2)
+  (setq company-show-numbers t)
+  (add-hook 'evil-normal-state-entry-hook #'company-abort))
+#+end_src
+
+**** Company Prescient
+#+begin_src emacs-lisp
+(setq-default history-length 1000)
+(setq-default prescient-history-length 1000)
+#+end_src
+
+**** Company backend
+#+begin_src emacs-lisp
+(set-company-backend!
+  '(text-mode
+    markdown-mode
+    gfm-mode)
+  '(:seperate
+    company-ispell
+    company-files
+    company-yasnippet))
+#+end_src
+
+* Writing
+** Dictionary
+#+begin_src emacs-lisp
+(setq ispell-dictionary "en-custom")
+(setq ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir))
+#+end_src
+* Applications
+** PDF Tools
+#+begin_src emacs-lisp
+(after! pdf-view
+  (setq-default pdf-view-display-size 'fit-width)
+  (setq pdf-annot-activate-created-annotations t
+        pdf-view-resize-factor 1.1)
+  (map!
+   :map pdf-view-mode-map
+   :n "g g"          #'pdf-view-first-page
+   :n "G"            #'pdf-view-last-page
+   :n "N"            #'pdf-view-next-page-command
+   :n "E"            #'pdf-view-previous-page-command
+   :n "e"            #'evil-collection-pdf-view-previous-line-or-previous-page
+   :n "n"            #'evil-collection-pdf-view-next-line-or-next-page
+   :localleader
+   (:prefix "o"
+    (:prefix "n"
+     :desc "Insert" "i" 'org-noter-insert-note
+     ))))
 #+end_src

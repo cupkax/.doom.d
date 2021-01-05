@@ -12,6 +12,8 @@
 
 (package! rotate)
 
+(package! general)
+
 (package! magit-delta
   :recipe (:host github
            :repo "dandavison/magit-delta"))
