@@ -3,7 +3,7 @@
 #+startup: fold
 #+property: header-args:emacs-lisp :tangle "config.el" :results silent
 
-* Doom Core Configuration
+* Doom Core
 ** =init.el=
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
