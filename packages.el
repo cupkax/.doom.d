@@ -19,7 +19,7 @@
            :repo "dandavison/magit-delta"))
 
 (package! package-lint)
-;(package! flycheck-package)
+(package! flycheck-package)
 
 (package! nov)
 

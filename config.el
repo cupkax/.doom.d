@@ -142,25 +142,27 @@
             :prefix my-leader
             "m e m" '(org-mind-map-write :wk "Export mind-map") ))
 
-(use-package! org-ref
-    :after org
-    :init
-    ; code to run before loading org-ref
-    :config
-    ; code to run after loading
-    ; org-ref
-    
-    (setq
-     org-ref-completion-library        'org-ref-ivy-cite
-     org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-     org-ref-bibliography-notes        "~/git/phd/notes/bibnotes.org"
-     org-ref-note-title-format         "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-     org-ref-notes-directory           "~/git/phd/notes"
-     org-ref-default-bibliography      '("~/Dropbox/org/research/zotLib.bib")
-     org-ref-pdf-directory             "~/Dropbox/org/research/zotero-library"
-     org-ref-notes-function            'orb-edit-notes))
+;(use-package! org-ref
+;    :after org
+;    :init
+;    ; code to run before loading org-ref
+;    :config
+;    ; code to run after loading
+;    ; org-ref
+;    
+;    (setq
+;     org-ref-completion-library        'org-ref-ivy-cite
+;     org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+;     org-ref-bibliography-notes        "~/git/phd/notes/bibnotes.org"
+;     org-ref-note-title-format         "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+;     org-ref-notes-directory           "~/git/phd/notes"
+;     org-ref-default-bibliography      '("~/Dropbox/org/research/zotLib.bib")
+;     org-ref-pdf-directory             "~/Dropbox/org/research/zotero-library"
+;     org-ref-notes-function            'orb-edit-notes))
 
 (setq org-roam-directory "~/git/phd/notes/")
+
+(setq org-roam-db-update-method 'immediate)
 
 (use-package! org-roam-bibtex
   :after (org-roam)
@@ -188,11 +190,11 @@
 :NOTER_PAGE:
 :END:"))))
 
-(setq bibtex-format-citation-functions
-      '((org-mode . (lambda (x) (insert (concat
-                                         "\\cite{"
-                                         (mapconcat 'identity x ",")
-                                         "}")) ""))))
+                                        ;(setq bibtex-format-citation-functions
+                                        ;      '((org-mode . (lambda (x) (insert (concat
+                                        ;                                         "\\cite{"
+                                        ;                                         (mapconcat 'identity x ",")
+                                        ;                                         "}")) ""))))
 
 
 (setq
@@ -201,21 +203,21 @@
  bibtex-completion-library-path "~/Dropbox/org/research/zotero-library/"
  bibtex-completion-pdf-field    "file"
  bibtex-completion-notes-template-multiple-files
-   (concat
-    "#+TITLE: ${title}\n"
-    "#+ROAM_KEY: cite:${=key=}\n"
-    "#+ROAM_TAGS: ${keywords}\n"
-    "* TODO Notes\n"
-    ":PROPERTIES:\n"
-    ":Custom_ID: ${=key=}\n"
-    ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-    ":AUTHOR: ${author-abbrev}\n"
-    ":JOURNAL: ${journaltitle}\n"
-    ":DATE: ${date}\n"
-    ":YEAR: ${year}\n"
-    ":DOI: ${doi}\n"
-    ":URL: ${url}\n"
-    ":END:\n\n"))
+ (concat
+  "#+TITLE: ${title}\n"
+  "#+ROAM_KEY: cite:${=key=}\n"
+  "#+ROAM_TAGS: ${keywords}\n"
+  "* TODO Notes\n"
+  ":PROPERTIES:\n"
+  ":Custom_ID: ${=key=}\n"
+  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+  ":AUTHOR: ${author-abbrev}\n"
+  ":JOURNAL: ${journaltitle}\n"
+  ":DATE: ${date}\n"
+  ":YEAR: ${year}\n"
+  ":DOI: ${doi}\n"
+  ":URL: ${url}\n"
+  ":END:\n\n"))
 
 (map! :localleader
       :map (org-mode-map pdf-view-mode-map)
