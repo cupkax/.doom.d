@@ -4,7 +4,6 @@
  (company
   +childframe)
  (ivy
-  +childframe
   +prescient
   +icons
   +fuzzy)

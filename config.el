@@ -75,14 +75,6 @@
       (deft-default-extension "org")
       (deft-directory "~/git/phd/notes/"))
 
-(use-package! bufler
-  :general
-  (:keymaps 'doom-leader-map
-   "b b" 'bufler-workspace-switch-buffer
-   "b B" 'bufler-switch-buffer)
-  :config
-  (setq bufler-workspace-switch-buffer-sets-workspace t))
-
 (setq-default window-combination-resize t)
 
 (after! text-mode
@@ -116,49 +108,6 @@
       org-list-allow-alphabetical       t
       org-catch-invisible-edits         'smart
       org-cycle-separator-lines              0)
-
-(use-package! helm-org-rifle
-  :after org
-  :general
-  (:keymaps 'org-mode-map
-            :states 'normal
-            :prefix my-leader
-            "m r"     '(:ignore t                       :wk "Rifle (Helm)")
-            "m r b"   '(helm-org-rifle-current-buffer   :wk "Rifle buffer")
-            "m r e"   '(helm-org-rifle                  :wk "Rifle every open buffer")
-            "m r d"   '(helm-org-rifle-directory        :wk "Rifle from org-directory")
-            "m r a"   '(helm-org-rifle-agenda-files     :wk "Rifle agenda")
-            "m r o"   '(:ignore t                       :wk "Occur (Persistent)")
-            "m r o b" '(helm-org-rifle-current-buffer   :wk "Rifle buffer")
-            "m r o e" '(helm-org-rifle                  :wk "Rifle every open buffer")
-            "m r o d" '(helm-org-rifle-directory        :wk "Rifle from org-directory")
-            "m r o a" '(helm-org-rifle-agenda-files     :wk "Rifle agenda")
-            ))
-
-(use-package! org-mind-map
-  :general
-  (:keymaps 'org-mode-map
-            :states 'normal
-            :prefix my-leader
-            "m e m" '(org-mind-map-write :wk "Export mind-map") ))
-
-;(use-package! org-ref
-;    :after org
-;    :init
-;    ; code to run before loading org-ref
-;    :config
-;    ; code to run after loading
-;    ; org-ref
-;    
-;    (setq
-;     org-ref-completion-library        'org-ref-ivy-cite
-;     org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-;     org-ref-bibliography-notes        "~/git/phd/notes/bibnotes.org"
-;     org-ref-note-title-format         "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-;     org-ref-notes-directory           "~/git/phd/notes"
-;     org-ref-default-bibliography      '("~/Dropbox/org/research/zotLib.bib")
-;     org-ref-pdf-directory             "~/Dropbox/org/research/zotero-library"
-;     org-ref-notes-function            'orb-edit-notes))
 
 (setq org-roam-directory "~/git/phd/notes/")
 
@@ -242,9 +191,6 @@
 (setq org-pandoc-options-for-docx '((standalone . nil)))
 ;; special extensions for markdown_github output
 (setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
-
-(setq ispell-dictionary "en-custom")
-(setq ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir))
 
 (after! pdf-view
   (setq-default pdf-view-display-size 'fit-width)
