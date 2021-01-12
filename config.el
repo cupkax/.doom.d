@@ -12,7 +12,6 @@
   (load custom-file))
 
 (defun doom-modeline-conditional-buffer-encoding ()
-  "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
   (setq-local doom-modeline-buffer-encoding
               (unless (or (eq buffer-file-coding-system 'utf-8-unix)
                           (eq buffer-file-coding-system 'utf-8)))))
@@ -48,6 +47,7 @@
 (defconst my-leader "SPC")
 (general-create-definer my-leader-def
   :prefix my-leader)
+
 (general-create-definer my-local-leader-def
   :prefix my-local-leader
   :prefix ",")
@@ -67,13 +67,11 @@
 
 (use-package deft
       :after org
-      :bind
-      ("C-c n d" . deft)
-      :custom
-      (deft-recursive t)
-      (deft-use-filter-string-for-filename t)
-      (deft-default-extension "org")
-      (deft-directory "~/git/phd/notes/"))
+      :config
+      (setq deft-recursive t)
+      (setq deft-use-filter-string-for-filename t)
+      (setq deft-default-extension "org")
+      (setq deft-directory "~/git/phd/notes/"))
 
 (setq-default window-combination-resize t)
 
@@ -93,15 +91,6 @@
 (setq-default history-length 1000)
 (setq-default prescient-history-length 1000)
 
-(set-company-backend!
-  '(text-mode
-    markdown-mode
-    gfm-mode)
-  '(:seperate
-    company-ispell
-    company-files
-    company-yasnippet))
-
 (setq org-directory                     "~/git/phd/notes/"
       org-use-property-inheritance      t
       org-log-done                      'time
@@ -109,8 +98,7 @@
       org-catch-invisible-edits         'smart
       org-cycle-separator-lines              0)
 
-(setq org-roam-directory "~/git/phd/notes/")
-
+(setq org-roam-directory        "~/git/phd/notes/")
 (setq org-roam-db-update-method 'immediate)
 
 (use-package! org-roam-bibtex
@@ -118,11 +106,11 @@
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :config
  (setq orb-preformat-keywords
-      '("citekey" "title" "url" "author-or-editor" "keywords" "file")
-      orb-process-file-keyword t
-      orb-file-field-extensions '("pdf"))
+       '("citekey" "title" "url" "author-or-editor" "keywords" "file")
+       orb-process-file-keyword t
+       orb-file-field-extensions '("pdf"))
  (setq orb-templates
-      '(("r" "ref" plain (function org-roam-capture--get-point)
+       '(("r" "ref" plain (function org-roam-capture--get-point)
          ""
          :file-name "${citekey}"
          :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}
@@ -139,11 +127,11 @@
 :NOTER_PAGE:
 :END:"))))
 
-                                        ;(setq bibtex-format-citation-functions
-                                        ;      '((org-mode . (lambda (x) (insert (concat
-                                        ;                                         "\\cite{"
-                                        ;                                         (mapconcat 'identity x ",")
-                                        ;                                         "}")) ""))))
+;(setq bibtex-format-citation-functions
+;      '((org-mode . (lambda (x) (insert (concat
+;                                         "\\cite{"
+;                                         (mapconcat 'identity x ",")
+;                                         "}")) ""))))
 
 
 (setq
@@ -168,19 +156,11 @@
   ":URL: ${url}\n"
   ":END:\n\n"))
 
-(map! :localleader
-      :map (org-mode-map pdf-view-mode-map)
-      (:prefix ("o" . "Org")
-       (:prefix ("n" . "Noter")
-        :desc "Noter" "n" 'org-noter
-        )))
-
 (use-package! org-noter
   :after (:any org pdf-view)
   :config
   (setq
    org-noter-hide-other nil
-   ;; Everything is relative to the rclone mega
    org-noter-notes-search-path (list "~/git/phd/notes/")))
 
 (use-package! ox-pandoc
@@ -195,20 +175,7 @@
 (after! pdf-view
   (setq-default pdf-view-display-size 'fit-width)
   (setq pdf-annot-activate-created-annotations t
-        pdf-view-resize-factor 1.1)
-  (map!
-   :map pdf-view-mode-map
-   :n "g g"          #'pdf-view-first-page
-   :n "G"            #'pdf-view-last-page
-   :n "N"            #'pdf-view-next-page-command
-   :n "E"            #'pdf-view-previous-page-command
-   :n "e"            #'evil-collection-pdf-view-previous-line-or-previous-page
-   :n "n"            #'evil-collection-pdf-view-next-line-or-next-page
-   :localleader
-   (:prefix "o"
-    (:prefix "n"
-     :desc "Insert" "i" 'org-noter-insert-note
-     ))))
+        pdf-view-resize-factor 1.1))
 
 (use-package! zotxt
   :after org)
