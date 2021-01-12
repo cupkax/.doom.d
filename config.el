@@ -105,15 +105,15 @@
   :after (org-roam)
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :config
- (setq orb-preformat-keywords
-       '("citekey" "title" "url" "author-or-editor" "keywords" "file")
-       orb-process-file-keyword t
-       orb-file-field-extensions '("pdf"))
- (setq orb-templates
-       '(("r" "ref" plain (function org-roam-capture--get-point)
-         ""
-         :file-name "${citekey}"
-         :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}
+  (setq orb-preformat-keywords
+        '("citekey" "title" "url" "author-or-editor" "keywords" "file")
+        orb-process-file-keyword t
+        orb-file-field-extensions '("pdf"))
+  (setq orb-templates
+        '(("r" "ref" plain (function org-roam-capture--get-point)
+           ""
+           :file-name "${citekey}"
+           :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}
 
 - tags ::
 - keywords :: ${keywords}
@@ -162,6 +162,11 @@
   (setq
    org-noter-hide-other nil
    org-noter-notes-search-path (list "~/git/phd/notes/")))
+(map! :localleader
+      :map (org-mode-map pdf-view-mode)
+      (:prefix ("o" . "Org")
+       (:prefix ("n" . "Noter")
+         :desc "Noter" "n" 'org-noter)))
 
 (use-package! ox-pandoc
   :after org)
@@ -176,6 +181,17 @@
   (setq-default pdf-view-display-size 'fit-width)
   (setq pdf-annot-activate-created-annotations t
         pdf-view-resize-factor 1.1))
+
+(map!
+ :map (pdf-view-mode-map)
+ :n "g g"  #'pdf-view-first-page
+ :n "G"    #'pdf-view-last-page
+ :n "n"    #'pdf-view-next-page-command
+ :n "N"    #'pdf-view-previous-page-command
+ :localleader
+ (:prefix "o"
+  (:prefix "n"
+   :desc "Insert Note" "n" 'org-noter-insert-note)))
 
 (use-package! zotxt
   :after org)
