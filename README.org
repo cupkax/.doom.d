@@ -285,33 +285,33 @@ web
 #+begin_src emacs-lisp
 (package! org-super-agenda)
 #+end_src
-
-* Lexical Bindings
+* Doom Config
+** Lexical Bindings
 #+begin_src emacs-lisp
 ;;; config.el -*- lexical-binding: t; -*-
 #+end_src
 
-* Personal Information
+** Personal Information
 #+begin_src emacs-lisp
 (setq user-full-name "Vedant Sansare (cupkax)"
       user-mail-address "vedantsansare23@gmail.com")
 #+end_src
 
-* Startup
-** Better Defaults
+** Startup
+*** Better Defaults
 #+begin_src emacs-lisp
 (setq undo-limit 80000000)
 (setq evil-want-fine-undo t)
 (setq auto-save-default t)
 #+end_src
-** =custom.el=
+*** =custom.el=
 #+begin_src emacs-lisp
 (setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
 #+end_src
 
-** =utf-8-unix= System
+*** =utf-8-unix= System
 #+begin_src emacs-lisp
 (defun doom-modeline-conditional-buffer-encoding ()
   (setq-local doom-modeline-buffer-encoding
@@ -324,8 +324,8 @@ web
 (set-default-coding-systems 'utf-8)
 #+end_src
 
-* Visual Settings
-** Fonts
+** Visual Settings
+*** Fonts
 #+begin_src emacs-lisp
 (setq doom-font                (font-spec :family "FiraCode Nerd Font" :size 16))
 (setq doom-big-font            (font-spec :family "FiraCode Nerd Font" :size 20))
@@ -333,25 +333,25 @@ web
 (setq doom-serif-font          (font-spec :family "BlexMono Nerd Font" :weight 'light))
 #+end_src
 
-** Theme
+*** Theme
 #+begin_src emacs-lisp
 (setq doom-theme 'doom-palenight)
 #+end_src
 
-** Modeline
-*** Change red text
+*** Modeline
+**** Change red text
 #+begin_src emacs-lisp
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "grey"))
 #+end_src
 
-*** Show time
+**** Show time
 #+begin_src emacs-lisp
 (setq display-time-24hr-format t)
 (display-time-mode 1)
 #+end_src
 
-** Info Colors
+*** Info Colors
 #+begin_src emacs-lisp
 (use-package! info-colors
   :commands (info-colors-fontify-node))
@@ -361,14 +361,14 @@ web
 (add-hook 'Info-mode-hook #'mixed-pitch-mode)
 #+end_src
 
-* Keybindings
-** Change local leader
+** Keybindings
+*** Change local leader
 #+begin_src emacs-lisp
 (setq doom-localleader-key ",")
 #+end_src
 
-** General
-*** Initial Config
+*** General
+**** Initial Config
 #+begin_src emacs-lisp
 (use-package! general)
 (defconst my-leader "SPC")
@@ -379,18 +379,18 @@ web
   :prefix my-local-leader
   :prefix ",")
 #+end_src
-*** Evil Setup and Error Handling
+**** Evil Setup and Error Handling
 #+begin_src emacs-lisp
 (general-evil-setup t)
 (general-auto-unbind-keys)
 #+end_src
-** Which-key
-*** Key delay
+*** Which-key
+**** Key delay
 #+begin_src emacs-lisp
 (setq which-key-idle-delay 0.0)
 #+end_src
 
-*** Replace =evil= with unicode symbols
+**** Replace =evil= with unicode symbols
 #+begin_src emacs-lisp
 (setq which-key-allow-multiple-replacements t)
 (after! which-key
@@ -401,8 +401,8 @@ web
    ))
 #+end_src
 
-* Navigation
-** Deft
+** Navigation
+*** Deft
 #+begin_src emacs-lisp
 (use-package deft
       :after org
@@ -413,17 +413,17 @@ web
       (setq deft-directory "~/git/phd/notes/"))
 #+end_src
 
-* Buffer, Frame and Window Configuration
-** Window Config
-*** Window Resize
+** Buffer, Frame and Window Configuration
+*** Window Config
+**** Window Resize
 #+begin_src emacs-lisp
 (setq-default window-combination-resize t)
 #+end_src
 
-* Development
-** Productivity
-*** Company
-**** Company mode
+** Development
+*** Productivity
+**** Company
+***** Company mode
 #+begin_src emacs-lisp
 (after! company
   (setq company-idle-delay 0.5
@@ -431,14 +431,14 @@ web
   (setq company-show-numbers t))
 #+end_src
 
-**** Company Prescient
+***** Company Prescient
 #+begin_src emacs-lisp
 (setq-default history-length 1000)
 (setq-default prescient-history-length 1000)
 #+end_src
 
-* Org Mode
-** Basic Config
+** Org Mode
+*** Basic Config
 #+begin_src emacs-lisp
 (setq org-directory                     "~/git/phd/notes/"
       org-use-property-inheritance      t
@@ -447,13 +447,13 @@ web
       org-catch-invisible-edits         'smart
       org-cycle-separator-lines              0)
 #+end_src
-** Org-Roam
-*** Basic Config
+*** Org-Roam
+**** Basic Config
 #+begin_src emacs-lisp
 (setq org-roam-directory        "~/git/phd/notes/")
 (setq org-roam-db-update-method 'immediate)
 #+end_src
-*** Org Roam Bibtex
+**** Org Roam Bibtex
 #+begin_src emacs-lisp
 (use-package! org-roam-bibtex
   :after (org-roam)
@@ -481,7 +481,7 @@ web
 :NOTER_PAGE:
 :END:"))))
 #+end_src
-** Helm Bibtex
+*** Helm Bibtex
 #+begin_src emacs-lisp
 ;(setq bibtex-format-citation-functions
 ;      '((org-mode . (lambda (x) (insert (concat
@@ -512,7 +512,7 @@ web
   ":URL: ${url}\n"
   ":END:\n\n"))
 #+end_src
-** Org Noter
+*** Org Noter
 #+begin_src emacs-lisp
 (setq
  org-noter-hide-other nil
@@ -523,7 +523,7 @@ web
        (:prefix ("n" . "Noter")
         :desc "Noter" "n" 'org-noter)))
 #+end_src
-** Pandoc
+*** Pandoc
 #+begin_src emacs-lisp
 (use-package! ox-pandoc
   :after org)
@@ -534,8 +534,8 @@ web
 ;; special extensions for markdown_github output
 (setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
 #+end_src
-* Applications
-** PDF Tools
+** Applications
+*** PDF Tools
 #+begin_src emacs-lisp
 (after! pdf-view
   (setq-default pdf-view-display-size 'fit-width)
