@@ -1,29 +1,12 @@
 ;; -*- no-byte-compile: t; -*-
 
-(package! beacon)
-
-(package! bufler)
-
 (package! all-the-icons-dired)
 
 (package! evil-better-visual-line)
 
 (package! info-colors )
 
-(package! rotate)
-
 (package! general)
-
-(package! magit-delta
-  :recipe (:host github
-           :repo "dandavison/magit-delta"))
-
-(package! package-lint)
-(package! flycheck-package)
-
-(package! nov)
-
-(package! calibredb)
 
 (package! org-pretty-table-mode
   :recipe (:host github

@@ -38,7 +38,6 @@
  fold
  (format
   +onsave)
- multiple-cursors
  rotate-text
  snippets
  word-wrap
@@ -48,7 +47,7 @@
   +ranger
   +icons)
  electric
- (ibuffer +icons)
+ ;(ibuffer +icons)
  (undo +tree)
  vc
 
@@ -56,14 +55,11 @@
  vterm
 
  :checkers
- (syntax
-  +childframe)
- spell
- grammar
+ syntax
+ ;spell
+ ;grammar
 
  :tools
- direnv
- editorconfig
  (eval
   +overlay)
  gist
@@ -72,20 +68,22 @@
   +dictionary
   +docsets)
  lsp
- (magit)
+ magit
  make
  pdf
  rgb
 
  :os
- tty
+ 
 
  :lang
  (csharp
-  +lsp)
+  +lsp
+  +unity)
  data
  emacs-lisp
- json
+ (json
+  +lsp)
  (javascript
   +lsp)
  ledger
@@ -95,21 +93,22 @@
   +dragndrop
   +gnuplot
   +hugo
+  +journal
+  +noter
   +pandoc
   +pretty
   +roam)
  (python
   +poetry
   +lsp)
- scheme
- sh
+ (sh
+  +powershell)
  web
- yaml
+ (yaml
+  +lsp)
 
  :email
- (mu4e
-  +org
-  +gmail)
+ 
 
  :app
  ;;calendar

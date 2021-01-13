@@ -75,18 +75,10 @@
 
 (setq-default window-combination-resize t)
 
-(after! text-mode
-  (add-hook! 'text-mode-hook
-    (with-silent-modifications
-      (ansi-color-apply-on-region (point-min) (point-max)))))
-
-
-
 (after! company
   (setq company-idle-delay 0.5
         company-minimum-prefix-length 2)
-  (setq company-show-numbers t)
-  (add-hook 'evil-normal-state-entry-hook #'company-abort))
+  (setq company-show-numbers t))
 
 (setq-default history-length 1000)
 (setq-default prescient-history-length 1000)
@@ -156,17 +148,14 @@
   ":URL: ${url}\n"
   ":END:\n\n"))
 
-(use-package! org-noter
-  :after (:any org pdf-view)
-  :config
-  (setq
-   org-noter-hide-other nil
-   org-noter-notes-search-path (list "~/git/phd/notes/")))
+(setq
+ org-noter-hide-other nil
+ org-noter-notes-search-path (list "~/git/phd/notes/"))
 (map! :localleader
       :map (org-mode-map pdf-view-mode)
       (:prefix ("o" . "Org")
        (:prefix ("n" . "Noter")
-         :desc "Noter" "n" 'org-noter)))
+        :desc "Noter" "n" 'org-noter)))
 
 (use-package! ox-pandoc
   :after org)
@@ -192,6 +181,3 @@
  (:prefix "o"
   (:prefix "n"
    :desc "Insert Note" "n" 'org-noter-insert-note)))
-
-(use-package! zotxt
-  :after org)

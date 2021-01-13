@@ -94,7 +94,6 @@ file-templates
 fold
 (format
  +onsave)
-multiple-cursors
 rotate-text
 snippets
 word-wrap
@@ -106,7 +105,7 @@ word-wrap
  +ranger
  +icons)
 electric
-(ibuffer +icons)
+;(ibuffer +icons)
 (undo +tree)
 vc
 #+end_src
@@ -118,16 +117,13 @@ vterm
 *** doom-checkers
 #+name: doom-checkers
 #+begin_src emacs-lisp
-(syntax
- +childframe)
-spell
-grammar
+syntax
+;spell
+;grammar
 #+end_src
 *** doom-tools
 #+name: doom-tools
 #+begin_src emacs-lisp
-direnv
-editorconfig
 (eval
  +overlay)
 gist
@@ -136,7 +132,7 @@ gist
  +dictionary
  +docsets)
 lsp
-(magit)
+magit
 make
 pdf
 rgb
@@ -144,16 +140,17 @@ rgb
 *** doom-os
 #+name: doom-os
 #+begin_src emacs-lisp
-tty
 #+end_src
 *** doom-lang
 #+name: doom-lang
 #+begin_src emacs-lisp
 (csharp
- +lsp)
+ +lsp
+ +unity)
 data
 emacs-lisp
-json
+(json
+ +lsp)
 (javascript
  +lsp)
 ledger
@@ -163,23 +160,23 @@ markdown
  +dragndrop
  +gnuplot
  +hugo
+ +journal
+ +noter
  +pandoc
  +pretty
  +roam)
 (python
  +poetry
  +lsp)
-scheme
-sh
+(sh
+ +powershell)
 web
-yaml
+(yaml
+ +lsp)
 #+end_src
 *** doom-email
 #+name: doom-email
 #+begin_src emacs-lisp
-(mu4e
- +org
- +gmail)
 #+end_src
 *** doom-app
 #+name: doom-app
@@ -208,14 +205,6 @@ yaml
 ;; -*- no-byte-compile: t; -*-
 #+end_src
 *** Aesthetics
-**** Beacon
-#+begin_src emacs-lisp
-(package! beacon)
-#+end_src
-**** Bufler
-#+begin_src emacs-lisp
-(package! bufler)
-#+end_src
 **** Dired Icons
 #+begin_src emacs-lisp
 (package! all-the-icons-dired)
@@ -229,39 +218,10 @@ yaml
 (package! info-colors )
 #+end_src
 
-**** Rotate
-#+begin_src emacs-lisp
-(package! rotate)
-#+end_src
 *** Keybindings
 #+begin_src emacs-lisp
 (package! general)
 #+end_src
-*** Magit
-**** Magit Delta
-#+begin_src emacs-lisp
-(package! magit-delta
-  :recipe (:host github
-           :repo "dandavison/magit-delta"))
-#+end_src
-
-*** Flycheck
-#+begin_src emacs-lisp
-(package! package-lint)
-(package! flycheck-package)
-#+end_src
-
-*** Ebooks
-**** EPUBS major mode =nov.el=
-#+begin_src emacs-lisp
-(package! nov)
-#+end_src
-
-**** Calibre
-#+begin_src emacs-lisp
-(package! calibredb)
-#+end_src
-
 *** Org
 **** Visuals
 ***** Tables
@@ -485,27 +445,14 @@ yaml
 #+end_src
 
 * Development
-** Language
-*** Plaintext
-#+begin_src emacs-lisp
-(after! text-mode
-  (add-hook! 'text-mode-hook
-    (with-silent-modifications
-      (ansi-color-apply-on-region (point-min) (point-max)))))
-#+end_src
-
 ** Productivity
-*** Flycheck
-#+begin_src emacs-lisp
-#+end_src
 *** Company
 **** Company mode
 #+begin_src emacs-lisp
 (after! company
   (setq company-idle-delay 0.5
         company-minimum-prefix-length 2)
-  (setq company-show-numbers t)
-  (add-hook 'evil-normal-state-entry-hook #'company-abort))
+  (setq company-show-numbers t))
 #+end_src
 
 **** Company Prescient
@@ -591,17 +538,14 @@ yaml
 #+end_src
 ** Org Noter
 #+begin_src emacs-lisp
-(use-package! org-noter
-  :after (:any org pdf-view)
-  :config
-  (setq
-   org-noter-hide-other nil
-   org-noter-notes-search-path (list "~/git/phd/notes/")))
+(setq
+ org-noter-hide-other nil
+ org-noter-notes-search-path (list "~/git/phd/notes/"))
 (map! :localleader
       :map (org-mode-map pdf-view-mode)
       (:prefix ("o" . "Org")
        (:prefix ("n" . "Noter")
-         :desc "Noter" "n" 'org-noter)))
+        :desc "Noter" "n" 'org-noter)))
 #+end_src
 ** Pandoc
 #+begin_src emacs-lisp
@@ -634,8 +578,3 @@ yaml
    :desc "Insert Note" "n" 'org-noter-insert-note)))
 #+end_src
 
-** Zotero (zotxt)
-#+begin_src emacs-lisp
-(use-package! zotxt
-  :after org)
-#+end_src
