@@ -92,7 +92,6 @@
   +dragndrop
   +gnuplot
   +hugo
-  +journal
   +noter
   +pandoc
   +pretty
