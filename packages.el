@@ -8,6 +8,8 @@
 
 (package! general)
 
+(unpin! org-mode)
+
 (package! org-pretty-table-mode
   :recipe (:host github
            :repo "Fuco1/org-pretty-table"))

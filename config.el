@@ -6,6 +6,7 @@
 (setq undo-limit 80000000)
 (setq evil-want-fine-undo t)
 (setq auto-save-default t)
+(setq global-subword-mode 1)
 
 (setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
 (when (file-exists-p custom-file)
@@ -28,11 +29,15 @@
 
 (setq doom-theme 'doom-palenight)
 
+(setq display-line-numbers-type 'relative)
+
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "grey"))
 
 (setq display-time-24hr-format t)
 (display-time-mode 1)
+
+(custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
 
 (use-package! info-colors
   :commands (info-colors-fontify-node))
@@ -73,6 +78,44 @@
       (setq deft-default-extension "org")
       (setq deft-directory "~/git/phd/notes/"))
 
+(setq doom-fallback-buffer-name "► Doom"
+      +doom-dashboard-name "► Doom")
+
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string
+              ".*/[0-9]*-?" "☰ "
+              (subst-char-in-string ?_ ?  buffer-file-name))
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+
+(map! :map evil-window-map
+      "SPC" #'rotate-layout
+      ;; Navigation
+      "<left>"         #'evil-window-left
+      "<down>"         #'evil-window-down
+      "<up>"           #'evil-window-up
+      "<right>"        #'evil-window-right
+      ;; Swapping windows
+      "C-<left>"       #'+evil/window-move-left
+      "C-<down>"       #'+evil/window-move-down
+      "C-<up>"         #'+evil/window-move-up
+      "C-<right>"      #'+evil/window-move-right)
+
+(setq evil-vsplit-window-right t
+      evil-split-window-below  t)
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (+ivy/switch-buffer))
+
+(setq +ivy-buffer-preview t)
+
 (setq-default window-combination-resize t)
 
 (after! company
@@ -83,12 +126,15 @@
 (setq-default history-length 1000)
 (setq-default prescient-history-length 1000)
 
+(setq-default major-mode 'org-mode)
 (setq org-directory                     "~/git/phd/notes/"
       org-use-property-inheritance      t
       org-log-done                      'time
       org-list-allow-alphabetical       t
       org-catch-invisible-edits         'smart
       org-cycle-separator-lines              0)
+
+
 
 (setq org-roam-directory        "~/git/phd/notes/")
 (setq org-roam-db-update-method 'immediate)

@@ -15,7 +15,8 @@
  doom-quit
  hl-todo
  hydra
- ligatures
+ (ligatures
+  +extra)
  modeline
  nav-flash
  ophints
@@ -39,19 +40,18 @@
   +onsave)
  rotate-text
  snippets
- word-wrap
+ ;;word-wrap
 
  :emacs
  (dired
-  +ranger
   +icons)
  electric
- ;(ibuffer +icons)
+ (ibuffer +icons)
  (undo +tree)
  vc
 
  :term
- vterm
+ ;;vterm
 
  :checkers
  syntax
@@ -98,7 +98,8 @@
   +roam)
  (python
   +poetry
-  +lsp)
+  +lsp
+  +pyright)
  (sh
   +powershell)
  web

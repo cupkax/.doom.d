@@ -2,6 +2,7 @@
 #+author: Vedant "cupkax" Sansare
 #+startup: fold
 #+property: header-args:emacs-lisp :tangle "config.el" :results silent
+#+property: header-args :tangle no :results silent
 
 * Doom Core
 ** =init.el=
@@ -69,7 +70,8 @@ doom-dashboard
 doom-quit
 hl-todo
 hydra
-ligatures
+(ligatures
+ +extra)
 modeline
 nav-flash
 ophints
@@ -95,23 +97,22 @@ fold
  +onsave)
 rotate-text
 snippets
-word-wrap
+;;word-wrap
 #+end_src
 *** doom-emacs
 #+name: doom-emacs
 #+begin_src emacs-lisp
 (dired
- +ranger
  +icons)
 electric
-;(ibuffer +icons)
+(ibuffer +icons)
 (undo +tree)
 vc
 #+end_src
 *** doom-term
 #+name: doom-term
 #+begin_src emacs-lisp
-vterm
+;;vterm
 #+end_src
 *** doom-checkers
 #+name: doom-checkers
@@ -165,7 +166,8 @@ markdown
  +roam)
 (python
  +poetry
- +lsp)
+ +lsp
+ +pyright)
 (sh
  +powershell)
 web
@@ -215,6 +217,10 @@ web
 (package! general)
 #+end_src
 *** Org
+/Head/ for Development
+#+begin_src emacs-lisp
+(unpin! org-mode)
+#+end_src
 **** Visuals
 ***** Tables
 #+begin_src emacs-lisp
@@ -302,6 +308,7 @@ web
 (setq undo-limit 80000000)
 (setq evil-want-fine-undo t)
 (setq auto-save-default t)
+(setq global-subword-mode 1)
 #+end_src
 *** =custom.el=
 #+begin_src emacs-lisp
@@ -337,6 +344,10 @@ web
 (setq doom-theme 'doom-palenight)
 #+end_src
 
+*** Line Numbers
+#+begin_src emacs-lisp
+(setq display-line-numbers-type 'relative)
+#+end_src
 *** Modeline
 **** Change red text
 #+begin_src emacs-lisp
@@ -349,7 +360,10 @@ web
 (setq display-time-24hr-format t)
 (display-time-mode 1)
 #+end_src
-
+**** TODO Debug
+#+begin_src emacs-lisp
+(custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
+#+end_src
 *** Info Colors
 #+begin_src emacs-lisp
 (use-package! info-colors
@@ -413,7 +427,54 @@ web
 #+end_src
 
 ** Buffer, Frame and Window Configuration
+*** Buffer Config
+#+begin_src emacs-lisp
+(setq doom-fallback-buffer-name "► Doom"
+      +doom-dashboard-name "► Doom")
+#+end_src
+*** Frame Config
+**** Frame Title
+#+begin_src emacs-lisp
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string
+              ".*/[0-9]*-?" "☰ "
+              (subst-char-in-string ?_ ?  buffer-file-name))
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+#+end_src
 *** Window Config
+**** Window Management
+#+begin_src emacs-lisp
+(map! :map evil-window-map
+      "SPC" #'rotate-layout
+      ;; Navigation
+      "<left>"         #'evil-window-left
+      "<down>"         #'evil-window-down
+      "<up>"           #'evil-window-up
+      "<right>"        #'evil-window-right
+      ;; Swapping windows
+      "C-<left>"       #'+evil/window-move-left
+      "C-<down>"       #'+evil/window-move-down
+      "C-<up>"         #'+evil/window-move-up
+      "C-<right>"      #'+evil/window-move-right)
+#+end_src
+**** Window Split
+#+begin_src emacs-lisp
+(setq evil-vsplit-window-right t
+      evil-split-window-below  t)
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (+ivy/switch-buffer))
+
+(setq +ivy-buffer-preview t)
+#+end_src
 **** Window Resize
 #+begin_src emacs-lisp
 (setq-default window-combination-resize t)
@@ -439,12 +500,18 @@ web
 ** Org Mode
 *** Basic Config
 #+begin_src emacs-lisp
+(setq-default major-mode 'org-mode)
 (setq org-directory                     "~/git/phd/notes/"
       org-use-property-inheritance      t
       org-log-done                      'time
       org-list-allow-alphabetical       t
       org-catch-invisible-edits         'smart
       org-cycle-separator-lines              0)
+#+end_src
+*** Org-Capture
+**** Templates
+#+begin_src emacs-lisp
+
 #+end_src
 *** Org-Roam
 **** Basic Config
