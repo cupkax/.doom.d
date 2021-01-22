@@ -203,21 +203,13 @@ web
 #+begin_src emacs-lisp
 (package! all-the-icons-dired)
 #+end_src
-**** Evil Better Visual Line
-#+begin_src emacs-lisp
-(package! evil-better-visual-line)
-#+end_src
 **** Info Colors
 #+begin_src emacs-lisp
 (package! info-colors )
 #+end_src
 
-*** Keybindings
-#+begin_src emacs-lisp
-(package! general)
-#+end_src
 *** Org
-/Head/ for Development
+**** Org Mode
 #+begin_src emacs-lisp
 (unpin! org-mode)
 #+end_src
@@ -253,12 +245,6 @@ web
 (package! helm-org-rifle)
 #+end_src
 
-**** Org Mindmap
-#+begin_src emacs-lisp
-(package! org-mind-map
-  :recipe (:host github
-            :repo "theodorewiles/org-mind-map"))
-#+end_src
 **** Org Noter
 #+begin_src emacs-lisp
 (package! org-noter)
@@ -379,24 +365,6 @@ web
 #+begin_src emacs-lisp
 (setq doom-localleader-key ",")
 #+end_src
-
-*** General
-**** Initial Config
-#+begin_src emacs-lisp
-(use-package! general)
-(defconst my-leader "SPC")
-(general-create-definer my-leader-def
-  :prefix my-leader)
-
-(general-create-definer my-local-leader-def
-  :prefix my-local-leader
-  :prefix ",")
-#+end_src
-**** Evil Setup and Error Handling
-#+begin_src emacs-lisp
-(general-evil-setup t)
-(general-auto-unbind-keys)
-#+end_src
 *** Which-key
 **** Key delay
 #+begin_src emacs-lisp
@@ -449,6 +417,21 @@ web
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 #+end_src
 *** Window Config
+**** Window Title
+#+begin_src emacs-lisp
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string
+              ".*/[0-9]*-?" "☰ "
+              (subst-char-in-string ?_ ?  buffer-file-name))
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+#+end_src
 **** Window Management
 #+begin_src emacs-lisp
 (map! :map evil-window-map
@@ -583,11 +566,6 @@ web
 (setq
  org-noter-hide-other nil
  org-noter-notes-search-path (list "~/git/phd/notes/"))
-(map! :localleader
-      :map (org-mode-map pdf-view-mode)
-      (:prefix ("o" . "Org")
-       (:prefix ("n" . "Noter")
-        :desc "Noter" "n" 'org-noter)))
 #+end_src
 *** Pandoc
 #+begin_src emacs-lisp
@@ -607,16 +585,4 @@ web
   (setq-default pdf-view-display-size 'fit-width)
   (setq pdf-annot-activate-created-annotations t
         pdf-view-resize-factor 1.1))
-
-(map!
- :map (pdf-view-mode-map)
- :n "g g"  #'pdf-view-first-page
- :n "G"    #'pdf-view-last-page
- :n "n"    #'pdf-view-next-page-command
- :n "N"    #'pdf-view-previous-page-command
- :localleader
- (:prefix "o"
-  (:prefix "n"
-   :desc "Insert Note" "n" 'org-noter-insert-note)))
 #+end_src
-

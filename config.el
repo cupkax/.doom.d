@@ -48,18 +48,6 @@
 
 (setq doom-localleader-key ",")
 
-(use-package! general)
-(defconst my-leader "SPC")
-(general-create-definer my-leader-def
-  :prefix my-leader)
-
-(general-create-definer my-local-leader-def
-  :prefix my-local-leader
-  :prefix ",")
-
-(general-evil-setup t)
-(general-auto-unbind-keys)
-
 (setq which-key-idle-delay 0.0)
 
 (setq which-key-allow-multiple-replacements t)
@@ -80,6 +68,19 @@
 
 (setq doom-fallback-buffer-name "► Doom"
       +doom-dashboard-name "► Doom")
+
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string
+              ".*/[0-9]*-?" "☰ "
+              (subst-char-in-string ?_ ?  buffer-file-name))
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 
 (setq frame-title-format
       '(""
@@ -197,11 +198,6 @@
 (setq
  org-noter-hide-other nil
  org-noter-notes-search-path (list "~/git/phd/notes/"))
-(map! :localleader
-      :map (org-mode-map pdf-view-mode)
-      (:prefix ("o" . "Org")
-       (:prefix ("n" . "Noter")
-        :desc "Noter" "n" 'org-noter)))
 
 (use-package! ox-pandoc
   :after org)
@@ -216,14 +212,3 @@
   (setq-default pdf-view-display-size 'fit-width)
   (setq pdf-annot-activate-created-annotations t
         pdf-view-resize-factor 1.1))
-
-(map!
- :map (pdf-view-mode-map)
- :n "g g"  #'pdf-view-first-page
- :n "G"    #'pdf-view-last-page
- :n "n"    #'pdf-view-next-page-command
- :n "N"    #'pdf-view-previous-page-command
- :localleader
- (:prefix "o"
-  (:prefix "n"
-   :desc "Insert Note" "n" 'org-noter-insert-note)))

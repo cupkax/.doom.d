@@ -2,11 +2,7 @@
 
 (package! all-the-icons-dired)
 
-(package! evil-better-visual-line)
-
 (package! info-colors )
-
-(package! general)
 
 (unpin! org-mode)
 
@@ -25,10 +21,6 @@
             :repo "abo-abo/org-download"))
 
 (package! helm-org-rifle)
-
-(package! org-mind-map
-  :recipe (:host github
-            :repo "theodorewiles/org-mind-map"))
 
 (package! org-noter)
 
