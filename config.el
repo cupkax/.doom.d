@@ -236,72 +236,6 @@
 (setq yas-triggers-in-field t)
 ;; YASnippet:1 ends here
 
-;; [[file:README.org::*Development][Development:1]]
-(defvar org-ml-target-dir "~/.emacs.d/.local/straight/repos/org-mode/")
-(defvar org-ml-max-age 600
-  "Maximum permissible age in seconds.")
-(defvar org-ml--cache-timestamp 0)
-(defvar org-ml--cache nil)
-
-(defun org-ml-current-patches ()
-  "Get the currently open patches, as a list of alists.
-Entries of the form (subject . id)."
-  (delq nil
-        (mapcar
-         (lambda (entry)
-           (unless (plist-get entry :fixed)
-             (cons
-              (format "%-8s  %s"
-                      (propertize
-                       (replace-regexp-in-string "T.*" ""
-                                                 (plist-get entry :date))
-                       'face 'font-lock-doc-face)
-                      (propertize
-                       (replace-regexp-in-string "\\[PATCH\\] ?" ""
-                                                 (plist-get entry :summary))
-                       'face 'font-lock-keyword-face))
-              (plist-get entry :id))))
-         (with-current-buffer (url-retrieve-synchronously "https://updates.orgmode.org/data/patches")
-           (json-parse-buffer :object-type 'plist)))))
-
-(defun org-ml-select-patch-thread ()
-  "Find and apply a proposed Org patch."
-  (interactive)
-  (let ((current-workspace (+workspace-current))
-        (patches (progn
-                   (when (or (not org-ml--cache)
-                             (> (- (float-time) org-ml--cache-timestamp)
-                                org-ml-max-age))
-                     (setq org-ml--cache (org-ml-current-patches)
-                           org-ml--cache-timestamp (float-time)))
-                   org-ml--cache))
-        msg-id)
-    (ivy-read "Thread: "
-              patches
-              :action (lambda (m) (setq msg-id (cdr m))))
-    (+workspace-switch +mu4e-workspace-name)
-    (mu4e-view-message-with-message-id msg-id)
-    (add-to-list 'mu4e-view-actions
-                 (cons "apply patch to org" #'org-ml-transient-mu4e-action))))
-
-(defun org-ml-transient-mu4e-action (msg)
-  (setq mu4e-view-actions
-        (delete (cons "apply patch to org" #'org-ml-transient-mu4e-action)
-                mu4e-view-actions))
-  (+workspace/other)
-  (magit-status org-ml-target-dir)
-  (with-current-buffer (get-buffer-create "*Shell: Org apply patches*")
-    (erase-buffer)
-    (let ((default-directory org-ml-target-dir))
-      (shell-command
-       (format "git am %s"
-               (shell-quote-argument (mu4e-message-field msg :path)))
-       (current-buffer))
-      (magit-refresh))
-    (when (string-match-p "Error\\|failed" (buffer-string))
-      (+popup/buffer))))
-;; Development:1 ends here
-
 ;; [[file:README.org::*Defaults][Defaults:1]]
 (setq-default major-mode 'org-mode)
 (setq org-directory                     "~/git/phd/notes/"
@@ -326,16 +260,6 @@ Entries of the form (subject . id)."
         (:tangle   . "no")
         (:comments . "link")))
 ;; Babel:1 ends here
-
-;; [[file:README.org::*Keybinds][Keybinds:1]]
-(map! :map evil-org-mode-map
-      :after evil-org
-      :n "g <up>"    #'org-backward-heading-same-level
-      :n "g <down>"  #'org-forward-heading-same-level
-      :n "g <left>"  #'org-up-element
-      :n "g <right>" #'org-down-element
-      )
-;; Keybinds:1 ends here
 
 ;; [[file:README.org::*LSP Support][LSP Support:1]]
 (cl-defmacro lsp-org-babel-enable (lang)
@@ -367,78 +291,6 @@ Entries of the form (subject . id)."
 (dolist (lang org-babel-lang-list)
   (eval `(lsp-org-babel-enable ,lang)))
 ;; LSP Support:1 ends here
-
-;; [[file:README.org::*Org Agenda][Org Agenda:1]]
-(use-package! org-super-agenda
-  :commands (org-super-agenda-mode))
-(after! org-agenda
-  (org-super-agenda-mode))
-
-(setq
- org-agenda-include-deadlines t
- org-agenda-tags-column 100
- org-agenda-compact-blocks t)
-
-(setq org-agenda-custom-commands
-      '(("o" "Overview"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                       '((:name "Today"
-                          :time-grid t
-                          :date today
-                          :todo "TODAY"
-                          :scheduled today
-                          :order 1)))))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do"
-                           :todo "NEXT"
-                           :order 1)
-                          (:name "Important"
-                           :tag "Important"
-                           :priority "A"
-                           :order 6)
-                          (:name "Due Today"
-                           :deadline today
-                           :order 2)
-                          (:name "Due Soon"
-                           :deadline future
-                           :order 8)
-                          (:name "Overdue"
-                           :deadline past
-                           :face error
-                           :order 7)
-                          (:name "Assignments"
-                           :tag "Assignment"
-                           :order 10)
-                          (:name "Issues"
-                           :tag "Issue"
-                           :order 12)
-                          (:name "Emacs"
-                           :tag "Emacs"
-                           :order 13)
-                          (:name "Projects"
-                           :tag "Project"
-                           :order 14)
-                          (:name "Research"
-                           :tag "Research"
-                           :order 15)
-                          (:name "To read"
-                           :tag "Read"
-                           :order 30)
-                          (:name "Waiting"
-                           :todo "WAITING"
-                           :order 20)
-                          (:name "University"
-                           :tag "uni"
-                           :order 32)
-                          (:name "Trivial"
-                           :priority<= "E"
-                           :tag ("Trivial" "Unimportant")
-                           :todo ("SOMEDAY" )
-                           :order 90)
-                          (:discard (:tag ("Chore" "Routine" "Daily")))))))))))
-;; Org Agenda:1 ends here
 
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
 (setq org-roam-directory        "~/git/phd/notes/")
