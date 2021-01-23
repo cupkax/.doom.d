@@ -33,10 +33,9 @@
 ;; =utf-8-unix= System:1 ends here
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
-(setq doom-font                (font-spec :family "FiraCode Nerd Font" :size 16))
-(setq doom-big-font            (font-spec :family "FiraCode Nerd Font" :size 20))
+(setq doom-font                (font-spec :family "JetBrains Mono Nerd Font" :size 16))
+(setq doom-big-font            (font-spec :family "JetBrains Mono Nerd Font" :size 20))
 (setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
-(setq doom-serif-font          (font-spec :family "BlexMono Nerd Font" :weight 'light))
 ;; Fonts:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
@@ -292,6 +291,148 @@
   (eval `(lsp-org-babel-enable ,lang)))
 ;; LSP Support:1 ends here
 
+;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
+(add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
+;; Mixed Pitch Mode:1 ends here
+
+;; [[file:README.org::*Pretty tables][Pretty tables:1]]
+(setq global-org-pretty-table-mode t)
+;; Pretty tables:1 ends here
+
+;; [[file:README.org::*Headings][Headings:1]]
+(custom-set-faces!
+  '(outline-1 :weight extra-bold :height 1.25)
+  '(outline-2 :weight bold       :height 1.15)
+  '(outline-3 :weight bold       :height 1.12)
+  '(outline-4 :weight semi-bold  :height 1.09)
+  '(outline-5 :weight semi-bold  :height 1.06)
+  '(outline-6 :weight semi-bold  :height 1.03)
+  '(outline-8 :weight semi-bold)
+  '(outline-9 :weight semi-bold)
+
+  '(org-document-title           :height 1.2))
+;; Headings:1 ends here
+
+;; [[file:README.org::*Agenda Errors][Agenda Errors:1]]
+(setq org-agenda-deadline-faces
+      '((1.001 . error)
+        (1.0   . org-warning)
+        (0.5   . org-upcoming-deadline)
+        (0.0   . org-upcoming-distant-deadline)))
+;; Agenda Errors:1 ends here
+
+;; [[file:README.org::*Quote Blocks][Quote Blocks:1]]
+(setq org-fontify-quote-and-verse-blocks t)
+;; Quote Blocks:1 ends here
+
+;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
+(after! org-superstar
+  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
+        org-superstar-prettify-item-bullets t ))
+
+(setq org-ellipsis " ▾ "
+      org-hide-leading-stars t
+      org-priority-highest ?A
+      org-priority-lowest ?E
+      org-priority-faces
+      '((?A . 'all-the-icons-red)
+        (?B . 'all-the-icons-orange)
+        (?C . 'all-the-icons-yellow)
+        (?D . 'all-the-icons-green)
+        (?E . 'all-the-icons-blue)))
+;; Bullets / Endings:1 ends here
+
+;; [[file:README.org::*Other Symbols][Other Symbols:1]]
+(appendq! +ligatures-extra-symbols
+          `(:checkbox      "☐"
+            :pending       "◼"
+            :checkedbox    "☑"
+            :list_property "∷"
+            :em_dash       "—"
+            :ellipses      "…"
+            :title         "𝙏"
+            :subtitle      "𝙩"
+            :author        "𝘼"
+            :date          "𝘿"
+            :property      "☸"
+            :options       "⌥"
+            :latex_class   "🄲"
+            :latex_header  "⇥"
+            :beamer_header "↠"
+            :attr_latex    "🄛"
+            :attr_html     "🄗"
+            :begin_quote   "❮"
+            :end_quote     "❯"
+            :caption       "☰"
+            :header        "›"
+            :results       "🠶"
+            :begin_export  "⯮"
+            :end_export    "⯬"
+            :properties    "⚙"
+            :end           "∎"
+            :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
+            :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
+            :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
+            :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
+            :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)))
+(set-ligatures! 'org-mode
+  :merge t
+  :checkbox      "[ ]"
+  :pending       "[-]"
+  :checkedbox    "[X]"
+  :list_property "::"
+  :em_dash       "---"
+  :ellipsis      "..."
+  :title         "#+title:"
+  :subtitle      "#+subtitle:"
+  :author        "#+author:"
+  :date          "#+date:"
+  :property      "#+property:"
+  :options       "#+options:"
+  :latex_class   "#+latex_class:"
+  :latex_header  "#+latex_header:"
+  :beamer_header "#+beamer_header:"
+  :attr_latex    "#+attr_latex:"
+  :attr_html     "#+attr_latex:"
+  :begin_quote   "#+begin_quote"
+  :end_quote     "#+end_quote"
+  :caption       "#+caption:"
+  :header        "#+header:"
+  :begin_export  "#+begin_export"
+  :end_export    "#+end_export"
+  :results       "#+RESULTS:"
+  :property      ":PROPERTIES:"
+  :end           ":END:"
+  :priority_a    "[#A]"
+  :priority_b    "[#B]"
+  :priority_c    "[#C]"
+  :priority_d    "[#D]"
+  :priority_e    "[#E]")
+(plist-put +ligatures-extra-symbols :name "⁍")
+;; Other Symbols:1 ends here
+
+;; [[file:README.org::*General org-babel config][General org-babel config:1]]
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((C          . t)
+     (emacs-lisp . t)
+     (ledger     . t)
+     (lisp       . t)
+     (lua        . t)
+     (org        . t)
+     (python     . t)
+     (shell      . t)))
+;; General org-babel config:1 ends here
+
+;; [[file:README.org::*Python][Python:1]]
+(setq org-babel-python-command "python3")
+(defun cpkx-org-python ()
+  (if (eq major-mode 'python-mode)
+      (progn (anaconda-mode t)
+             (company-mode t))))
+(add-hook 'org-src-mode-hook 'cpkx-org-python)
+;; Python:1 ends here
+
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
 (setq org-roam-directory        "~/git/phd/notes/")
 (setq org-roam-db-update-method 'immediate)
@@ -361,6 +502,12 @@
  org-noter-hide-other nil
  org-noter-notes-search-path (list "~/git/phd/notes/"))
 ;; Org Noter:1 ends here
+
+;; [[file:README.org::*General][General:1]]
+(setq org-export-headline-levels 5)
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+;; General:1 ends here
 
 ;; [[file:README.org::*Pandoc][Pandoc:1]]
 (use-package! ox-pandoc
