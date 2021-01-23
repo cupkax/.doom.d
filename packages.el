@@ -14,6 +14,9 @@
 
 (package! org-fancy-priorities)
 
+(package! ivy-bibtex)
+(package! helm-bibtex)
+
 (package! doct)
 
 (package! org-download

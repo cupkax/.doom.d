@@ -411,7 +411,7 @@
 (plist-put +ligatures-extra-symbols :name "⁍")
 ;; Other Symbols:1 ends here
 
-;; [[file:README.org::*General org-babel config][General org-babel config:1]]
+;; [[file:README.org::*=org-babel= languages][=org-babel= languages:1]]
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((C          . t)
@@ -421,8 +421,9 @@
      (lua        . t)
      (org        . t)
      (python     . t)
-     (shell      . t)))
-;; General org-babel config:1 ends here
+     (shell      . t)
+     (xml        . t)))
+;; =org-babel= languages:1 ends here
 
 ;; [[file:README.org::*Python][Python:1]]
 (setq org-babel-python-command "python3")
@@ -466,14 +467,12 @@
 :END:"))))
 ;; Org Roam Bibtex:1 ends here
 
-;; [[file:README.org::*Helm Bibtex][Helm Bibtex:1]]
+;; [[file:README.org::*Bibtex][Bibtex:1]]
 ;(setq bibtex-format-citation-functions
 ;      '((org-mode . (lambda (x) (insert (concat
 ;                                         "\\cite{"
 ;                                         (mapconcat 'identity x ",")
 ;                                         "}")) ""))))
-
-
 (setq
  bibtex-completion-notes-path   "~/git/phd/notes/"
  bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
@@ -495,7 +494,7 @@
   ":DOI: ${doi}\n"
   ":URL: ${url}\n"
   ":END:\n\n"))
-;; Helm Bibtex:1 ends here
+;; Bibtex:1 ends here
 
 ;; [[file:README.org::*Org Noter][Org Noter:1]]
 (setq

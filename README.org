@@ -229,6 +229,11 @@ web
 #+begin_src emacs-lisp
 (package! org-fancy-priorities)
 #+end_src
+**** Ivy/Helm Bibtex
+#+begin_src emacs-lisp
+(package! ivy-bibtex)
+(package! helm-bibtex)
+#+end_src
 **** Org Capture
 #+begin_src emacs-lisp
 (package! doct)
@@ -720,7 +725,7 @@ web
 (plist-put +ligatures-extra-symbols :name "⁍")
 #+end_src
 *** Babel
-**** General org-babel config
+**** =org-babel= languages
 #+begin_src emacs-lisp
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -731,7 +736,8 @@ web
      (lua        . t)
      (org        . t)
      (python     . t)
-     (shell      . t)))
+     (shell      . t)
+     (xml        . t)))
 #+end_src
 **** Python
 #+begin_src emacs-lisp
@@ -777,15 +783,13 @@ web
 :NOTER_PAGE:
 :END:"))))
 #+end_src
-*** Helm Bibtex
+*** Bibtex
 #+begin_src emacs-lisp
 ;(setq bibtex-format-citation-functions
 ;      '((org-mode . (lambda (x) (insert (concat
 ;                                         "\\cite{"
 ;                                         (mapconcat 'identity x ",")
 ;                                         "}")) ""))))
-
-
 (setq
  bibtex-completion-notes-path   "~/git/phd/notes/"
  bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
