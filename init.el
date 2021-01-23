@@ -55,8 +55,8 @@
 
  :checkers
  syntax
- ;spell
- ;grammar
+ spell
+ grammar
 
  :tools
  (eval
