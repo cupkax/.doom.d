@@ -287,6 +287,10 @@ web
 #+begin_src emacs-lisp
 (package! org-super-agenda)
 #+end_src
+*** Applications
+#+begin_src emacs-lisp
+(package! elcord)
+#+end_src
 * Doom Config
 ** Lexical Bindings
 #+begin_src emacs-lisp
@@ -856,25 +860,14 @@ web
 (setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
 #+end_src
 ** Applications
+*** Discord
+#+begin_src emacs-lisp
+(setq elcord-use-major-mode-as-main-icon t)
+(elcord-mode)
+#+end_src
 *** PDF Tools
 #+begin_src emacs-lisp
-(after! pdf-view
-  (map!
-   :map (pdf-view-mode-map)
-   ;; Navigation
-   :n "g g"       #'pdf-view-first-page
-   :n "G"         #'pdf-view-last-page
-   :n "n"         #'pdf-view-next-page-command
-   :n "N"         #'pdf-view-previous-page-command
-   ;; Zoom
-   :n "+"         #'pdf-view-enlarge
-   :n "-"         #'pdf-view-shrink
-   ;; Note
-   :localleader
-   (:prefix "n"
-    :desc   "Insert note" "i" 'org-noter-insert-note))
-
-  (setq-default pdf-view-display-size 'fit-width)
-  (setq pdf-annot-activate-created-annotations t
-        pdf-view-resize-factor 1.01))
+(setq-default pdf-view-display-size 'fit-width)
+(setq pdf-annot-activate-created-annotations t
+      pdf-view-resize-factor 1.01)
 #+end_src

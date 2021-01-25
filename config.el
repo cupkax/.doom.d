@@ -532,24 +532,13 @@
 (setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
 ;; Pandoc:1 ends here
 
-;; [[file:README.org::*PDF Tools][PDF Tools:1]]
-(after! pdf-view
-  (map!
-   :map (pdf-view-mode-map)
-   ;; Navigation
-   :n "g g"       #'pdf-view-first-page
-   :n "G"         #'pdf-view-last-page
-   :n "n"         #'pdf-view-next-page-command
-   :n "N"         #'pdf-view-previous-page-command
-   ;; Zoom
-   :n "+"         #'pdf-view-enlarge
-   :n "-"         #'pdf-view-shrink
-   ;; Note
-   :localleader
-   (:prefix "n"
-    :desc   "Insert note" "i" 'org-noter-insert-note))
+;; [[file:README.org::*Discord][Discord:1]]
+(setq elcord-use-major-mode-as-main-icon t)
+(elcord-mode)
+;; Discord:1 ends here
 
-  (setq-default pdf-view-display-size 'fit-width)
-  (setq pdf-annot-activate-created-annotations t
-        pdf-view-resize-factor 1.01))
+;; [[file:README.org::*PDF Tools][PDF Tools:1]]
+(setq-default pdf-view-display-size 'fit-width)
+(setq pdf-annot-activate-created-annotations t
+      pdf-view-resize-factor 1.01)
 ;; PDF Tools:1 ends here
