@@ -33,6 +33,10 @@
   :recipe (:host github
            :repo "alphapapa/org-protocol-capture-html"))
 
+(package! org-pdftools
+  :recipe (:host github
+           :repo "fuxialexander/org-pdftools"))
+
 (package! org-ref)
 
 (package! org-roam-bibtex)

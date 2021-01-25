@@ -264,6 +264,12 @@ web
   :recipe (:host github
            :repo "alphapapa/org-protocol-capture-html"))
 #+end_src
+**** Org Pdf Tools
+#+begin_src emacs-lisp
+(package! org-pdftools
+  :recipe (:host github
+           :repo "fuxialexander/org-pdftools"))
+#+end_src
 **** Org Ref
 #+begin_src emacs-lisp
 (package! org-ref)
@@ -324,8 +330,8 @@ web
 ** Visual Settings
 *** Fonts
 #+begin_src emacs-lisp
-(setq doom-font                (font-spec :family "JetBrains Mono Nerd Font" :size 16))
-(setq doom-big-font            (font-spec :family "JetBrains Mono Nerd Font" :size 20))
+(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
+(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
 (setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
 #+end_src
 
@@ -376,6 +382,10 @@ web
 #+end_src
 
 ** Keybindings
+*** Auto-unbind
+#+begin_src emacs-lisp
+(general-auto-unbind-keys)
+#+end_src
 *** Evil
 **** Global Substitution
 #+begin_src emacs-lisp
@@ -601,6 +611,16 @@ web
 (dolist (lang org-babel-lang-list)
   (eval `(lsp-org-babel-enable ,lang)))
 #+end_src
+**** Keybindings
+#+begin_src emacs-lisp
+(map!
+ :map (org-mode-map)
+ :localleader
+ ;; Noter
+ (:prefix  ("n" . "Noter")
+  :desc    "Start Noter"        "n" 'org-noter
+  :desc    "Kill Noter Session" "k" 'org-noter-kill-session))
+#+end_src
 *** Visuals
 **** Font Display
 ***** Mixed Pitch Mode
@@ -814,9 +834,8 @@ web
 #+end_src
 *** Org Noter
 #+begin_src emacs-lisp
-(setq
- org-noter-hide-other nil
- org-noter-notes-search-path (list "~/git/phd/notes/"))
+(after! org-noter
+  (setq org-noter-notes-search-path (list "~/git/phd/notes/")))
 #+end_src
 *** Export
 **** General
@@ -840,8 +859,22 @@ web
 *** PDF Tools
 #+begin_src emacs-lisp
 (after! pdf-view
+  (map!
+   :map (pdf-view-mode-map)
+   ;; Navigation
+   :n "g g"       #'pdf-view-first-page
+   :n "G"         #'pdf-view-last-page
+   :n "n"         #'pdf-view-next-page-command
+   :n "N"         #'pdf-view-previous-page-command
+   ;; Zoom
+   :n "+"         #'pdf-view-enlarge
+   :n "-"         #'pdf-view-shrink
+   ;; Note
+   :localleader
+   (:prefix "n"
+    :desc   "Insert note" "i" 'org-noter-insert-note))
+
   (setq-default pdf-view-display-size 'fit-width)
   (setq pdf-annot-activate-created-annotations t
-        pdf-view-resize-factor 1.1))
+        pdf-view-resize-factor 1.01))
 #+end_src
-***

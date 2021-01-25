@@ -33,8 +33,8 @@
 ;; =utf-8-unix= System:1 ends here
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
-(setq doom-font                (font-spec :family "JetBrains Mono Nerd Font" :size 16))
-(setq doom-big-font            (font-spec :family "JetBrains Mono Nerd Font" :size 20))
+(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
+(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
 (setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
 ;; Fonts:1 ends here
 
@@ -79,6 +79,10 @@
 
 (add-hook 'Info-mode-hook #'mixed-pitch-mode)
 ;; Info Colors:1 ends here
+
+;; [[file:README.org::*Auto-unbind][Auto-unbind:1]]
+(general-auto-unbind-keys)
+;; Auto-unbind:1 ends here
 
 ;; [[file:README.org::*Global Substitution][Global Substitution:1]]
 (after! evil (setq evil-ex-substitute-global t))
@@ -291,6 +295,16 @@
   (eval `(lsp-org-babel-enable ,lang)))
 ;; LSP Support:1 ends here
 
+;; [[file:README.org::*Keybindings][Keybindings:1]]
+(map!
+ :map (org-mode-map)
+ :localleader
+ ;; Noter
+ (:prefix  ("n" . "Noter")
+  :desc    "Start Noter"        "n" 'org-noter
+  :desc    "Kill Noter Session" "k" 'org-noter-kill-session))
+;; Keybindings:1 ends here
+
 ;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
 (add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
 ;; Mixed Pitch Mode:1 ends here
@@ -497,9 +511,8 @@
 ;; Bibtex:1 ends here
 
 ;; [[file:README.org::*Org Noter][Org Noter:1]]
-(setq
- org-noter-hide-other nil
- org-noter-notes-search-path (list "~/git/phd/notes/"))
+(after! org-noter
+  (setq org-noter-notes-search-path (list "~/git/phd/notes/")))
 ;; Org Noter:1 ends here
 
 ;; [[file:README.org::*General][General:1]]
@@ -521,7 +534,22 @@
 
 ;; [[file:README.org::*PDF Tools][PDF Tools:1]]
 (after! pdf-view
+  (map!
+   :map (pdf-view-mode-map)
+   ;; Navigation
+   :n "g g"       #'pdf-view-first-page
+   :n "G"         #'pdf-view-last-page
+   :n "n"         #'pdf-view-next-page-command
+   :n "N"         #'pdf-view-previous-page-command
+   ;; Zoom
+   :n "+"         #'pdf-view-enlarge
+   :n "-"         #'pdf-view-shrink
+   ;; Note
+   :localleader
+   (:prefix "n"
+    :desc   "Insert note" "i" 'org-noter-insert-note))
+
   (setq-default pdf-view-display-size 'fit-width)
   (setq pdf-annot-activate-created-annotations t
-        pdf-view-resize-factor 1.1))
+        pdf-view-resize-factor 1.01))
 ;; PDF Tools:1 ends here
