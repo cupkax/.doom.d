@@ -287,10 +287,6 @@ web
 #+begin_src emacs-lisp
 (package! org-super-agenda)
 #+end_src
-*** Applications
-#+begin_src emacs-lisp
-(package! elcord)
-#+end_src
 * Doom Config
 ** Lexical Bindings
 #+begin_src emacs-lisp
@@ -863,11 +859,6 @@ web
 (setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
 #+end_src
 ** Applications
-*** Discord
-#+begin_src emacs-lisp
-(setq elcord-use-major-mode-as-main-icon t)
-(elcord-mode)
-#+end_src
 *** PDF Tools
 #+begin_src emacs-lisp
 (setq-default pdf-view-display-size 'fit-width)

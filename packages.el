@@ -44,5 +44,3 @@
 (package! org-roam-server)
 
 (package! org-super-agenda)
-
-(package! elcord)

@@ -535,11 +535,6 @@
 (setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
 ;; Pandoc:1 ends here
 
-;; [[file:README.org::*Discord][Discord:1]]
-(setq elcord-use-major-mode-as-main-icon t)
-(elcord-mode)
-;; Discord:1 ends here
-
 ;; [[file:README.org::*PDF Tools][PDF Tools:1]]
 (setq-default pdf-view-display-size 'fit-width)
 (setq pdf-annot-activate-created-annotations t
