@@ -450,34 +450,29 @@
 ;; Python:1 ends here
 
 ;; [[file:README.org::*Bibtex][Bibtex:1]]
-                                        ;(setq bibtex-format-citation-functions
-                                        ;      '((org-mode . (lambda (x) (insert (concat
-                                        ;                                         "\\cite{"
-                                        ;                                         (mapconcat 'identity x ",")
-                                        ;                                         "}")) ""))))
-(setq
- bibtex-completion-notes-path   "~/git/phd/notes/"
- bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
- bibtex-completion-library-path "~/Dropbox/org/research/zotero-library/"
- bibtex-completion-pdf-field    "file"
- bibtex-completion-additional-search-fields '(journal booktitle keywords)
- bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}"))
- bibtex-completion-notes-template-multiple-files
- (concat
-  "#+TITLE: ${title}\n"
-  "#+ROAM_KEY: cite:${=key=}\n"
-  "#+ROAM_TAGS: ${keywords}\n"
-  "* TODO Notes\n"
-  ":PROPERTIES:\n"
-  ":CUSTOM_ID: ${=key=}\n"
-  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-  ":AUTHOR: ${author-abbrev}\n"
-  ":JOURNAL: ${journaltitle}\n"
-  ":DATE: ${date}\n"
-  ":YEAR: ${year}\n"
-  ":DOI: ${doi}\n"
-  ":URL: ${url}\n"
-  ":END:\n\n"))
+(use-package! bibtex-completion
+  :config
+  (setq bibtex-completion-notes-path   "~/git/phd/notes/"
+        bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
+        bibtex-completion-library-path "~/Dropbox/org/research/zotero-library/"
+        bibtex-completion-pdf-field    "file"
+        bibtex-completion-additional-search-fields '(journal booktitle keywords)
+        bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}"))
+        bibtex-completion-notes-template-multiple-files
+        (concat
+         "#+TITLE: ${title}\n"
+         "#+ROAM_KEY: cite:${=key=}\n"
+         "* TODO Notes\n"
+         ":PROPERTIES:\n"
+         ":CUSTOM_ID: ${=key=}\n"
+         ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+         ":AUTHOR: ${author-abbrev}\n"
+         ":JOURNAL: ${journaltitle}\n"
+         ":DATE: ${date}\n"
+         ":YEAR: ${year}\n"
+         ":DOI: ${doi}\n"
+         ":URL: ${url}\n"
+         ":END:\n\n")))
 ;; Bibtex:1 ends here
 
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
@@ -498,19 +493,18 @@
         '(("r" "ref" plain (function org-roam-capture--get-point)
            ""
            :file-name "${citekey}"
-           :head "#+TITLE: ${citekey}: ${title}\n#+ROAM_KEY: ${ref}
-
-- tags ::
-- keywords :: ${keywords}
-
-* ${title}
-:PROPERTIES:
-:CUSTOM_ID: ${citekey}
-:URL: ${url}
-:AUTHOR: ${author}
-:NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")
-:NOTER_PAGE:
-:END:"))))
+           :head ,(concat
+                   "#+TITLE: ${citekey}: ${title}\n"
+                   "#+ROAM_KEY: ${ref}\n\n"
+                   "* ${title}\n"
+                   ":PROPERTIES:\n"
+                   ":CUSTOM_ID: ${citekey}\n"
+                   ":URL: ${url}\n"
+                   ":AUTHOR: ${author}\n"
+                   ":NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")\n"
+                   ":NOTER_PAGE:\n"
+                   ":END:\n")
+           :unnarrowed t))))
 ;; Org Roam Bibtex:1 ends here
 
 ;; [[file:README.org::*Org Noter][Org Noter:1]]
