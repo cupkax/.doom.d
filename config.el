@@ -33,13 +33,14 @@
 ;; =utf-8-unix= System:1 ends here
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
-(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
-(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
-(setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
+(setq inhibit-compacting-font-caches t)
+(setq doom-font                (font-spec :family "Roboto Mono"          :size 18)
+      doom-variable-pitch-font (font-spec :family "ETBembo"              :size 18)
+      doom-serif-font          (font-spec :family "ETBembo"              :size 18))
 ;; Fonts:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
-(setq doom-theme 'doom-palenight)
+(setq doom-theme 'spacemacs-light)
 ;; Theme:1 ends here
 
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
@@ -306,8 +307,23 @@
   :desc    "Kill Noter Session" "k" 'org-noter-kill-session))
 ;; Keybindings:1 ends here
 
+;; [[file:README.org::*Visual Defaults][Visual Defaults:1]]
+  (setq org-startup-indented t
+        org-src-fontify-natively t
+        org-hide-emphasis-markers t
+        org-fontify-whole-heading-line t
+        org-fontify-done-headline t
+        org-fontify-quote-and-verse-blocks t
+        line-spacing 0.2)
+;; Visual Defaults:1 ends here
+
 ;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
-(add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
+(add-hook! 'org-mode-hook
+           #'+org-pretty-mode
+           #'mixed-pitch-mode
+           #'variable-pitch-mode
+           #'org-pretty-tags-mode)
+(setq mixed-pitch-variable-pitch-cursor nil)
 ;; Mixed Pitch Mode:1 ends here
 
 ;; [[file:README.org::*Pretty tables][Pretty tables:1]]
@@ -335,10 +351,6 @@
         (0.5   . org-upcoming-deadline)
         (0.0   . org-upcoming-distant-deadline)))
 ;; Agenda Errors:1 ends here
-
-;; [[file:README.org::*Quote Blocks][Quote Blocks:1]]
-(setq org-fontify-quote-and-verse-blocks t)
-;; Quote Blocks:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (after! org-superstar

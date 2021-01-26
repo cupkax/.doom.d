@@ -3,7 +3,6 @@
 #+startup: fold
 #+property: header-args:emacs-lisp :tangle "config.el" :results silent
 #+property: header-args :tangle no :results silent
-
 * Doom Core
 ** =init.el=
 :PROPERTIES:
@@ -207,7 +206,10 @@ web
 #+begin_src emacs-lisp
 (package! info-colors )
 #+end_src
-
+**** Themes
+#+begin_src emacs-lisp
+(package! spacemacs-theme)
+#+end_src
 *** Org
 **** Org Mode
 #+begin_src emacs-lisp
@@ -330,14 +332,14 @@ web
 ** Visual Settings
 *** Fonts
 #+begin_src emacs-lisp
-(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
-(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
-(setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
+(setq inhibit-compacting-font-caches t)
+(setq doom-font                (font-spec :family "Roboto Mono"          :size 18)
+      doom-variable-pitch-font (font-spec :family "ETBembo"              :size 18)
+      doom-serif-font          (font-spec :family "ETBembo"              :size 18))
 #+end_src
-
 *** Theme
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-palenight)
+(setq doom-theme 'spacemacs-light)
 #+end_src
 
 *** Line Numbers
@@ -624,9 +626,24 @@ web
 #+end_src
 *** Visuals
 **** Font Display
+***** Visual Defaults
+#+begin_src emacs-lisp
+  (setq org-startup-indented t
+        org-src-fontify-natively t
+        org-hide-emphasis-markers t
+        org-fontify-whole-heading-line t
+        org-fontify-done-headline t
+        org-fontify-quote-and-verse-blocks t
+        line-spacing 0.2)
+#+end_src
 ***** Mixed Pitch Mode
 #+begin_src emacs-lisp
-(add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
+(add-hook! 'org-mode-hook
+           #'+org-pretty-mode
+           #'mixed-pitch-mode
+           #'variable-pitch-mode
+           #'org-pretty-tags-mode)
+(setq mixed-pitch-variable-pitch-cursor nil)
 #+end_src
 ***** Pretty tables
 #+begin_src emacs-lisp
@@ -653,10 +670,6 @@ web
         (1.0   . org-warning)
         (0.5   . org-upcoming-deadline)
         (0.0   . org-upcoming-distant-deadline)))
-#+end_src
-***** Quote Blocks
-#+begin_src emacs-lisp
-(setq org-fontify-quote-and-verse-blocks t)
 #+end_src
 **** Symbols
 ***** Bullets / Endings
