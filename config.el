@@ -250,6 +250,7 @@
       org-cycle-separator-lines              0)
 
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
+(set-file-template! "\\.org$" :ignore t)
 ;; Defaults:1 ends here
 
 ;; [[file:README.org::*Babel][Babel:1]]
@@ -448,6 +449,37 @@
 (add-hook 'org-src-mode-hook 'cpkx-org-python)
 ;; Python:1 ends here
 
+;; [[file:README.org::*Bibtex][Bibtex:1]]
+                                        ;(setq bibtex-format-citation-functions
+                                        ;      '((org-mode . (lambda (x) (insert (concat
+                                        ;                                         "\\cite{"
+                                        ;                                         (mapconcat 'identity x ",")
+                                        ;                                         "}")) ""))))
+(setq
+ bibtex-completion-notes-path   "~/git/phd/notes/"
+ bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
+ bibtex-completion-library-path "~/Dropbox/org/research/zotero-library/"
+ bibtex-completion-pdf-field    "file"
+ bibtex-completion-additional-search-fields '(journal booktitle keywords)
+ bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}"))
+ bibtex-completion-notes-template-multiple-files
+ (concat
+  "#+TITLE: ${title}\n"
+  "#+ROAM_KEY: cite:${=key=}\n"
+  "#+ROAM_TAGS: ${keywords}\n"
+  "* TODO Notes\n"
+  ":PROPERTIES:\n"
+  ":CUSTOM_ID: ${=key=}\n"
+  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+  ":AUTHOR: ${author-abbrev}\n"
+  ":JOURNAL: ${journaltitle}\n"
+  ":DATE: ${date}\n"
+  ":YEAR: ${year}\n"
+  ":DOI: ${doi}\n"
+  ":URL: ${url}\n"
+  ":END:\n\n"))
+;; Bibtex:1 ends here
+
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
 (setq org-roam-directory        "~/git/phd/notes/")
 (setq org-roam-db-update-method 'immediate)
@@ -473,42 +505,13 @@
 
 * ${title}
 :PROPERTIES:
-:Custom_ID: ${citekey}
+:CUSTOM_ID: ${citekey}
 :URL: ${url}
-:AUTHOR: ${author-or-editor}
+:AUTHOR: ${author}
 :NOTER_DOCUMENT: %(orb-process-file-field \"${citekey}\")
 :NOTER_PAGE:
 :END:"))))
 ;; Org Roam Bibtex:1 ends here
-
-;; [[file:README.org::*Bibtex][Bibtex:1]]
-;(setq bibtex-format-citation-functions
-;      '((org-mode . (lambda (x) (insert (concat
-;                                         "\\cite{"
-;                                         (mapconcat 'identity x ",")
-;                                         "}")) ""))))
-(setq
- bibtex-completion-notes-path   "~/git/phd/notes/"
- bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
- bibtex-completion-library-path "~/Dropbox/org/research/zotero-library/"
- bibtex-completion-pdf-field    "file"
- bibtex-completion-notes-template-multiple-files
- (concat
-  "#+TITLE: ${title}\n"
-  "#+ROAM_KEY: cite:${=key=}\n"
-  "#+ROAM_TAGS: ${keywords}\n"
-  "* TODO Notes\n"
-  ":PROPERTIES:\n"
-  ":Custom_ID: ${=key=}\n"
-  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-  ":AUTHOR: ${author-abbrev}\n"
-  ":JOURNAL: ${journaltitle}\n"
-  ":DATE: ${date}\n"
-  ":YEAR: ${year}\n"
-  ":DOI: ${doi}\n"
-  ":URL: ${url}\n"
-  ":END:\n\n"))
-;; Bibtex:1 ends here
 
 ;; [[file:README.org::*Org Noter][Org Noter:1]]
 (after! org-noter
