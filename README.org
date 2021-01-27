@@ -3,7 +3,7 @@
 #+startup: fold
 #+property: header-args:emacs-lisp :tangle "config.el" :results silent
 #+property: header-args :tangle no :results silent
-Test writing
+
 * Doom Core
 ** =init.el=
 :PROPERTIES:
@@ -207,10 +207,7 @@ web
 #+begin_src emacs-lisp
 (package! info-colors )
 #+end_src
-**** Themes
-#+begin_src emacs-lisp
-(package! spacemacs-theme)
-#+end_src
+
 *** Org
 **** Org Mode
 #+begin_src emacs-lisp
@@ -333,14 +330,14 @@ web
 ** Visual Settings
 *** Fonts
 #+begin_src emacs-lisp
-(setq inhibit-compacting-font-caches t)
-(setq doom-font                (font-spec :family "Roboto Mono"          :size 16)
-      doom-variable-pitch-font (font-spec :family "ETBembo"              :size 16)
-      doom-serif-font          (font-spec :family "ETBembo"              :size 18))
+(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
+(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
+(setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
 #+end_src
+
 *** Theme
 #+begin_src emacs-lisp
-(setq doom-theme 'spacemacs-light)
+(setq doom-theme 'doom-palenight)
 #+end_src
 
 *** Line Numbers
@@ -627,25 +624,9 @@ web
 #+end_src
 *** Visuals
 **** Font Display
-***** Visual Defaults
-#+begin_src emacs-lisp
-  (setq org-startup-indented t
-        org-src-fontify-natively t
-        org-hide-emphasis-markers t
-        org-fontify-whole-heading-line t
-        org-fontify-done-headline t
-        org-fontify-quote-and-verse-blocks t
-        line-spacing 0.2)
-#+end_src
 ***** Mixed Pitch Mode
 #+begin_src emacs-lisp
-(add-hook! 'org-mode-hook
-           #'+org-pretty-mode
-           #'mixed-pitch-mode
-           #'variable-pitch-mode
-           #'org-pretty-tags-mode)
-(setq mixed-pitch-variable-pitch-cursor nil
-      mixed-pitch-set-height t)
+(add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
 #+end_src
 ***** Pretty tables
 #+begin_src emacs-lisp
@@ -653,17 +634,17 @@ web
 #+end_src
 ***** Headings
 #+begin_src emacs-lisp
-                                        ;(custom-set-faces!
-                                        ;  '(outline-1 :weight extra-bold :height 1.18)
-                                        ;  '(outline-2 :weight bold       :height 1.12)
-                                        ;  '(outline-3 :weight bold       :height 1.09)
-                                        ;  '(outline-4 :weight semi-bold  :height 1.06)
-                                        ;  '(outline-5 :weight semi-bold  :height 1.03)
-                                        ;  '(outline-6 :weight semi-bold  :height 1.01)
-                                        ;  '(outline-8 :weight semi-bold)
-                                        ;  '(outline-9 :weight semi-bold)
+(custom-set-faces!
+  '(outline-1 :weight extra-bold :height 1.25)
+  '(outline-2 :weight bold       :height 1.15)
+  '(outline-3 :weight bold       :height 1.12)
+  '(outline-4 :weight semi-bold  :height 1.09)
+  '(outline-5 :weight semi-bold  :height 1.06)
+  '(outline-6 :weight semi-bold  :height 1.03)
+  '(outline-8 :weight semi-bold)
+  '(outline-9 :weight semi-bold)
 
-'(org-document-title           :height 1.2))
+  '(org-document-title           :height 1.2))
 #+end_src
 ***** Agenda Errors
 #+begin_src emacs-lisp
@@ -672,6 +653,10 @@ web
         (1.0   . org-warning)
         (0.5   . org-upcoming-deadline)
         (0.0   . org-upcoming-distant-deadline)))
+#+end_src
+***** Quote Blocks
+#+begin_src emacs-lisp
+(setq org-fontify-quote-and-verse-blocks t)
 #+end_src
 **** Symbols
 ***** Bullets / Endings

@@ -33,14 +33,13 @@
 ;; =utf-8-unix= System:1 ends here
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
-(setq inhibit-compacting-font-caches t)
-(setq doom-font                (font-spec :family "Roboto Mono"          :size 16)
-      doom-variable-pitch-font (font-spec :family "ETBembo"              :size 16)
-      doom-serif-font          (font-spec :family "ETBembo"              :size 18))
+(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
+(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
+(setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
 ;; Fonts:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
-(setq doom-theme 'spacemacs-light)
+(setq doom-theme 'doom-palenight)
 ;; Theme:1 ends here
 
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
@@ -307,24 +306,8 @@
   :desc    "Kill Noter Session" "k" 'org-noter-kill-session))
 ;; Keybindings:1 ends here
 
-;; [[file:README.org::*Visual Defaults][Visual Defaults:1]]
-  (setq org-startup-indented t
-        org-src-fontify-natively t
-        org-hide-emphasis-markers t
-        org-fontify-whole-heading-line t
-        org-fontify-done-headline t
-        org-fontify-quote-and-verse-blocks t
-        line-spacing 0.2)
-;; Visual Defaults:1 ends here
-
 ;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
-(add-hook! 'org-mode-hook
-           #'+org-pretty-mode
-           #'mixed-pitch-mode
-           #'variable-pitch-mode
-           #'org-pretty-tags-mode)
-(setq mixed-pitch-variable-pitch-cursor nil
-      mixed-pitch-set-height t)
+(add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
 ;; Mixed Pitch Mode:1 ends here
 
 ;; [[file:README.org::*Pretty tables][Pretty tables:1]]
@@ -332,17 +315,17 @@
 ;; Pretty tables:1 ends here
 
 ;; [[file:README.org::*Headings][Headings:1]]
-                                        ;(custom-set-faces!
-                                        ;  '(outline-1 :weight extra-bold :height 1.18)
-                                        ;  '(outline-2 :weight bold       :height 1.12)
-                                        ;  '(outline-3 :weight bold       :height 1.09)
-                                        ;  '(outline-4 :weight semi-bold  :height 1.06)
-                                        ;  '(outline-5 :weight semi-bold  :height 1.03)
-                                        ;  '(outline-6 :weight semi-bold  :height 1.01)
-                                        ;  '(outline-8 :weight semi-bold)
-                                        ;  '(outline-9 :weight semi-bold)
+(custom-set-faces!
+  '(outline-1 :weight extra-bold :height 1.25)
+  '(outline-2 :weight bold       :height 1.15)
+  '(outline-3 :weight bold       :height 1.12)
+  '(outline-4 :weight semi-bold  :height 1.09)
+  '(outline-5 :weight semi-bold  :height 1.06)
+  '(outline-6 :weight semi-bold  :height 1.03)
+  '(outline-8 :weight semi-bold)
+  '(outline-9 :weight semi-bold)
 
-'(org-document-title           :height 1.2))
+  '(org-document-title           :height 1.2))
 ;; Headings:1 ends here
 
 ;; [[file:README.org::*Agenda Errors][Agenda Errors:1]]
@@ -352,6 +335,10 @@
         (0.5   . org-upcoming-deadline)
         (0.0   . org-upcoming-distant-deadline)))
 ;; Agenda Errors:1 ends here
+
+;; [[file:README.org::*Quote Blocks][Quote Blocks:1]]
+(setq org-fontify-quote-and-verse-blocks t)
+;; Quote Blocks:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (after! org-superstar

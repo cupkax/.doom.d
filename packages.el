@@ -4,8 +4,6 @@
 
 (package! info-colors )
 
-(package! spacemacs-theme)
-
 (unpin! org-mode)
 
 (package! org-pretty-table-mode
