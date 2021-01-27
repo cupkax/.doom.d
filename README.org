@@ -55,7 +55,8 @@
 #+name: doom-completion
 #+begin_src emacs-lisp
 (company
- +childframe)
+ +childframe
+ +tng)
 (ivy
  +prescient
  +icons
@@ -67,19 +68,19 @@
 deft
 doom
 doom-dashboard
-doom-quit
+                                        ;doom-quit
 hl-todo
 hydra
 (ligatures
- +extra)
+ +extra
+ +fira)
 modeline
-nav-flash
+;nav-flash
 ophints
 (popup
  +all
  +defaults)
 treemacs
-vc-gutter
 vi-tilde-fringe
 (window-select
  +numbers)
@@ -103,10 +104,11 @@ snippets
 #+name: doom-emacs
 #+begin_src emacs-lisp
 (dired
- +icons)
+ +icons
+ +ranger)
 electric
 (ibuffer +icons)
-(undo +tree)
+undo
 vc
 #+end_src
 *** doom-checkers
@@ -119,7 +121,6 @@ syntax
 #+begin_src emacs-lisp
 (eval
  +overlay)
-gist
 lsp
 magit
 make
@@ -129,17 +130,9 @@ rgb
 *** doom-lang
 #+name: doom-lang
 #+begin_src emacs-lisp
-(csharp
- +lsp
- +unity)
 data
 emacs-lisp
-(json
- +lsp)
-(javascript
- +lsp)
 ledger
-lua
 markdown
 (org
  +dragndrop
@@ -150,9 +143,7 @@ markdown
  +pretty
  +roam)
 (python
- +poetry
- +lsp
- +pyright)
+ +lsp)
 (sh
  +powershell)
 #+end_src
@@ -194,15 +185,6 @@ markdown
   :recipe (:host github
            :repo "Fuco1/org-pretty-table"))
 #+end_src
-***** Tags
-#+begin_src emacs-lisp
-(package! org-pretty-tags)
-#+end_src
-
-***** Priorities
-#+begin_src emacs-lisp
-(package! org-fancy-priorities)
-#+end_src
 **** Ivy/Helm Bibtex
 #+begin_src emacs-lisp
 (package! ivy-bibtex)
@@ -232,21 +214,11 @@ markdown
 #+begin_src emacs-lisp
 (package! ox-pandoc)
 #+end_src
-**** Org Protocol
-#+begin_src emacs-lisp
-(package! org-protocol-capture-html
-  :recipe (:host github
-           :repo "alphapapa/org-protocol-capture-html"))
-#+end_src
 **** Org Pdf Tools
 #+begin_src emacs-lisp
 (package! org-pdftools
   :recipe (:host github
            :repo "fuxialexander/org-pdftools"))
-#+end_src
-**** Org Ref
-#+begin_src emacs-lisp
-(package! org-ref)
 #+end_src
 **** Org Roam
 ***** Org Roam Bibtex
@@ -325,7 +297,7 @@ markdown
 
 *** Line Numbers
 #+begin_src emacs-lisp
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type nil)
 #+end_src
 *** Modeline
 **** Change red text
@@ -467,7 +439,7 @@ markdown
  "<<" ">>"
  :actions '(insert))
 #+end_src
-** Languages
+** TODO Languages
 *** YASnippet
 #+begin_src emacs-lisp
 (setq yas-triggers-in-field t)

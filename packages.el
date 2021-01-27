@@ -10,10 +10,6 @@
   :recipe (:host github
            :repo "Fuco1/org-pretty-table"))
 
-(package! org-pretty-tags)
-
-(package! org-fancy-priorities)
-
 (package! ivy-bibtex)
 (package! helm-bibtex)
 
@@ -29,15 +25,9 @@
 
 (package! ox-pandoc)
 
-(package! org-protocol-capture-html
-  :recipe (:host github
-           :repo "alphapapa/org-protocol-capture-html"))
-
 (package! org-pdftools
   :recipe (:host github
            :repo "fuxialexander/org-pdftools"))
-
-(package! org-ref)
 
 (package! org-roam-bibtex)
 

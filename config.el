@@ -52,7 +52,7 @@
 ;; Theme:1 ends here
 
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
-(setq display-line-numbers-type 'relative)
+(setq display-line-numbers-type nil)
 ;; Line Numbers:1 ends here
 
 ;; [[file:README.org::*Change red text][Change red text:1]]

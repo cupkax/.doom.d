@@ -2,7 +2,8 @@
 (doom!
  :completion
  (company
-  +childframe)
+  +childframe
+  +tng)
  (ivy
   +prescient
   +icons
@@ -12,19 +13,19 @@
  deft
  doom
  doom-dashboard
- doom-quit
+                                         ;doom-quit
  hl-todo
  hydra
  (ligatures
-  +extra)
+  +extra
+  +fira)
  modeline
- nav-flash
+ ;nav-flash
  ophints
  (popup
   +all
   +defaults)
  treemacs
- vc-gutter
  vi-tilde-fringe
  (window-select
   +numbers)
@@ -44,10 +45,11 @@
 
  :emacs
  (dired
-  +icons)
+  +icons
+  +ranger)
  electric
  (ibuffer +icons)
- (undo +tree)
+ undo
  vc
 
  :term
@@ -59,7 +61,6 @@
  :tools
  (eval
   +overlay)
- gist
  lsp
  magit
  make
@@ -70,17 +71,9 @@
  
 
  :lang
- (csharp
-  +lsp
-  +unity)
  data
  emacs-lisp
- (json
-  +lsp)
- (javascript
-  +lsp)
  ledger
- lua
  markdown
  (org
   +dragndrop
@@ -91,9 +84,7 @@
   +pretty
   +roam)
  (python
-  +poetry
-  +lsp
-  +pyright)
+  +lsp)
  (sh
   +powershell)
 
