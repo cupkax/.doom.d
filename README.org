@@ -3,6 +3,7 @@
 #+startup: fold
 #+property: header-args:emacs-lisp :tangle "config.el" :results silent
 #+property: header-args :tangle no :results silent
+Test writing
 * Doom Core
 ** =init.el=
 :PROPERTIES:
@@ -333,8 +334,8 @@ web
 *** Fonts
 #+begin_src emacs-lisp
 (setq inhibit-compacting-font-caches t)
-(setq doom-font                (font-spec :family "Roboto Mono"          :size 18)
-      doom-variable-pitch-font (font-spec :family "ETBembo"              :size 18)
+(setq doom-font                (font-spec :family "Roboto Mono"          :size 16)
+      doom-variable-pitch-font (font-spec :family "ETBembo"              :size 16)
       doom-serif-font          (font-spec :family "ETBembo"              :size 18))
 #+end_src
 *** Theme
@@ -643,7 +644,8 @@ web
            #'mixed-pitch-mode
            #'variable-pitch-mode
            #'org-pretty-tags-mode)
-(setq mixed-pitch-variable-pitch-cursor nil)
+(setq mixed-pitch-variable-pitch-cursor nil
+      mixed-pitch-set-height t)
 #+end_src
 ***** Pretty tables
 #+begin_src emacs-lisp
@@ -651,17 +653,17 @@ web
 #+end_src
 ***** Headings
 #+begin_src emacs-lisp
-(custom-set-faces!
-  '(outline-1 :weight extra-bold :height 1.25)
-  '(outline-2 :weight bold       :height 1.15)
-  '(outline-3 :weight bold       :height 1.12)
-  '(outline-4 :weight semi-bold  :height 1.09)
-  '(outline-5 :weight semi-bold  :height 1.06)
-  '(outline-6 :weight semi-bold  :height 1.03)
-  '(outline-8 :weight semi-bold)
-  '(outline-9 :weight semi-bold)
+                                        ;(custom-set-faces!
+                                        ;  '(outline-1 :weight extra-bold :height 1.18)
+                                        ;  '(outline-2 :weight bold       :height 1.12)
+                                        ;  '(outline-3 :weight bold       :height 1.09)
+                                        ;  '(outline-4 :weight semi-bold  :height 1.06)
+                                        ;  '(outline-5 :weight semi-bold  :height 1.03)
+                                        ;  '(outline-6 :weight semi-bold  :height 1.01)
+                                        ;  '(outline-8 :weight semi-bold)
+                                        ;  '(outline-9 :weight semi-bold)
 
-  '(org-document-title           :height 1.2))
+'(org-document-title           :height 1.2))
 #+end_src
 ***** Agenda Errors
 #+begin_src emacs-lisp
