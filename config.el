@@ -1,3 +1,12 @@
+;; [[file:README.org::*Fix =define-obsolete-function-alias=][Fix =define-obsolete-function-alias=:1]]
+(define-advice define-obsolete-function-alias (:filter-args (ll) fix-obsolete)
+  (let ((obsolete-name (pop ll))
+        (current-name (pop ll))
+        (when (if ll (pop ll) "1"))
+        (docstring (if ll (pop ll) nil)))
+    (list obsolete-name current-name when docstring)))
+;; Fix =define-obsolete-function-alias=:1 ends here
+
 ;; [[file:README.org::*Lexical Bindings][Lexical Bindings:1]]
 ;;; config.el -*- lexical-binding: t; -*-
 ;; Lexical Bindings:1 ends here
@@ -478,6 +487,7 @@
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
 (setq org-roam-directory        "~/git/phd/notes/")
 (setq org-roam-db-update-method 'immediate)
+(add-hook! 'org-roam-mode-hook #'org-roam-db-build-cache)
 ;; Basic Config:1 ends here
 
 ;; [[file:README.org::*Org Roam Bibtex][Org Roam Bibtex:1]]

@@ -288,6 +288,15 @@ web
 (package! org-super-agenda)
 #+end_src
 * Doom Config
+** TODO Fix =define-obsolete-function-alias=
+#+begin_src emacs-lisp
+(define-advice define-obsolete-function-alias (:filter-args (ll) fix-obsolete)
+  (let ((obsolete-name (pop ll))
+        (current-name (pop ll))
+        (when (if ll (pop ll) "1"))
+        (docstring (if ll (pop ll) nil)))
+    (list obsolete-name current-name when docstring)))
+#+end_src
 ** Lexical Bindings
 #+begin_src emacs-lisp
 ;;; config.el -*- lexical-binding: t; -*-
@@ -801,6 +810,7 @@ web
 #+begin_src emacs-lisp
 (setq org-roam-directory        "~/git/phd/notes/")
 (setq org-roam-db-update-method 'immediate)
+(add-hook! 'org-roam-mode-hook #'org-roam-db-build-cache)
 #+end_src
 **** Org Roam Bibtex
 #+begin_src emacs-lisp
