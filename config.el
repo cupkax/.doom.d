@@ -150,36 +150,6 @@
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 ;; Frame Title:1 ends here
 
-;; [[file:README.org::*Window Title][Window Title:1]]
-(setq frame-title-format
-      '(""
-        (:eval
-         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
-             (replace-regexp-in-string
-              ".*/[0-9]*-?" "☰ "
-              (subst-char-in-string ?_ ?  buffer-file-name))
-           "%b"))
-        (:eval
-         (let ((project-name (projectile-project-name)))
-           (unless (string= "-" project-name)
-             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
-;; Window Title:1 ends here
-
-;; [[file:README.org::*Window Management][Window Management:1]]
-(map! :map evil-window-map
-      "SPC" #'rotate-layout
-      ;; Navigation
-      "<left>"         #'evil-window-left
-      "<down>"         #'evil-window-down
-      "<up>"           #'evil-window-up
-      "<right>"        #'evil-window-right
-      ;; Swapping windows
-      "C-<left>"       #'+evil/window-move-left
-      "C-<down>"       #'+evil/window-move-down
-      "C-<up>"         #'+evil/window-move-up
-      "C-<right>"      #'+evil/window-move-right)
-;; Window Management:1 ends here
-
 ;; [[file:README.org::*Window Split][Window Split:1]]
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
@@ -211,39 +181,6 @@
  :actions '(insert))
 ;; Parentheses:1 ends here
 
-;; [[file:README.org::*Dictionary][Dictionary:1]]
-(setq ispell-dictionary "en-custom")
-(setq ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir))
-;; Dictionary:1 ends here
-
-;; [[file:README.org::*Spellcheck][Spellcheck:1]]
-(add-hook 'org-mode-hook 'turn-on-flyspell)
-
-(defun my-save-word ()
-  (interactive)
-  (let ((current-location (point))
-         (word (flyspell-get-word)))
-    (when (consp word)
-      (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
-;; Spellcheck:1 ends here
-
-;; [[file:README.org::*Plain Text][Plain Text:1]]
-(set-company-backend!
-  '(text-mode
-    markdown-mode
-    gfm-mode)
-  '(:seperate
-    company-ispell
-    company-files
-    company-yasnippet))
-
-(after! text-mode
-  (add-hook! 'text-mode-hook
-             ;; Apply ANSI color codes
-             (with-silent-modifications
-               (ansi-color-apply-on-region (point-min) (point-max)))))
-;; Plain Text:1 ends here
-
 ;; [[file:README.org::*YASnippet][YASnippet:1]]
 (setq yas-triggers-in-field t)
 ;; YASnippet:1 ends here
@@ -273,37 +210,6 @@
         (:tangle   . "no")
         (:comments . "link")))
 ;; Babel:1 ends here
-
-;; [[file:README.org::*LSP Support][LSP Support:1]]
-(cl-defmacro lsp-org-babel-enable (lang)
-  "Support LANG in org source code block."
-  (setq centaur-lsp 'lsp-mode)
-  (cl-check-type lang stringp)
-  (let* ((edit-pre (intern (format "org-babel-edit-prep:%s" lang)))
-         (intern-pre (intern (format "lsp--%s" (symbol-name edit-pre)))))
-    `(progn
-       (defun ,intern-pre (info)
-         (let ((file-name (->> info caddr (alist-get :file))))
-           (unless file-name
-             (setq file-name (make-temp-file "babel-lsp-")))
-           (setq buffer-file-name file-name)
-           (lsp-deferred)))
-       (put ',intern-pre 'function-documentation
-            (format "Enable lsp-mode in the buffer of org source block (%s)."
-                    (upcase ,lang)))
-       (if (fboundp ',edit-pre)
-           (advice-add ',edit-pre :after ',intern-pre)
-         (progn
-           (defun ,edit-pre (info)
-             (,intern-pre info))
-           (put ',edit-pre 'function-documentation
-                (format "Prepare local buffer environment for org source block (%s)."
-                        (upcase ,lang))))))))
-(defvar org-babel-lang-list
-  '("go" "python" "ipython" "bash" "sh"))
-(dolist (lang org-babel-lang-list)
-  (eval `(lsp-org-babel-enable ,lang)))
-;; LSP Support:1 ends here
 
 ;; [[file:README.org::*Keybindings][Keybindings:1]]
 (map!
@@ -440,23 +346,10 @@
    'org-babel-load-languages
    '((C          . t)
      (emacs-lisp . t)
-     (ledger     . t)
-     (lisp       . t)
-     (lua        . t)
      (org        . t)
-     (python     . t)
      (shell      . t)
      (xml        . t)))
 ;; =org-babel= languages:1 ends here
-
-;; [[file:README.org::*Python][Python:1]]
-(setq org-babel-python-command "python3")
-(defun cpkx-org-python ()
-  (if (eq major-mode 'python-mode)
-      (progn (anaconda-mode t)
-             (company-mode t))))
-(add-hook 'org-src-mode-hook 'cpkx-org-python)
-;; Python:1 ends here
 
 ;; [[file:README.org::*Bibtex][Bibtex:1]]
 (use-package! bibtex-completion
@@ -522,21 +415,12 @@
   (setq org-noter-notes-search-path (list "~/git/phd/notes/")))
 ;; Org Noter:1 ends here
 
-;; [[file:README.org::*General][General:1]]
-(setq org-export-headline-levels 5)
-(require 'ox-extra)
-(ox-extras-activate '(ignore-headlines))
-;; General:1 ends here
-
 ;; [[file:README.org::*Pandoc][Pandoc:1]]
 (use-package! ox-pandoc
   :after org)
 ;; default options for all output formats
-(setq org-pandoc-options '((standalone . _)))
-;; cancel above settings only for 'docx' format
-(setq org-pandoc-options-for-docx '((standalone . nil)))
-;; special extensions for markdown_github output
-(setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
+(setq org-pandoc-options          '((standalone . _))
+      org-pandoc-options-for-docx '((standalone . nil)))
 ;; Pandoc:1 ends here
 
 ;; [[file:README.org::*PDF Tools][PDF Tools:1]]

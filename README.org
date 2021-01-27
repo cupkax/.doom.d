@@ -109,17 +109,10 @@ electric
 (undo +tree)
 vc
 #+end_src
-*** doom-term
-#+name: doom-term
-#+begin_src emacs-lisp
-;;vterm
-#+end_src
 *** doom-checkers
 #+name: doom-checkers
 #+begin_src emacs-lisp
 syntax
-spell
-grammar
 #+end_src
 *** doom-tools
 #+name: doom-tools
@@ -127,19 +120,11 @@ grammar
 (eval
  +overlay)
 gist
-(lookup
- +offline
- +dictionary
- +docsets)
 lsp
 magit
 make
 pdf
 rgb
-#+end_src
-*** doom-os
-#+name: doom-os
-#+begin_src emacs-lisp
 #+end_src
 *** doom-lang
 #+name: doom-lang
@@ -170,17 +155,6 @@ markdown
  +pyright)
 (sh
  +powershell)
-web
-(yaml
- +lsp)
-#+end_src
-*** doom-email
-#+name: doom-email
-#+begin_src emacs-lisp
-#+end_src
-*** doom-app
-#+name: doom-app
-#+begin_src emacs-lisp
 #+end_src
 *** doom-config
 #+name: doom-config
@@ -460,36 +434,6 @@ web
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 #+end_src
 *** Window Config
-**** Window Title
-#+begin_src emacs-lisp
-(setq frame-title-format
-      '(""
-        (:eval
-         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
-             (replace-regexp-in-string
-              ".*/[0-9]*-?" "☰ "
-              (subst-char-in-string ?_ ?  buffer-file-name))
-           "%b"))
-        (:eval
-         (let ((project-name (projectile-project-name)))
-           (unless (string= "-" project-name)
-             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
-#+end_src
-**** Window Management
-#+begin_src emacs-lisp
-(map! :map evil-window-map
-      "SPC" #'rotate-layout
-      ;; Navigation
-      "<left>"         #'evil-window-left
-      "<down>"         #'evil-window-down
-      "<up>"           #'evil-window-up
-      "<right>"        #'evil-window-right
-      ;; Swapping windows
-      "C-<left>"       #'+evil/window-move-left
-      "C-<down>"       #'+evil/window-move-down
-      "C-<up>"         #'+evil/window-move-up
-      "C-<right>"      #'+evil/window-move-right)
-#+end_src
 **** Window Split
 #+begin_src emacs-lisp
 (setq evil-vsplit-window-right t
@@ -523,41 +467,7 @@ web
  "<<" ">>"
  :actions '(insert))
 #+end_src
-*** Spell Check
-**** Dictionary
-#+begin_src emacs-lisp
-(setq ispell-dictionary "en-custom")
-(setq ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir))
-#+end_src
-**** Spellcheck
-#+begin_src emacs-lisp
-(add-hook 'org-mode-hook 'turn-on-flyspell)
-
-(defun my-save-word ()
-  (interactive)
-  (let ((current-location (point))
-         (word (flyspell-get-word)))
-    (when (consp word)
-      (flyspell-do-correct 'save nil (car word) current-location (cadr word) (caddr word) current-location))))
-#+end_src
 ** Languages
-*** Plain Text
-#+begin_src emacs-lisp
-(set-company-backend!
-  '(text-mode
-    markdown-mode
-    gfm-mode)
-  '(:seperate
-    company-ispell
-    company-files
-    company-yasnippet))
-
-(after! text-mode
-  (add-hook! 'text-mode-hook
-             ;; Apply ANSI color codes
-             (with-silent-modifications
-               (ansi-color-apply-on-region (point-min) (point-max)))))
-#+end_src
 *** YASnippet
 #+begin_src emacs-lisp
 (setq yas-triggers-in-field t)
@@ -589,37 +499,6 @@ web
         (:hlines   . "no")
         (:tangle   . "no")
         (:comments . "link")))
-#+end_src
-**** LSP Support
-#+begin_src emacs-lisp
-(cl-defmacro lsp-org-babel-enable (lang)
-  "Support LANG in org source code block."
-  (setq centaur-lsp 'lsp-mode)
-  (cl-check-type lang stringp)
-  (let* ((edit-pre (intern (format "org-babel-edit-prep:%s" lang)))
-         (intern-pre (intern (format "lsp--%s" (symbol-name edit-pre)))))
-    `(progn
-       (defun ,intern-pre (info)
-         (let ((file-name (->> info caddr (alist-get :file))))
-           (unless file-name
-             (setq file-name (make-temp-file "babel-lsp-")))
-           (setq buffer-file-name file-name)
-           (lsp-deferred)))
-       (put ',intern-pre 'function-documentation
-            (format "Enable lsp-mode in the buffer of org source block (%s)."
-                    (upcase ,lang)))
-       (if (fboundp ',edit-pre)
-           (advice-add ',edit-pre :after ',intern-pre)
-         (progn
-           (defun ,edit-pre (info)
-             (,intern-pre info))
-           (put ',edit-pre 'function-documentation
-                (format "Prepare local buffer environment for org source block (%s)."
-                        (upcase ,lang))))))))
-(defvar org-babel-lang-list
-  '("go" "python" "ipython" "bash" "sh"))
-(dolist (lang org-babel-lang-list)
-  (eval `(lsp-org-babel-enable ,lang)))
 #+end_src
 **** Keybindings
 #+begin_src emacs-lisp
@@ -761,24 +640,10 @@ web
    'org-babel-load-languages
    '((C          . t)
      (emacs-lisp . t)
-     (ledger     . t)
-     (lisp       . t)
-     (lua        . t)
      (org        . t)
-     (python     . t)
      (shell      . t)
      (xml        . t)))
 #+end_src
-**** Python
-#+begin_src emacs-lisp
-(setq org-babel-python-command "python3")
-(defun cpkx-org-python ()
-  (if (eq major-mode 'python-mode)
-      (progn (anaconda-mode t)
-             (company-mode t))))
-(add-hook 'org-src-mode-hook 'cpkx-org-python)
-#+end_src
-*** Org-Capture
 *** Bibtex
 #+begin_src emacs-lisp
 (use-package! bibtex-completion
@@ -845,22 +710,14 @@ web
   (setq org-noter-notes-search-path (list "~/git/phd/notes/")))
 #+end_src
 *** Export
-**** General
-#+begin_src emacs-lisp
-(setq org-export-headline-levels 5)
-(require 'ox-extra)
-(ox-extras-activate '(ignore-headlines))
-#+end_src
 **** Pandoc
 #+begin_src emacs-lisp
 (use-package! ox-pandoc
   :after org)
 ;; default options for all output formats
-(setq org-pandoc-options '((standalone . _)))
-;; cancel above settings only for 'docx' format
-(setq org-pandoc-options-for-docx '((standalone . nil)))
-;; special extensions for markdown_github output
-(setq org-pandoc-format-extensions '(markdown_github+pipe_tables+raw_html))
+(setq org-pandoc-options          '((standalone . _))
+      org-pandoc-options-for-docx '((standalone . nil)))
+
 #+end_src
 ** Applications
 *** PDF Tools

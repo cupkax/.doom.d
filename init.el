@@ -51,21 +51,15 @@
  vc
 
  :term
- ;;vterm
+ 
 
  :checkers
  syntax
- spell
- grammar
 
  :tools
  (eval
   +overlay)
  gist
- (lookup
-  +offline
-  +dictionary
-  +docsets)
  lsp
  magit
  make
@@ -102,9 +96,6 @@
   +pyright)
  (sh
   +powershell)
- web
- (yaml
-  +lsp)
 
  :email
  
