@@ -133,7 +133,7 @@
 
 ;; [[file:README.org::*Company mode][Company mode:1]]
 (after! company
-  (setq company-idle-delay 0.5
+  (setq company-idle-delay 0
         company-minimum-prefix-length 2
         company-show-numbers t)
   (setq-default history-length 1000)
@@ -154,15 +154,22 @@
 ;; [[file:README.org::*Defaults][Defaults:1]]
 (setq-default major-mode 'org-mode)
 (setq org-directory                     "~/git/phd/notes/"
-      org-use-property-inheritance      t
-      org-log-done                      'time
-      org-list-allow-alphabetical       t
-      org-export-in-background          t
-      org-catch-invisible-edits         'smart
+      org-use-property-inheritance      t       ;; Property inheritance for sublevels
+      org-log-done                      'time   ;; Record arguments when task is DONE
+      org-list-allow-alphabetical       t       ;; Alphabetical bullets
+      org-export-in-background          t       ;; Export in background
+      org-catch-invisible-edits         'smart  ;; Check invisible region before insert/delete
       org-cycle-separator-lines              0)
 
+;; Demoting bullet points
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
+
+;; Ignore org default template
 (set-file-template! "\\.org$" :ignore t)
+
+;; Org block templates
+(setq org-structure-template-alist
+      '(("e" . "src emacs-lisp")))
 ;; Defaults:1 ends here
 
 ;; [[file:README.org::*Babel][Babel:1]]
@@ -264,6 +271,10 @@
   )
                                         ;(plist-put +ligatures-extra-symbols :name "⁍")
 ;; Other Symbols:1 ends here
+
+;; [[file:README.org::*Capture][Capture:1]]
+
+;; Capture:1 ends here
 
 ;; [[file:README.org::*=org-babel= languages][=org-babel= languages:1]]
   (org-babel-do-load-languages

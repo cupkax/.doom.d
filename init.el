@@ -2,8 +2,7 @@
 (doom!
  :completion
  (company
-  +childframe
-  +tng)
+  +childframe)
  (ivy
   +prescient
   +icons
@@ -13,7 +12,6 @@
  deft
  doom
  doom-dashboard
-                                         ;doom-quit
  hl-todo
  hydra
  (ligatures
@@ -24,8 +22,6 @@
  (popup
   +all
   +defaults)
- treemacs
- vi-tilde-fringe
  (window-select
   +numbers)
  workspaces
@@ -55,13 +51,19 @@
  
 
  :checkers
- syntax
+ (syntax
+  +childframe)
 
  :tools
  (eval
   +overlay)
- lsp
- magit
+ (lookup
+  +docsets
+  +dictionary)
+ (lsp
+  +peek)
+ (magit
+  +forge)
  make
  pdf
  rgb
@@ -72,7 +74,6 @@
  :lang
  data
  emacs-lisp
- ledger
  markdown
  (org
   +dragndrop
