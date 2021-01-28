@@ -228,7 +228,7 @@ markdown
 (package! org-super-agenda)
 #+end_src
 * Doom Config
-** TODO Fix =define-obsolete-function-alias=
+** TODO =Emacs 28= Fix
 #+begin_src emacs-lisp
 (define-advice define-obsolete-function-alias (:filter-args (ll) fix-obsolete)
   (let ((obsolete-name (pop ll))

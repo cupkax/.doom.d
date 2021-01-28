@@ -1,11 +1,11 @@
-;; [[file:README.org::*Fix =define-obsolete-function-alias=][Fix =define-obsolete-function-alias=:1]]
+;; [[file:README.org::*=Emacs 28= Fix][=Emacs 28= Fix:1]]
 (define-advice define-obsolete-function-alias (:filter-args (ll) fix-obsolete)
   (let ((obsolete-name (pop ll))
         (current-name (pop ll))
         (when (if ll (pop ll) "1"))
         (docstring (if ll (pop ll) nil)))
     (list obsolete-name current-name when docstring)))
-;; Fix =define-obsolete-function-alias=:1 ends here
+;; =Emacs 28= Fix:1 ends here
 
 ;; [[file:README.org::*Lexical Bindings][Lexical Bindings:1]]
 ;;; config.el -*- lexical-binding: t; -*-
