@@ -12,7 +12,7 @@
 ;; Lexical Bindings:1 ends here
 
 ;; [[file:README.org::*Personal Information][Personal Information:1]]
-(setq user-full-name "Vedant Sansare (cupkax)"
+(setq user-full-name    "Vedant Sansare"
       user-mail-address "vedantsansare23@gmail.com")
 ;; Personal Information:1 ends here
 
@@ -69,33 +69,9 @@
 (custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
 ;; Debug:1 ends here
 
-;; [[file:README.org::*Filename][Filename:1]]
-(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
-  :around #'doom-modeline-buffer-file-name ; takes no args
-  (if (s-contains-p org-roam-directory (or buffer-file-name ""))
-      (replace-regexp-in-string
-       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
-       "(\\1-\\2-\\3) "
-       (subst-char-in-string ?_ ?  buffer-file-name))
-    (funcall orig-fun)))
-;; Filename:1 ends here
-
-;; [[file:README.org::*Info Colors][Info Colors:1]]
-(use-package! info-colors
-  :commands (info-colors-fontify-node))
-
-(add-hook 'Info-selection-hook 'info-colors-fontify-node)
-
-(add-hook 'Info-mode-hook #'mixed-pitch-mode)
-;; Info Colors:1 ends here
-
 ;; [[file:README.org::*Auto-unbind][Auto-unbind:1]]
 (general-auto-unbind-keys)
 ;; Auto-unbind:1 ends here
-
-;; [[file:README.org::*Global Substitution][Global Substitution:1]]
-(after! evil (setq evil-ex-substitute-global t))
-;; Global Substitution:1 ends here
 
 ;; [[file:README.org::*Change local leader][Change local leader:1]]
 (setq doom-localleader-key ",")
@@ -125,11 +101,6 @@
       (setq deft-directory "~/git/phd/notes/"))
 ;; Deft:1 ends here
 
-;; [[file:README.org::*Ivy][Ivy:1]]
-(setq ivy-read-action-function #'ivy-hydra-read-action)
-(setq ivy-sort-max-size 50000)
-;; Ivy:1 ends here
-
 ;; [[file:README.org::*Buffer Config][Buffer Config:1]]
 (setq doom-fallback-buffer-name "► Doom"
       +doom-dashboard-name "► Doom")
@@ -153,11 +124,6 @@
 ;; [[file:README.org::*Window Split][Window Split:1]]
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
-
-(defadvice! prompt-for-buffer (&rest _)
-  :after '(evil-window-split evil-window-vsplit)
-  (+ivy/switch-buffer))
-
 (setq +ivy-buffer-preview t)
 ;; Window Split:1 ends here
 
@@ -258,53 +224,28 @@
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (after! org-superstar
   (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
-        org-superstar-prettify-item-bullets t ))
+        org-superstar-prettify-item-bullets t))
 
 (setq org-ellipsis " ▾ "
-      org-hide-leading-stars t
-      org-priority-highest ?A
-      org-priority-lowest ?E
-      org-priority-faces
-      '((?A . 'all-the-icons-red)
-        (?B . 'all-the-icons-orange)
-        (?C . 'all-the-icons-yellow)
-        (?D . 'all-the-icons-green)
-        (?E . 'all-the-icons-blue)))
+      org-hide-leading-stars t)
 ;; Bullets / Endings:1 ends here
 
 ;; [[file:README.org::*Other Symbols][Other Symbols:1]]
 (appendq! +ligatures-extra-symbols
           `(:checkbox      "☐"
-            :pending       "◼"
+            :pending       "🕑"
             :checkedbox    "☑"
             :list_property "∷"
             :em_dash       "—"
             :ellipses      "…"
-            :title         "𝙏"
-            :subtitle      "𝙩"
-            :author        "𝘼"
-            :date          "𝘿"
-            :property      "☸"
             :options       "⌥"
-            :latex_class   "🄲"
-            :latex_header  "⇥"
-            :beamer_header "↠"
-            :attr_latex    "🄛"
-            :attr_html     "🄗"
             :begin_quote   "❮"
             :end_quote     "❯"
             :caption       "☰"
             :header        "›"
-            :results       "🠶"
             :begin_export  "⯮"
             :end_export    "⯬"
-            :properties    "⚙"
-            :end           "∎"
-            :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
-            :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
-            :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
-            :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
-            :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)))
+            ))
 (set-ligatures! 'org-mode
   :merge t
   :checkbox      "[ ]"
@@ -313,39 +254,21 @@
   :list_property "::"
   :em_dash       "---"
   :ellipsis      "..."
-  :title         "#+title:"
-  :subtitle      "#+subtitle:"
-  :author        "#+author:"
-  :date          "#+date:"
-  :property      "#+property:"
   :options       "#+options:"
-  :latex_class   "#+latex_class:"
-  :latex_header  "#+latex_header:"
-  :beamer_header "#+beamer_header:"
-  :attr_latex    "#+attr_latex:"
-  :attr_html     "#+attr_latex:"
   :begin_quote   "#+begin_quote"
   :end_quote     "#+end_quote"
   :caption       "#+caption:"
   :header        "#+header:"
   :begin_export  "#+begin_export"
   :end_export    "#+end_export"
-  :results       "#+RESULTS:"
-  :property      ":PROPERTIES:"
-  :end           ":END:"
-  :priority_a    "[#A]"
-  :priority_b    "[#B]"
-  :priority_c    "[#C]"
-  :priority_d    "[#D]"
-  :priority_e    "[#E]")
-(plist-put +ligatures-extra-symbols :name "⁍")
+  )
+                                        ;(plist-put +ligatures-extra-symbols :name "⁍")
 ;; Other Symbols:1 ends here
 
 ;; [[file:README.org::*=org-babel= languages][=org-babel= languages:1]]
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((C          . t)
-     (emacs-lisp . t)
+   '((emacs-lisp . t)
      (org        . t)
      (shell      . t)
      (xml        . t)))

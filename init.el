@@ -17,10 +17,9 @@
  hl-todo
  hydra
  (ligatures
-  +extra
-  +fira)
+  +extra)
  modeline
- ;nav-flash
+                                         ;nav-flash
  ophints
  (popup
   +all

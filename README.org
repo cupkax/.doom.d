@@ -72,10 +72,9 @@ doom-dashboard
 hl-todo
 hydra
 (ligatures
- +extra
- +fira)
+ +extra)
 modeline
-;nav-flash
+                                        ;nav-flash
 ophints
 (popup
  +all
@@ -168,11 +167,6 @@ markdown
 #+begin_src emacs-lisp
 (package! all-the-icons-dired)
 #+end_src
-**** Info Colors
-#+begin_src emacs-lisp
-(package! info-colors )
-#+end_src
-
 *** Org
 **** Org Mode
 #+begin_src emacs-lisp
@@ -187,7 +181,6 @@ markdown
 #+end_src
 **** Ivy/Helm Bibtex
 #+begin_src emacs-lisp
-(package! ivy-bibtex)
 (package! helm-bibtex)
 #+end_src
 **** Org Capture
@@ -250,7 +243,7 @@ markdown
 
 ** Personal Information
 #+begin_src emacs-lisp
-(setq user-full-name "Vedant Sansare (cupkax)"
+(setq user-full-name    "Vedant Sansare"
       user-mail-address "vedantsansare23@gmail.com")
 #+end_src
 
@@ -315,36 +308,10 @@ markdown
 #+begin_src emacs-lisp
 (custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
 #+end_src
-**** Filename
-#+begin_src emacs-lisp
-(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
-  :around #'doom-modeline-buffer-file-name ; takes no args
-  (if (s-contains-p org-roam-directory (or buffer-file-name ""))
-      (replace-regexp-in-string
-       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
-       "(\\1-\\2-\\3) "
-       (subst-char-in-string ?_ ?  buffer-file-name))
-    (funcall orig-fun)))
-#+end_src
-*** Info Colors
-#+begin_src emacs-lisp
-(use-package! info-colors
-  :commands (info-colors-fontify-node))
-
-(add-hook 'Info-selection-hook 'info-colors-fontify-node)
-
-(add-hook 'Info-mode-hook #'mixed-pitch-mode)
-#+end_src
-
 ** Keybindings
 *** Auto-unbind
 #+begin_src emacs-lisp
 (general-auto-unbind-keys)
-#+end_src
-*** Evil
-**** Global Substitution
-#+begin_src emacs-lisp
-(after! evil (setq evil-ex-substitute-global t))
 #+end_src
 *** Change local leader
 #+begin_src emacs-lisp
@@ -355,7 +322,6 @@ markdown
 #+begin_src emacs-lisp
 (setq which-key-idle-delay 0.0)
 #+end_src
-
 **** Replace =evil= with unicode
 #+begin_src emacs-lisp
 (setq which-key-allow-multiple-replacements t)
@@ -377,11 +343,6 @@ markdown
       (setq deft-use-filter-string-for-filename t)
       (setq deft-default-extension "org")
       (setq deft-directory "~/git/phd/notes/"))
-#+end_src
-*** Ivy
-#+begin_src emacs-lisp
-(setq ivy-read-action-function #'ivy-hydra-read-action)
-(setq ivy-sort-max-size 50000)
 #+end_src
 ** Buffer, Frame and Window Configuration
 *** Buffer Config
@@ -410,18 +371,12 @@ markdown
 #+begin_src emacs-lisp
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
-
-(defadvice! prompt-for-buffer (&rest _)
-  :after '(evil-window-split evil-window-vsplit)
-  (+ivy/switch-buffer))
-
 (setq +ivy-buffer-preview t)
 #+end_src
 **** Window Resize
 #+begin_src emacs-lisp
 (setq-default window-combination-resize t)
 #+end_src
-
 ** Productivity
 *** Company mode
 #+begin_src emacs-lisp
@@ -439,7 +394,7 @@ markdown
  "<<" ">>"
  :actions '(insert))
 #+end_src
-** TODO Languages
+** Languages
 *** YASnippet
 #+begin_src emacs-lisp
 (setq yas-triggers-in-field t)
@@ -523,53 +478,28 @@ markdown
 #+begin_src emacs-lisp
 (after! org-superstar
   (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
-        org-superstar-prettify-item-bullets t ))
+        org-superstar-prettify-item-bullets t))
 
 (setq org-ellipsis " ▾ "
-      org-hide-leading-stars t
-      org-priority-highest ?A
-      org-priority-lowest ?E
-      org-priority-faces
-      '((?A . 'all-the-icons-red)
-        (?B . 'all-the-icons-orange)
-        (?C . 'all-the-icons-yellow)
-        (?D . 'all-the-icons-green)
-        (?E . 'all-the-icons-blue)))
+      org-hide-leading-stars t)
 #+end_src
 ***** Other Symbols
 #+begin_src emacs-lisp
 (appendq! +ligatures-extra-symbols
           `(:checkbox      "☐"
-            :pending       "◼"
+            :pending       "🕑"
             :checkedbox    "☑"
             :list_property "∷"
             :em_dash       "—"
             :ellipses      "…"
-            :title         "𝙏"
-            :subtitle      "𝙩"
-            :author        "𝘼"
-            :date          "𝘿"
-            :property      "☸"
             :options       "⌥"
-            :latex_class   "🄲"
-            :latex_header  "⇥"
-            :beamer_header "↠"
-            :attr_latex    "🄛"
-            :attr_html     "🄗"
             :begin_quote   "❮"
             :end_quote     "❯"
             :caption       "☰"
             :header        "›"
-            :results       "🠶"
             :begin_export  "⯮"
             :end_export    "⯬"
-            :properties    "⚙"
-            :end           "∎"
-            :priority_a   ,(propertize "⚑" 'face 'all-the-icons-red)
-            :priority_b   ,(propertize "⬆" 'face 'all-the-icons-orange)
-            :priority_c   ,(propertize "■" 'face 'all-the-icons-yellow)
-            :priority_d   ,(propertize "⬇" 'face 'all-the-icons-green)
-            :priority_e   ,(propertize "❓" 'face 'all-the-icons-blue)))
+            ))
 (set-ligatures! 'org-mode
   :merge t
   :checkbox      "[ ]"
@@ -578,40 +508,22 @@ markdown
   :list_property "::"
   :em_dash       "---"
   :ellipsis      "..."
-  :title         "#+title:"
-  :subtitle      "#+subtitle:"
-  :author        "#+author:"
-  :date          "#+date:"
-  :property      "#+property:"
   :options       "#+options:"
-  :latex_class   "#+latex_class:"
-  :latex_header  "#+latex_header:"
-  :beamer_header "#+beamer_header:"
-  :attr_latex    "#+attr_latex:"
-  :attr_html     "#+attr_latex:"
   :begin_quote   "#+begin_quote"
   :end_quote     "#+end_quote"
   :caption       "#+caption:"
   :header        "#+header:"
   :begin_export  "#+begin_export"
   :end_export    "#+end_export"
-  :results       "#+RESULTS:"
-  :property      ":PROPERTIES:"
-  :end           ":END:"
-  :priority_a    "[#A]"
-  :priority_b    "[#B]"
-  :priority_c    "[#C]"
-  :priority_d    "[#D]"
-  :priority_e    "[#E]")
-(plist-put +ligatures-extra-symbols :name "⁍")
+  )
+                                        ;(plist-put +ligatures-extra-symbols :name "⁍")
 #+end_src
 *** Babel
 **** =org-babel= languages
 #+begin_src emacs-lisp
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((C          . t)
-     (emacs-lisp . t)
+   '((emacs-lisp . t)
      (org        . t)
      (shell      . t)
      (xml        . t)))
