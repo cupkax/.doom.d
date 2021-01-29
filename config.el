@@ -11,11 +11,6 @@
 ;;; config.el -*- lexical-binding: t; -*-
 ;; Lexical Bindings:1 ends here
 
-;; [[file:README.org::*Personal Information][Personal Information:1]]
-(setq user-full-name    "Vedant Sansare"
-      user-mail-address "vedantsansare23@gmail.com")
-;; Personal Information:1 ends here
-
 ;; [[file:README.org::*Better Defaults][Better Defaults:1]]
 (setq undo-limit 80000000)
 (setq evil-want-fine-undo t)
@@ -43,12 +38,16 @@
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
-(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
-(setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
+(setq doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'bold :size 21))
 ;; Fonts:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
-(setq doom-theme 'doom-palenight)
+(setq doom-theme 'poet)
+(use-package circadian
+  :config
+  (setq circadian-themes '(("6:00" . poet)
+                           ("18:30" . poet-dark)))
+  (circadian-setup))
 ;; Theme:1 ends here
 
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
@@ -203,6 +202,7 @@
 
 ;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
 (add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
+(setq mixed-pitch-set-height t)
 ;; Mixed Pitch Mode:1 ends here
 
 ;; [[file:README.org::*Pretty tables][Pretty tables:1]]
@@ -211,12 +211,12 @@
 
 ;; [[file:README.org::*Headings][Headings:1]]
 (custom-set-faces!
-  '(outline-1 :weight extra-bold :height 1.25)
-  '(outline-2 :weight bold       :height 1.15)
-  '(outline-3 :weight bold       :height 1.12)
-  '(outline-4 :weight semi-bold  :height 1.09)
-  '(outline-5 :weight semi-bold  :height 1.06)
-  '(outline-6 :weight semi-bold  :height 1.03)
+  '(outline-1 :weight bold       :height 1.15)
+  '(outline-2 :weight bold       :height 1.12)
+  '(outline-3 :weight bold       :height 1.09)
+  '(outline-4 :weight semi-bold  :height 1.06)
+  '(outline-5 :weight semi-bold  :height 1.03)
+  '(outline-6 :weight semi-bold  :height 1.01)
   '(outline-8 :weight semi-bold)
   '(outline-9 :weight semi-bold)
 

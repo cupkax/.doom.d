@@ -3,7 +3,6 @@
 #+startup: fold
 #+property: header-args:emacs-lisp :tangle "config.el" :results silent
 #+property: header-args :tangle no :results silent
-
 * Doom Core
 ** =init.el=
 :PROPERTIES:
@@ -168,6 +167,11 @@ markdown
 #+begin_src emacs-lisp
 (package! all-the-icons-dired)
 #+end_src
+**** Theme
+#+begin_src emacs-lisp
+(package! circadian)
+(package! poet-theme)
+#+end_src
 *** Org
 **** Org Mode
 #+begin_src emacs-lisp
@@ -242,12 +246,6 @@ markdown
 ;;; config.el -*- lexical-binding: t; -*-
 #+end_src
 
-** Personal Information
-#+begin_src emacs-lisp
-(setq user-full-name    "Vedant Sansare"
-      user-mail-address "vedantsansare23@gmail.com")
-#+end_src
-
 ** Startup
 *** Better Defaults
 #+begin_src emacs-lisp
@@ -280,13 +278,16 @@ markdown
 *** Fonts
 #+begin_src emacs-lisp
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
-(setq doom-big-font            (font-spec :family "JetBrainsMono Nerd Font" :size 20))
-(setq doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 16))
+(setq doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'bold :size 21))
 #+end_src
-
 *** Theme
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-palenight)
+(setq doom-theme 'poet)
+(use-package circadian
+  :config
+  (setq circadian-themes '(("6:00" . poet)
+                           ("18:30" . poet-dark)))
+  (circadian-setup))
 #+end_src
 
 *** Line Numbers
@@ -457,6 +458,7 @@ markdown
 ***** Mixed Pitch Mode
 #+begin_src emacs-lisp
 (add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
+(setq mixed-pitch-set-height t)
 #+end_src
 ***** Pretty tables
 #+begin_src emacs-lisp
@@ -465,12 +467,12 @@ markdown
 ***** Headings
 #+begin_src emacs-lisp
 (custom-set-faces!
-  '(outline-1 :weight extra-bold :height 1.25)
-  '(outline-2 :weight bold       :height 1.15)
-  '(outline-3 :weight bold       :height 1.12)
-  '(outline-4 :weight semi-bold  :height 1.09)
-  '(outline-5 :weight semi-bold  :height 1.06)
-  '(outline-6 :weight semi-bold  :height 1.03)
+  '(outline-1 :weight bold       :height 1.15)
+  '(outline-2 :weight bold       :height 1.12)
+  '(outline-3 :weight bold       :height 1.09)
+  '(outline-4 :weight semi-bold  :height 1.06)
+  '(outline-5 :weight semi-bold  :height 1.03)
+  '(outline-6 :weight semi-bold  :height 1.01)
   '(outline-8 :weight semi-bold)
   '(outline-9 :weight semi-bold)
 

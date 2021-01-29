@@ -2,6 +2,9 @@
 
 (package! all-the-icons-dired)
 
+(package! circadian)
+(package! poet-theme)
+
 (unpin! org-mode)
 
 (package! org-pretty-table-mode
