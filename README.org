@@ -368,6 +368,13 @@ markdown
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 #+end_src
 *** Window Config
+**** Manage windows
+#+begin_src emacs-lisp
+(map!
+ :leader
+ :desc "Switch to Left Window"  "<left>"  #'evil-window-left
+ :desc "Switch to Right Window" "<right>" #'evil-window-right)
+#+end_src
 **** Window Split
 #+begin_src emacs-lisp
 (setq evil-vsplit-window-right t

@@ -121,6 +121,13 @@
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 ;; Frame Title:1 ends here
 
+;; [[file:README.org::*Manage windows][Manage windows:1]]
+(map!
+ :leader
+ :desc "Switch to Left Window"  "<left>"  #'evil-window-left
+ :desc "Switch to Right Window" "<right>" #'evil-window-right)
+;; Manage windows:1 ends here
+
 ;; [[file:README.org::*Window Split][Window Split:1]]
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
