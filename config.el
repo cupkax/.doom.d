@@ -57,27 +57,24 @@
   (circadian-setup))
 ;; Theme:1 ends here
 
-;; [[file:README.org::*Line Numbers][Line Numbers:1]]
-(setq display-line-numbers-type nil)
-;; Line Numbers:1 ends here
-
 ;; [[file:README.org::*Change red text][Change red text:1]]
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "grey"))
 ;; Change red text:1 ends here
+
+;; [[file:README.org::*Remove default load average][Remove default load average:1]]
+(setq-default display-time-default-load-average nil
+              display-time-load-average nil)
+;; Remove default load average:1 ends here
 
 ;; [[file:README.org::*Show time][Show time:1]]
 (setq display-time-24hr-format t)
 (display-time-mode 1)
 ;; Show time:1 ends here
 
-;; [[file:README.org::*Debug][Debug:1]]
-(custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
-;; Debug:1 ends here
-
-;; [[file:README.org::*Test][Test:1]]
-
-;; Test:1 ends here
+;; [[file:README.org::*Line Numbers][Line Numbers:1]]
+(setq display-line-numbers-type nil)
+;; Line Numbers:1 ends here
 
 ;; [[file:README.org::*HL-Mode][HL-Mode:1]]
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
@@ -166,15 +163,15 @@
 ;; [[file:README.org::*Defaults][Defaults:1]]
 (setq-default major-mode 'org-mode)
 (setq org-directory                     "~/git/phd/notes/"
-      org-use-property-inheritance      t       ;; Property inheritance for sublevels
-      org-log-done                      'time   ;; Record arguments when task is DONE
-      org-list-allow-alphabetical       t       ;; Alphabetical bullets
-      org-export-in-background          t       ;; Export in background
-      org-catch-invisible-edits         'smart  ;; Check invisible region before insert/delete
+      org-use-property-inheritance      t        ; Property inheritance for sublevels
+      org-log-done                      'time    ; Record arguments when task is DONE
+      org-list-allow-alphabetical       t        ; Alphabetical bullets
+      org-export-in-background          t        ; Export in background
+      org-catch-invisible-edits         'smart   ; Check invisible region before insert/delete
       org-cycle-separator-lines              0)
 
-;; Demoting bullet points
-(setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
+(remove-hook 'text-mode-hook #'visual-line-mode) ; Remove visual line mode
+(add-hook 'text-mode-hook #'auto-fill-mode)      ; Enable auto fill mode
 
 ;; Ignore org default template
 (set-file-template! "\\.org$" :ignore t)
@@ -183,28 +180,6 @@
 (setq org-structure-template-alist
       '(("e" . "src emacs-lisp")))
 ;; Defaults:1 ends here
-
-;; [[file:README.org::*Babel][Babel:1]]
-(setq org-babel-default-header-args
-      '((:session  . "none")
-        (:results  . "replace")
-        (:exports  . "code")
-        (:cache    . "no")
-        (:noweb    . "no")
-        (:hlines   . "no")
-        (:tangle   . "no")
-        (:comments . "link")))
-;; Babel:1 ends here
-
-;; [[file:README.org::*Keybindings][Keybindings:1]]
-(map!
- :map (org-mode-map)
- :localleader
- ;; Noter
- (:prefix  ("n" . "Noter")
-  :desc    "Start Noter"        "n" 'org-noter
-  :desc    "Kill Noter Session" "k" 'org-noter-kill-session))
-;; Keybindings:1 ends here
 
 ;; [[file:README.org::*Org Defaults][Org Defaults:1]]
 (setq org-startup-indented t
@@ -244,12 +219,13 @@
 ;; Agenda Errors:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
+(setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
 (after! org-superstar
   (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
-        org-superstar-prettify-item-bullets t))
-
-(setq org-ellipsis " ▾ "
-      org-hide-leading-stars t)
+        org-hide-leading-stars nil
+        org-superstar-leading-bullet ?\s
+        org-superstar-remove-leading-stars t))
+(setq org-ellipsis " ▾ ")
 ;; Bullets / Endings:1 ends here
 
 ;; [[file:README.org::*Other Symbols][Other Symbols:1]]
@@ -287,9 +263,48 @@
                                         ;(plist-put +ligatures-extra-symbols :name "⁍")
 ;; Other Symbols:1 ends here
 
+;; [[file:README.org::*LSP Mode][LSP Mode:1]]
+(cl-defmacro lsp-org-babel-enable (lang)
+  "Support LANG in org source code block."
+  (setq centaur-lsp 'lsp-mode)
+  (cl-check-type lang stringp)
+  (let* ((edit-pre (intern (format "org-babel-edit-prep:%s" lang)))
+         (intern-pre (intern (format "lsp--%s" (symbol-name edit-pre)))))
+    `(progn
+       (defun ,intern-pre (info)
+         (let ((file-name (->> info caddr (alist-get :file))))
+           (unless file-name
+             (setq file-name (make-temp-file "babel-lsp-")))
+           (setq buffer-file-name file-name)
+           (lsp-deferred)))
+       (put ',intern-pre 'function-documentation
+            (format "Enable lsp-mode in the buffer of org source block (%s)."
+                    (upcase ,lang)))
+       (if (fboundp ',edit-pre)
+           (advice-add ',edit-pre :after ',intern-pre)
+         (progn
+           (defun ,edit-pre (info)
+             (,intern-pre info))
+           (put ',edit-pre 'function-documentation
+                (format "Prepare local buffer environment for org source block (%s)."
+                        (upcase ,lang))))))))
+;; LSP Mode:1 ends here
+
 ;; [[file:README.org::*Capture][Capture:1]]
 
 ;; Capture:1 ends here
+
+;; [[file:README.org::*=org-babel= evaluation arguements][=org-babel= evaluation arguements:1]]
+(setq org-babel-default-header-args
+      '((:session  . "none")
+        (:results  . "replace")
+        (:exports  . "code")
+        (:cache    . "no")
+        (:noweb    . "no")
+        (:hlines   . "no")
+        (:tangle   . "no")
+        (:comments . "link")))
+;; =org-babel= evaluation arguements:1 ends here
 
 ;; [[file:README.org::*=org-babel= languages][=org-babel= languages:1]]
   (org-babel-do-load-languages
