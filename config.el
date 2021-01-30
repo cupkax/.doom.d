@@ -69,9 +69,7 @@
 ;; Debug:1 ends here
 
 ;; [[file:README.org::*HL-Mode][HL-Mode:1]]
-(remove-hook! (prog-mode text-mode conf-mode special-mode) #'hl-line-mode)
-(setq global-hl-line-mode nil
-      hl-line-mode nil)
+(remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
 ;; HL-Mode:1 ends here
 
 ;; [[file:README.org::*Auto-unbind][Auto-unbind:1]]
