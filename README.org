@@ -278,14 +278,14 @@ markdown
 *** Fonts
 #+begin_src emacs-lisp
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
-(setq doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'bold :size 21))
+(setq doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'semibold :size 21))
 #+end_src
 *** Theme
 #+begin_src emacs-lisp
 (setq doom-theme 'poet)
 (use-package circadian
   :config
-  (setq circadian-themes '(("6:00" . poet)
+  (setq circadian-themes '(("6:00"  . poet)
                            ("18:30" . poet-dark)))
   (circadian-setup))
 #+end_src
@@ -309,6 +309,12 @@ markdown
 **** TODO Debug
 #+begin_src emacs-lisp
 (custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
+#+end_src
+*** HL-Mode
+#+begin_src emacs-lisp
+(remove-hook! (prog-mode text-mode conf-mode special-mode) #'hl-line-mode)
+(setq global-hl-line-mode nil
+      hl-line-mode nil)
 #+end_src
 ** Keybindings
 *** Auto-unbind

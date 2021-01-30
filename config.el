@@ -38,14 +38,14 @@
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
-(setq doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'bold :size 21))
+(setq doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'semibold :size 21))
 ;; Fonts:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
 (setq doom-theme 'poet)
 (use-package circadian
   :config
-  (setq circadian-themes '(("6:00" . poet)
+  (setq circadian-themes '(("6:00"  . poet)
                            ("18:30" . poet-dark)))
   (circadian-setup))
 ;; Theme:1 ends here
@@ -67,6 +67,12 @@
 ;; [[file:README.org::*Debug][Debug:1]]
 (custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
 ;; Debug:1 ends here
+
+;; [[file:README.org::*HL-Mode][HL-Mode:1]]
+(remove-hook! (prog-mode text-mode conf-mode special-mode) #'hl-line-mode)
+(setq global-hl-line-mode nil
+      hl-line-mode nil)
+;; HL-Mode:1 ends here
 
 ;; [[file:README.org::*Auto-unbind][Auto-unbind:1]]
 (general-auto-unbind-keys)
