@@ -3,7 +3,9 @@
 (package! all-the-icons-dired)
 
 (package! circadian)
+
 (package! poet-theme)
+(package! spacemacs-theme)
 
 (unpin! org-mode)
 

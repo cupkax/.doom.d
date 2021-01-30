@@ -2,7 +2,7 @@
 (doom!
  :completion
  (company
-  +childframe)
+  +tng)
  (ivy
   +prescient
   +icons
@@ -17,7 +17,6 @@
  (ligatures
   +extra)
  modeline
-                                         ;nav-flash
  ophints
  (popup
   +all
@@ -30,20 +29,16 @@
  :editor
  (evil
   +everywhere)
- file-templates
  fold
  (format
   +onsave)
  rotate-text
- snippets
- ;;word-wrap
+ word-wrap
 
  :emacs
  (dired
-  +icons
-  +ranger)
+  +icons)
  electric
- (ibuffer +icons)
  undo
  vc
 
@@ -59,12 +54,12 @@
   +overlay)
  (lookup
   +docsets
-  +dictionary)
+  +dictionary
+  +offline)
  (lsp
   +peek)
  (magit
   +forge)
- make
  pdf
  rgb
 

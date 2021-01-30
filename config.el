@@ -37,16 +37,23 @@
 ;; =utf-8-unix= System:1 ends here
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
-(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16))
-(setq doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'semibold :size 21))
+(setq inhibit-compacting-font-caches t)
+(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
+      doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'semibold :size 21)
+      doom-unicode-font        (font-spec :family "DejaVuSansMono Nerd Font"))
 ;; Fonts:1 ends here
+
+;; [[file:README.org::*Unicode][Unicode:1]]
+(after! unicode-fonts
+  (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
+;; Unicode:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
 (setq doom-theme 'poet)
 (use-package circadian
   :config
-  (setq circadian-themes '(("6:00"  . poet)
-                           ("18:30" . poet-dark)))
+  (setq circadian-themes '(("6:00"  . spacemacs-light)
+                           ("18:30" . spacemacs-dark)))
   (circadian-setup))
 ;; Theme:1 ends here
 
@@ -67,6 +74,10 @@
 ;; [[file:README.org::*Debug][Debug:1]]
 (custom-set-faces! '(doom-modeline-evil-insert-state :weight bold :foreground "#339CDB"))
 ;; Debug:1 ends here
+
+;; [[file:README.org::*Test][Test:1]]
+
+;; Test:1 ends here
 
 ;; [[file:README.org::*HL-Mode][HL-Mode:1]]
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
@@ -141,15 +152,6 @@
 (setq-default window-combination-resize t)
 ;; Window Resize:1 ends here
 
-;; [[file:README.org::*Company mode][Company mode:1]]
-(after! company
-  (setq company-idle-delay 0
-        company-minimum-prefix-length 2
-        company-show-numbers t)
-  (setq-default history-length 1000)
-  (setq-default prescient-history-length 1000))
-;; Company mode:1 ends here
-
 ;; [[file:README.org::*Parentheses][Parentheses:1]]
 (sp-local-pair
  '(org-mode)
@@ -204,6 +206,12 @@
   :desc    "Kill Noter Session" "k" 'org-noter-kill-session))
 ;; Keybindings:1 ends here
 
+;; [[file:README.org::*Org Defaults][Org Defaults:1]]
+(setq org-startup-indented t
+      org-fontify-quote-and-verse-blocks t
+      org-superstar-remove-leading-stars t)
+;; Org Defaults:1 ends here
+
 ;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
 (add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
 (setq mixed-pitch-set-height t)
@@ -234,10 +242,6 @@
         (0.5   . org-upcoming-deadline)
         (0.0   . org-upcoming-distant-deadline)))
 ;; Agenda Errors:1 ends here
-
-;; [[file:README.org::*Quote Blocks][Quote Blocks:1]]
-(setq org-fontify-quote-and-verse-blocks t)
-;; Quote Blocks:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (after! org-superstar
@@ -367,6 +371,38 @@
 (setq org-pandoc-options          '((standalone . _))
       org-pandoc-options-for-docx '((standalone . nil)))
 ;; Pandoc:1 ends here
+
+;; [[file:README.org::*Zen-mode][Zen-mode:1]]
+(setq +zen-text-scale 0.25)
+;; Zen-mode:1 ends here
+
+;; [[file:README.org::*Zen-mode][Zen-mode:2]]
+(after! writeroom-mode
+  (add-hook 'writeroom-mode-hook
+            (defun +zen-cleaner-org ()
+              (when (and (eq major-mode 'org-mode) writeroom-mode)
+                (toggle-frame-fullscreen)
+                (setq-local -org-indent-mode org-indent-mode)
+                (org-indent-mode -1)
+                (when (featurep 'org-superstar)
+                  (setq-local -org-superstar-headline-bullets-list org-superstar-headline-bullets-list
+                              ;; org-superstar-headline-bullets-list '("🙐" "🙑" "🙒" "🙓" "🙔" "🙕" "🙖" "🙗")
+                              org-superstar-headline-bullets-list '("🙘" "🙙" "🙚" "🙛")
+                              -org-superstar-remove-leading-stars org-superstar-remove-leading-stars
+                              org-superstar-remove-leading-stars t)
+                  (org-superstar-restart)))))
+  (add-hook 'writeroom-mode-disable-hook
+            (defun +zen-dirty-org ()
+              (when (eq major-mode 'org-mode)
+                (toggle-frame-fullscreen)
+                (toggle-frame-maximized)
+                (when -org-indent-mode
+                  (org-indent-mode 1))
+                (when (featurep 'org-superstar)
+                  (setq-local org-superstar-headline-bullets-list -org-superstar-headline-bullets-list
+                              org-superstar-remove-leading-stars -org-superstar-remove-leading-stars)
+                  (org-superstar-restart))))))
+;; Zen-mode:2 ends here
 
 ;; [[file:README.org::*PDF Tools][PDF Tools:1]]
 (setq-default pdf-view-display-size 'fit-width)
