@@ -16,7 +16,7 @@
  hydra
  (ligatures
   +extra)
- modeline
+ (modeline)
  ophints
  (popup
   +all
@@ -33,7 +33,7 @@
  (format
   +onsave)
  rotate-text
- word-wrap
+ ;word-wrap  ; Disabled for performance
 
  :emacs
  (dired

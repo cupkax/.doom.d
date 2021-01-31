@@ -50,7 +50,6 @@
  )
 #+end_src
 
-
 *** doom-completion
 #+name: doom-completion
 #+begin_src emacs-lisp
@@ -62,7 +61,6 @@
  +fuzzy)
 #+end_src
 
-
 *** doom-ui
 #+name: doom-ui
 #+begin_src emacs-lisp
@@ -73,7 +71,7 @@ hl-todo
 hydra
 (ligatures
  +extra)
-modeline
+(modeline)
 ophints
 (popup
  +all
@@ -84,7 +82,6 @@ workspaces
 zen
 #+end_src
 
-
 *** doom-editor
 #+name: doom-editor
 #+begin_src emacs-lisp
@@ -94,9 +91,8 @@ fold
 (format
  +onsave)
 rotate-text
-word-wrap
+;word-wrap  ; Disabled for performance
 #+end_src
-
 
 *** doom-emacs
 #+name: doom-emacs
@@ -108,14 +104,12 @@ undo
 vc
 #+end_src
 
-
 *** doom-checkers
 #+name: doom-checkers
 #+begin_src emacs-lisp
 (syntax
  +childframe)
 #+end_src
-
 
 *** doom-tools
 #+name: doom-tools
@@ -133,7 +127,6 @@ vc
 pdf
 rgb
 #+end_src
-
 
 *** doom-lang
 #+name: doom-lang
@@ -155,7 +148,6 @@ markdown
  +powershell)
 #+end_src
 
-
 *** doom-config
 #+name: doom-config
 #+begin_src emacs-lisp
@@ -163,7 +155,6 @@ markdown
   +bindings
   +smartparens)
 #+end_src
-
 
 ** =package.el=
 :PROPERTIES:
@@ -174,13 +165,11 @@ markdown
 ;; -*- no-byte-compile: t; -*-
 #+end_src
 
-
 *** Aesthetics
 **** Dired Icons
 #+begin_src emacs-lisp
 (package! all-the-icons-dired)
 #+end_src
-
 
 **** Theme
 ***** Theme-Changer
@@ -188,13 +177,11 @@ markdown
 (package! circadian)
 #+end_src
 
-
 ***** Theme packages
 #+begin_src emacs-lisp
 (package! poet-theme)
 (package! spacemacs-theme)
 #+end_src
-
 
 *** Org
 **** Org Mode
@@ -365,6 +352,7 @@ markdown
 **** HL-Mode
 #+begin_src emacs-lisp
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
+
 #+end_src
 
 ** Keybindings
@@ -483,7 +471,7 @@ markdown
 **** Defaults
 #+begin_src emacs-lisp
 (setq-default major-mode 'org-mode)
-(setq org-directory                     "~/git/phd/notes/"
+(setq org-directory                     "~/git/"
       org-use-property-inheritance      t        ; Property inheritance for sublevels
       org-log-done                      'time    ; Record arguments when task is DONE
       org-list-allow-alphabetical       t        ; Alphabetical bullets
@@ -503,12 +491,16 @@ markdown
 #+end_src
 
 **** Visuals
+***** Remove visual hooks
+#+begin_src emacs-lisp
+(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
+(remove-hook 'org-mode-hook #'org-superstar-mode)
+#+end_src
 ***** Font Display
 ****** Org Defaults
 #+begin_src emacs-lisp
 (setq org-startup-indented t
-      org-fontify-quote-and-verse-blocks t
-      org-superstar-remove-leading-stars t)
+      org-fontify-quote-and-verse-blocks t)
 #+end_src
 
 ****** Mixed Pitch Mode
@@ -550,11 +542,6 @@ markdown
 ****** Bullets / Endings
 #+begin_src emacs-lisp
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
-(after! org-superstar
-  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
-        org-hide-leading-stars nil
-        org-superstar-leading-bullet ?\s
-        org-superstar-remove-leading-stars t))
 (setq org-ellipsis " ▾ ")
 #+end_src
 
@@ -621,7 +608,6 @@ markdown
                 (format "Prepare local buffer environment for org source block (%s)."
                         (upcase ,lang))))))))
 #+end_src
-
 *** Capture
 #+begin_src emacs-lisp
 
@@ -736,35 +722,6 @@ markdown
 Reduce zen scaling
 #+begin_src emacs-lisp
 (setq +zen-text-scale 0.25)
-#+end_src
-
-Remove org stars in writeroom
-#+begin_src emacs-lisp
-(after! writeroom-mode
-  (add-hook 'writeroom-mode-hook
-            (defun +zen-cleaner-org ()
-              (when (and (eq major-mode 'org-mode) writeroom-mode)
-                (toggle-frame-fullscreen)
-                (setq-local -org-indent-mode org-indent-mode)
-                (org-indent-mode -1)
-                (when (featurep 'org-superstar)
-                  (setq-local -org-superstar-headline-bullets-list org-superstar-headline-bullets-list
-                              ;; org-superstar-headline-bullets-list '("🙐" "🙑" "🙒" "🙓" "🙔" "🙕" "🙖" "🙗")
-                              org-superstar-headline-bullets-list '("🙘" "🙙" "🙚" "🙛")
-                              -org-superstar-remove-leading-stars org-superstar-remove-leading-stars
-                              org-superstar-remove-leading-stars t)
-                  (org-superstar-restart)))))
-  (add-hook 'writeroom-mode-disable-hook
-            (defun +zen-dirty-org ()
-              (when (eq major-mode 'org-mode)
-                (toggle-frame-fullscreen)
-                (toggle-frame-maximized)
-                (when -org-indent-mode
-                  (org-indent-mode 1))
-                (when (featurep 'org-superstar)
-                  (setq-local org-superstar-headline-bullets-list -org-superstar-headline-bullets-list
-                              org-superstar-remove-leading-stars -org-superstar-remove-leading-stars)
-                  (org-superstar-restart))))))
 #+end_src
 
 ** Applications

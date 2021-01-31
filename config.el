@@ -162,7 +162,7 @@
 
 ;; [[file:README.org::*Defaults][Defaults:1]]
 (setq-default major-mode 'org-mode)
-(setq org-directory                     "~/git/phd/notes/"
+(setq org-directory                     "~/git/"
       org-use-property-inheritance      t        ; Property inheritance for sublevels
       org-log-done                      'time    ; Record arguments when task is DONE
       org-list-allow-alphabetical       t        ; Alphabetical bullets
@@ -181,10 +181,14 @@
       '(("e" . "src emacs-lisp")))
 ;; Defaults:1 ends here
 
+;; [[file:README.org::*Remove visual hooks][Remove visual hooks:1]]
+(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
+(remove-hook 'org-mode-hook #'org-superstar-mode)
+;; Remove visual hooks:1 ends here
+
 ;; [[file:README.org::*Org Defaults][Org Defaults:1]]
 (setq org-startup-indented t
-      org-fontify-quote-and-verse-blocks t
-      org-superstar-remove-leading-stars t)
+      org-fontify-quote-and-verse-blocks t)
 ;; Org Defaults:1 ends here
 
 ;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
@@ -220,11 +224,6 @@
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
-(after! org-superstar
-  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
-        org-hide-leading-stars nil
-        org-superstar-leading-bullet ?\s
-        org-superstar-remove-leading-stars t))
 (setq org-ellipsis " ▾ ")
 ;; Bullets / Endings:1 ends here
 
@@ -390,34 +389,6 @@
 ;; [[file:README.org::*Zen-mode][Zen-mode:1]]
 (setq +zen-text-scale 0.25)
 ;; Zen-mode:1 ends here
-
-;; [[file:README.org::*Zen-mode][Zen-mode:2]]
-(after! writeroom-mode
-  (add-hook 'writeroom-mode-hook
-            (defun +zen-cleaner-org ()
-              (when (and (eq major-mode 'org-mode) writeroom-mode)
-                (toggle-frame-fullscreen)
-                (setq-local -org-indent-mode org-indent-mode)
-                (org-indent-mode -1)
-                (when (featurep 'org-superstar)
-                  (setq-local -org-superstar-headline-bullets-list org-superstar-headline-bullets-list
-                              ;; org-superstar-headline-bullets-list '("🙐" "🙑" "🙒" "🙓" "🙔" "🙕" "🙖" "🙗")
-                              org-superstar-headline-bullets-list '("🙘" "🙙" "🙚" "🙛")
-                              -org-superstar-remove-leading-stars org-superstar-remove-leading-stars
-                              org-superstar-remove-leading-stars t)
-                  (org-superstar-restart)))))
-  (add-hook 'writeroom-mode-disable-hook
-            (defun +zen-dirty-org ()
-              (when (eq major-mode 'org-mode)
-                (toggle-frame-fullscreen)
-                (toggle-frame-maximized)
-                (when -org-indent-mode
-                  (org-indent-mode 1))
-                (when (featurep 'org-superstar)
-                  (setq-local org-superstar-headline-bullets-list -org-superstar-headline-bullets-list
-                              org-superstar-remove-leading-stars -org-superstar-remove-leading-stars)
-                  (org-superstar-restart))))))
-;; Zen-mode:2 ends here
 
 ;; [[file:README.org::*PDF Tools][PDF Tools:1]]
 (setq-default pdf-view-display-size 'fit-width)
