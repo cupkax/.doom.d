@@ -25,13 +25,6 @@
 ;; =custom.el=:1 ends here
 
 ;; [[file:README.org::*=utf-8-unix= System][=utf-8-unix= System:1]]
-(defun doom-modeline-conditional-buffer-encoding ()
-  (setq-local doom-modeline-buffer-encoding
-              (unless (or (eq buffer-file-coding-system 'utf-8-unix)
-                          (eq buffer-file-coding-system 'utf-8)))))
-
-(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
-
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8)
 ;; =utf-8-unix= System:1 ends here
@@ -72,6 +65,15 @@
 (display-time-mode 1)
 ;; Show time:1 ends here
 
+;; [[file:README.org::*Hide =utf-8-unix= if not needed][Hide =utf-8-unix= if not needed:1]]
+(defun doom-modeline-conditional-buffer-encoding ()
+  (setq-local doom-modeline-buffer-encoding
+              (unless (or (eq buffer-file-coding-system 'utf-8-unix)
+                          (eq buffer-file-coding-system 'utf-8)))))
+
+(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
+;; Hide =utf-8-unix= if not needed:1 ends here
+
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
 (setq display-line-numbers-type nil)
 ;; Line Numbers:1 ends here
@@ -111,6 +113,11 @@
       (setq deft-default-extension "org")
       (setq deft-directory "~/git/phd/notes/"))
 ;; Deft:1 ends here
+
+;; [[file:README.org::*Ivy][Ivy:1]]
+(setq ivy-read-action-function #'ivy-hydra-read-action)
+(setq ivy-sort-max-size 50000)
+;; Ivy:1 ends here
 
 ;; [[file:README.org::*Buffer Config][Buffer Config:1]]
 (setq doom-fallback-buffer-name "► Doom"
@@ -395,3 +402,8 @@
 (setq pdf-annot-activate-created-annotations t
       pdf-view-resize-factor 1.01)
 ;; PDF Tools:1 ends here
+
+;; [[file:README.org::*Spray][Spray:1]]
+                                        ;(setq spray-wpm 500
+                                        ;      spray-height 700)
+;; Spray:1 ends here

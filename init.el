@@ -2,7 +2,7 @@
 (doom!
  :completion
  (company
-  +tng)
+  +childframe)
  (ivy
   +prescient
   +icons
@@ -33,7 +33,8 @@
  (format
   +onsave)
  rotate-text
- ;word-wrap  ; Disabled for performance
+ snippets
+                                         ;word-wrap  ; Disabled for performance
 
  :emacs
  (dired

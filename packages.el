@@ -15,8 +15,6 @@
 
 (package! helm-bibtex)
 
-(package! doct)
-
 (package! org-download
   :recipe (:host github
             :repo "abo-abo/org-download"))
@@ -36,3 +34,5 @@
 (package! org-roam-server)
 
 (package! org-super-agenda)
+
+(package! spray)

@@ -54,7 +54,7 @@
 #+name: doom-completion
 #+begin_src emacs-lisp
 (company
- +tng)
+ +childframe)
 (ivy
  +prescient
  +icons
@@ -91,7 +91,8 @@ fold
 (format
  +onsave)
 rotate-text
-;word-wrap  ; Disabled for performance
+snippets
+                                        ;word-wrap  ; Disabled for performance
 #+end_src
 
 *** doom-emacs
@@ -202,11 +203,6 @@ markdown
 (package! helm-bibtex)
 #+end_src
 
-**** Org Capture
-#+begin_src emacs-lisp
-(package! doct)
-#+end_src
-
 **** Org Download
 #+begin_src emacs-lisp
 (package! org-download
@@ -254,6 +250,12 @@ markdown
 (package! org-super-agenda)
 #+end_src
 
+*** Fun
+**** Spray
+#+begin_src emacs-lisp
+(package! spray)
+#+end_src
+
 * Doom Config
 ** TODO =Emacs 28= Fix
 #+begin_src emacs-lisp
@@ -288,13 +290,6 @@ markdown
 
 *** =utf-8-unix= System
 #+begin_src emacs-lisp
-(defun doom-modeline-conditional-buffer-encoding ()
-  (setq-local doom-modeline-buffer-encoding
-              (unless (or (eq buffer-file-coding-system 'utf-8-unix)
-                          (eq buffer-file-coding-system 'utf-8)))))
-
-(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
-
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8)
 #+end_src
@@ -343,6 +338,16 @@ markdown
 (display-time-mode 1)
 #+end_src
 
+**** Hide =utf-8-unix= if not needed
+#+begin_src emacs-lisp
+(defun doom-modeline-conditional-buffer-encoding ()
+  (setq-local doom-modeline-buffer-encoding
+              (unless (or (eq buffer-file-coding-system 'utf-8-unix)
+                          (eq buffer-file-coding-system 'utf-8)))))
+
+(add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
+#+end_src
+
 *** Lines
 **** Line Numbers
 #+begin_src emacs-lisp
@@ -352,7 +357,6 @@ markdown
 **** HL-Mode
 #+begin_src emacs-lisp
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
-
 #+end_src
 
 ** Keybindings
@@ -395,6 +399,11 @@ markdown
       (setq deft-directory "~/git/phd/notes/"))
 #+end_src
 
+*** Ivy
+#+begin_src emacs-lisp
+(setq ivy-read-action-function #'ivy-hydra-read-action)
+(setq ivy-sort-max-size 50000)
+#+end_src
 ** Buffer, Frame and Window Configuration
 *** Buffer Config
 #+begin_src emacs-lisp
@@ -610,7 +619,6 @@ markdown
 #+end_src
 *** Capture
 #+begin_src emacs-lisp
-
 #+end_src
 
 *** Babel
@@ -730,4 +738,10 @@ Reduce zen scaling
 (setq-default pdf-view-display-size 'fit-width)
 (setq pdf-annot-activate-created-annotations t
       pdf-view-resize-factor 1.01)
+#+end_src
+** Miscellaneous
+*** Spray
+#+begin_src emacs-lisp
+                                        ;(setq spray-wpm 500
+                                        ;      spray-height 700)
 #+end_src
