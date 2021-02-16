@@ -80,7 +80,8 @@
   +pretty
   +roam)
  (python
-  +lsp)
+  +lsp
+  +pyright)
  (sh
   +powershell)
 

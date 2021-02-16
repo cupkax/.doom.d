@@ -144,7 +144,8 @@ markdown
  +pretty
  +roam)
 (python
- +lsp)
+ +lsp
+ +pyright)
 (sh
  +powershell)
 #+end_src
@@ -326,19 +327,20 @@ markdown
   '(doom-modeline-buffer-modified :foreground "grey"))
 #+end_src
 
-**** Remove default load average
-#+begin_src emacs-lisp
-(setq-default display-time-default-load-average nil
-              display-time-load-average nil)
-#+end_src
-
 **** Show time
 #+begin_src emacs-lisp
 (setq display-time-24hr-format t)
 (display-time-mode 1)
 #+end_src
 
-**** Hide =utf-8-unix= if not needed
+**** Hide Redundant Stuff
+***** Remove default load average
+#+begin_src emacs-lisp
+(setq-default display-time-default-load-average nil
+              display-time-load-average nil)
+#+end_src
+
+***** Hide =utf-8-unix= if not needed
 #+begin_src emacs-lisp
 (defun doom-modeline-conditional-buffer-encoding ()
   (setq-local doom-modeline-buffer-encoding
@@ -373,7 +375,7 @@ markdown
 *** Which-key
 **** Key delay
 #+begin_src emacs-lisp
-(setq which-key-idle-delay 0.0)
+(setq which-key-idle-delay 0.5)
 #+end_src
 
 **** Replace =evil= with unicode
@@ -404,6 +406,7 @@ markdown
 (setq ivy-read-action-function #'ivy-hydra-read-action)
 (setq ivy-sort-max-size 50000)
 #+end_src
+
 ** Buffer, Frame and Window Configuration
 *** Buffer Config
 #+begin_src emacs-lisp
@@ -480,7 +483,7 @@ markdown
 **** Defaults
 #+begin_src emacs-lisp
 (setq-default major-mode 'org-mode)
-(setq org-directory                     "~/git/"
+(setq org-directory                     "~/git/org/"
       org-use-property-inheritance      t        ; Property inheritance for sublevels
       org-log-done                      'time    ; Record arguments when task is DONE
       org-list-allow-alphabetical       t        ; Alphabetical bullets
@@ -496,7 +499,8 @@ markdown
 
 ;; Org block templates
 (setq org-structure-template-alist
-      '(("e" . "src emacs-lisp")))
+      '(("e" . "src emacs-lisp")
+        ("p" . "src python")))
 #+end_src
 
 **** Visuals
@@ -536,15 +540,6 @@ markdown
   '(outline-9 :weight semi-bold)
 
   '(org-document-title           :height 1.2))
-#+end_src
-
-****** Agenda Errors
-#+begin_src emacs-lisp
-(setq org-agenda-deadline-faces
-      '((1.001 . error)
-        (1.0   . org-warning)
-        (0.5   . org-upcoming-deadline)
-        (0.0   . org-upcoming-distant-deadline)))
 #+end_src
 
 ***** Symbols
@@ -616,9 +611,10 @@ markdown
            (put ',edit-pre 'function-documentation
                 (format "Prepare local buffer environment for org source block (%s)."
                         (upcase ,lang))))))))
-#+end_src
-*** Capture
-#+begin_src emacs-lisp
+(defvar org-babel-lang-list
+  '("python" "ipython" "bash" "sh" "emacs-lisp"))
+(dolist (lang org-babel-lang-list)
+  (eval `(lsp-org-babel-enable ,lang)))
 #+end_src
 
 *** Babel
@@ -641,8 +637,20 @@ markdown
    'org-babel-load-languages
    '((emacs-lisp . t)
      (org        . t)
+     (python     . t)
      (shell      . t)
      (xml        . t)))
+#+end_src
+
+***** =org-babel= python
+#+begin_src emacs-lisp
+(setq org-babel-python-command "python3")
+
+(defun cpkx/org-python ()
+  (if (eq major-mode 'python-mode)
+      (progn (anaconda-mode t)
+             (company-mode t))))
+(add-hook 'org-src-mode-hook 'cpkx/org-python)
 #+end_src
 
 *** Bibtex
@@ -650,8 +658,8 @@ markdown
 (use-package! bibtex-completion
   :config
   (setq bibtex-completion-notes-path   "~/git/phd/notes/"
-        bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
-        bibtex-completion-library-path "~/Dropbox/org/research/zotero-library/"
+        bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
+        bibtex-completion-library-path "~/Dropbox/research/zotero-library/"
         bibtex-completion-pdf-field    "file"
         bibtex-completion-additional-search-fields '(journal booktitle keywords)
         bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}"))
@@ -739,6 +747,7 @@ Reduce zen scaling
 (setq pdf-annot-activate-created-annotations t
       pdf-view-resize-factor 1.01)
 #+end_src
+
 ** Miscellaneous
 *** Spray
 #+begin_src emacs-lisp

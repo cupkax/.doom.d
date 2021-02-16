@@ -55,15 +55,15 @@
   '(doom-modeline-buffer-modified :foreground "grey"))
 ;; Change red text:1 ends here
 
-;; [[file:README.org::*Remove default load average][Remove default load average:1]]
-(setq-default display-time-default-load-average nil
-              display-time-load-average nil)
-;; Remove default load average:1 ends here
-
 ;; [[file:README.org::*Show time][Show time:1]]
 (setq display-time-24hr-format t)
 (display-time-mode 1)
 ;; Show time:1 ends here
+
+;; [[file:README.org::*Remove default load average][Remove default load average:1]]
+(setq-default display-time-default-load-average nil
+              display-time-load-average nil)
+;; Remove default load average:1 ends here
 
 ;; [[file:README.org::*Hide =utf-8-unix= if not needed][Hide =utf-8-unix= if not needed:1]]
 (defun doom-modeline-conditional-buffer-encoding ()
@@ -91,7 +91,7 @@
 ;; Change local leader:1 ends here
 
 ;; [[file:README.org::*Key delay][Key delay:1]]
-(setq which-key-idle-delay 0.0)
+(setq which-key-idle-delay 0.5)
 ;; Key delay:1 ends here
 
 ;; [[file:README.org::*Replace =evil= with unicode][Replace =evil= with unicode:1]]
@@ -169,7 +169,7 @@
 
 ;; [[file:README.org::*Defaults][Defaults:1]]
 (setq-default major-mode 'org-mode)
-(setq org-directory                     "~/git/"
+(setq org-directory                     "~/git/org/"
       org-use-property-inheritance      t        ; Property inheritance for sublevels
       org-log-done                      'time    ; Record arguments when task is DONE
       org-list-allow-alphabetical       t        ; Alphabetical bullets
@@ -185,7 +185,8 @@
 
 ;; Org block templates
 (setq org-structure-template-alist
-      '(("e" . "src emacs-lisp")))
+      '(("e" . "src emacs-lisp")
+        ("p" . "src python")))
 ;; Defaults:1 ends here
 
 ;; [[file:README.org::*Remove visual hooks][Remove visual hooks:1]]
@@ -220,14 +221,6 @@
 
   '(org-document-title           :height 1.2))
 ;; Headings:1 ends here
-
-;; [[file:README.org::*Agenda Errors][Agenda Errors:1]]
-(setq org-agenda-deadline-faces
-      '((1.001 . error)
-        (1.0   . org-warning)
-        (0.5   . org-upcoming-deadline)
-        (0.0   . org-upcoming-distant-deadline)))
-;; Agenda Errors:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
@@ -294,11 +287,11 @@
            (put ',edit-pre 'function-documentation
                 (format "Prepare local buffer environment for org source block (%s)."
                         (upcase ,lang))))))))
+(defvar org-babel-lang-list
+  '("python" "ipython" "bash" "sh" "emacs-lisp"))
+(dolist (lang org-babel-lang-list)
+  (eval `(lsp-org-babel-enable ,lang)))
 ;; LSP Mode:1 ends here
-
-;; [[file:README.org::*Capture][Capture:1]]
-
-;; Capture:1 ends here
 
 ;; [[file:README.org::*=org-babel= evaluation arguements][=org-babel= evaluation arguements:1]]
 (setq org-babel-default-header-args
@@ -317,16 +310,27 @@
    'org-babel-load-languages
    '((emacs-lisp . t)
      (org        . t)
+     (python     . t)
      (shell      . t)
      (xml        . t)))
 ;; =org-babel= languages:1 ends here
+
+;; [[file:README.org::*=org-babel= python][=org-babel= python:1]]
+(setq org-babel-python-command "python3")
+
+(defun cpkx/org-python ()
+  (if (eq major-mode 'python-mode)
+      (progn (anaconda-mode t)
+             (company-mode t))))
+(add-hook 'org-src-mode-hook 'cpkx/org-python)
+;; =org-babel= python:1 ends here
 
 ;; [[file:README.org::*Bibtex][Bibtex:1]]
 (use-package! bibtex-completion
   :config
   (setq bibtex-completion-notes-path   "~/git/phd/notes/"
-        bibtex-completion-bibliography "~/Dropbox/org/research/zotLib.bib"
-        bibtex-completion-library-path "~/Dropbox/org/research/zotero-library/"
+        bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
+        bibtex-completion-library-path "~/Dropbox/research/zotero-library/"
         bibtex-completion-pdf-field    "file"
         bibtex-completion-additional-search-fields '(journal booktitle keywords)
         bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}"))
