@@ -12,6 +12,8 @@
  deft
  doom
  doom-dashboard
+ (emoji
+  +unicode)
  hl-todo
  hydra
  (ligatures
@@ -21,6 +23,7 @@
  (popup
   +all
   +defaults)
+ unicode
  (window-select
   +numbers)
  workspaces

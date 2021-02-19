@@ -13,6 +13,12 @@
   :recipe (:host github
            :repo "Fuco1/org-pretty-table"))
 
+(package! org-pretty-tags)
+
+(package! org-appear
+  :recipe (:host github
+           :repo "awth13/org-appear"))
+
 (package! helm-bibtex)
 
 (package! org-download

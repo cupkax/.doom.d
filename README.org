@@ -67,6 +67,8 @@
 deft
 doom
 doom-dashboard
+(emoji
+ +unicode)
 hl-todo
 hydra
 (ligatures
@@ -76,6 +78,7 @@ ophints
 (popup
  +all
  +defaults)
+unicode
 (window-select
  +numbers)
 workspaces
@@ -199,6 +202,18 @@ markdown
            :repo "Fuco1/org-pretty-table"))
 #+end_src
 
+***** Tags
+#+begin_src emacs-lisp
+(package! org-pretty-tags)
+#+end_src
+
+***** Marker visibility
+#+begin_src emacs-lisp
+(package! org-appear
+  :recipe (:host github
+           :repo "awth13/org-appear"))
+#+end_src
+
 **** Ivy/Helm Bibtex
 #+begin_src emacs-lisp
 (package! helm-bibtex)
@@ -319,8 +334,8 @@ markdown
 
 **** Unicode
 #+begin_src emacs-lisp
-(after! unicode-fonts
-  (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
+;(after! unicode-fonts
+;  (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
 #+end_src
 
 *** Theme
@@ -515,8 +530,7 @@ markdown
 **** Visuals
 ***** Remove visual hooks
 #+begin_src emacs-lisp
-(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
-                                        ;(remove-hook 'org-mode-hook #'org-superstar-mode)
+;(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
 #+end_src
 
 ***** Font Display
@@ -555,10 +569,36 @@ markdown
     '(org-document-title :height 1.15)))
 #+end_src
 
+****** Show /empahsis/ markers
+#+begin_src emacs-lisp
+(use-package! org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t
+        org-appear-autosubmarkers t
+        org-appear-autolinks nil))
+  ;; for proper first-time setup, `org-appear--set-fragments'
+  ;; needs to be run after other hooks have acted.
+  (run-at-time nil nil #'org-appear--set-fragments))
+#+end_src
+
 ***** Symbols
 ****** Bullets / Endings
 #+begin_src emacs-lisp
-(setq org-ellipsis " ▾ ")
+(after! org-superstar
+  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
+        org-superstar-prettify-item-bullets t ))
+
+(setq org-ellipsis " ▾ "
+      org-hide-leading-stars t
+      org-priority-highest ?A
+      org-priority-lowest ?E
+      org-priority-faces
+      '((?A . 'all-the-icons-red)
+        (?B . 'all-the-icons-orange)
+        (?C . 'all-the-icons-yellow)
+        (?D . 'all-the-icons-green)
+        (?E . 'all-the-icons-blue)))
 #+end_src
 
 ****** Other Symbols

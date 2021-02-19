@@ -36,8 +36,8 @@
 ;; Fonts:1 ends here
 
 ;; [[file:README.org::*Unicode][Unicode:1]]
-(after! unicode-fonts
-  (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
+;(after! unicode-fonts
+;  (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
 ;; Unicode:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
@@ -188,8 +188,7 @@
 ;; Defaults:1 ends here
 
 ;; [[file:README.org::*Remove visual hooks][Remove visual hooks:1]]
-(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
-                                        ;(remove-hook 'org-mode-hook #'org-superstar-mode)
+;(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
 ;; Remove visual hooks:1 ends here
 
 ;; [[file:README.org::*Org Defaults][Org Defaults:1]]
@@ -223,8 +222,33 @@
     '(org-document-title :height 1.15)))
 ;; Headings:1 ends here
 
+;; [[file:README.org::*Show /empahsis/ markers][Show /empahsis/ markers:1]]
+(use-package! org-appear
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-appear-autoemphasis t
+        org-appear-autosubmarkers t
+        org-appear-autolinks nil))
+  ;; for proper first-time setup, `org-appear--set-fragments'
+  ;; needs to be run after other hooks have acted.
+  (run-at-time nil nil #'org-appear--set-fragments))
+;; Show /empahsis/ markers:1 ends here
+
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
-(setq org-ellipsis " ▾ ")
+(after! org-superstar
+  (setq org-superstar-headline-bullets-list '("◉" "○" "✸" "✿" "✤" "✜" "◆" "▶")
+        org-superstar-prettify-item-bullets t ))
+
+(setq org-ellipsis " ▾ "
+      org-hide-leading-stars t
+      org-priority-highest ?A
+      org-priority-lowest ?E
+      org-priority-faces
+      '((?A . 'all-the-icons-red)
+        (?B . 'all-the-icons-orange)
+        (?C . 'all-the-icons-yellow)
+        (?D . 'all-the-icons-green)
+        (?E . 'all-the-icons-blue)))
 ;; Bullets / Endings:1 ends here
 
 ;; [[file:README.org::*Other Symbols][Other Symbols:1]]
