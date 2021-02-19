@@ -1,21 +1,20 @@
-;; [[file:README.org::*=Emacs 28= Fix][=Emacs 28= Fix:1]]
-(define-advice define-obsolete-function-alias (:filter-args (ll) fix-obsolete)
-  (let ((obsolete-name (pop ll))
-        (current-name (pop ll))
-        (when (if ll (pop ll) "1"))
-        (docstring (if ll (pop ll) nil)))
-    (list obsolete-name current-name when docstring)))
-;; =Emacs 28= Fix:1 ends here
-
 ;; [[file:README.org::*Lexical Bindings][Lexical Bindings:1]]
 ;;; config.el -*- lexical-binding: t; -*-
 ;; Lexical Bindings:1 ends here
 
 ;; [[file:README.org::*Better Defaults][Better Defaults:1]]
-(setq undo-limit 80000000)
-(setq evil-want-fine-undo t)
-(setq auto-save-default t)
-(setq global-subword-mode 1)
+(global-auto-revert-mode 1)
+(whitespace-mode -1)
+(setq inhibit-compacting-font-caches t
+      undo-limit 80000000
+      evil-want-fine-undo t
+      auto-save-default t
+      global-subword-mode 1)
+(setq-default delete-by-moving-to-trash t
+              tab-width 4
+              uniquify-buffer-name-style 'forward
+              window-combination-resize t
+              x-stretch-cursor nil)
 ;; Better Defaults:1 ends here
 
 ;; [[file:README.org::*=custom.el=][=custom.el=:1]]
@@ -119,10 +118,13 @@
 (setq ivy-sort-max-size 50000)
 ;; Ivy:1 ends here
 
-;; [[file:README.org::*Buffer Config][Buffer Config:1]]
-(setq doom-fallback-buffer-name "► Doom"
-      +doom-dashboard-name "► Doom")
-;; Buffer Config:1 ends here
+;; [[file:README.org::*Buffer Navigation][Buffer Navigation:1]]
+
+;; Buffer Navigation:1 ends here
+
+;; [[file:README.org::*Frame Config][Frame Config:1]]
+(when (equal window-system 'x) (toggle-frame-fullscreen))
+;; Frame Config:1 ends here
 
 ;; [[file:README.org::*Frame Title][Frame Title:1]]
 (setq frame-title-format
@@ -139,22 +141,18 @@
              (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
 ;; Frame Title:1 ends here
 
-;; [[file:README.org::*Manage windows][Manage windows:1]]
+;; [[file:README.org::*Window Navigation][Window Navigation:1]]
 (map!
  :leader
  :desc "Switch to Left Window"  "<left>"  #'evil-window-left
  :desc "Switch to Right Window" "<right>" #'evil-window-right)
-;; Manage windows:1 ends here
+;; Window Navigation:1 ends here
 
 ;; [[file:README.org::*Window Split][Window Split:1]]
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
 (setq +ivy-buffer-preview t)
 ;; Window Split:1 ends here
-
-;; [[file:README.org::*Window Resize][Window Resize:1]]
-(setq-default window-combination-resize t)
-;; Window Resize:1 ends here
 
 ;; [[file:README.org::*Parentheses][Parentheses:1]]
 (sp-local-pair
@@ -191,7 +189,7 @@
 
 ;; [[file:README.org::*Remove visual hooks][Remove visual hooks:1]]
 (remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
-(remove-hook 'org-mode-hook #'org-superstar-mode)
+                                        ;(remove-hook 'org-mode-hook #'org-superstar-mode)
 ;; Remove visual hooks:1 ends here
 
 ;; [[file:README.org::*Org Defaults][Org Defaults:1]]
@@ -209,21 +207,23 @@
 ;; Pretty tables:1 ends here
 
 ;; [[file:README.org::*Headings][Headings:1]]
-(custom-set-faces!
-  '(outline-1 :weight bold       :height 1.15)
-  '(outline-2 :weight bold       :height 1.12)
-  '(outline-3 :weight bold       :height 1.09)
-  '(outline-4 :weight semi-bold  :height 1.06)
-  '(outline-5 :weight semi-bold  :height 1.03)
-  '(outline-6 :weight semi-bold  :height 1.01)
-  '(outline-8 :weight semi-bold)
-  '(outline-9 :weight semi-bold)
+(after! org
+  (custom-set-faces!
+    '(org-level-1 :height 1.15 :inherit outline-1)
+    '(org-level-2 :height 1.13 :inherit outline-2)
+    '(org-level-3 :height 1.11 :inherit outline-3)
+    '(org-level-4 :height 1.09 :inherit outline-4)
+    '(org-level-5 :height 1.07 :inherit outline-5)
+    '(org-level-6 :height 1.05 :inherit outline-6)
+    '(org-level-7 :height 1.03 :inherit outline-7)
+    '(org-level-8 :height 1.01 :inherit outline-8)))
 
-  '(org-document-title           :height 1.2))
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.15)))
 ;; Headings:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
-(setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
 (setq org-ellipsis " ▾ ")
 ;; Bullets / Endings:1 ends here
 
@@ -350,6 +350,17 @@
          ":URL: ${url}\n"
          ":END:\n\n")))
 ;; Bibtex:1 ends here
+
+;; [[file:README.org::*Org-Ref][Org-Ref:1]]
+(use-package! org-ref
+  :after org
+  :init
+                                        ; code to run before loading org-ref
+  :config
+                                        ; code to run after loading org-ref
+  )
+(setq org-ref-default-bibliography '("~/Dropbox/research/zotLib.bib"))
+;; Org-Ref:1 ends here
 
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
 (setq org-roam-directory        "~/git/phd/notes/")

@@ -235,6 +235,11 @@ markdown
            :repo "fuxialexander/org-pdftools"))
 #+end_src
 
+**** Org Ref
+#+begin_src emacs-lisp
+(package! org-ref)
+#+end_src
+
 **** Org Roam
 ***** Org Roam Bibtex
 #+begin_src emacs-lisp
@@ -259,7 +264,7 @@ markdown
 
 * Doom Config
 ** TODO =Emacs 28= Fix
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (define-advice define-obsolete-function-alias (:filter-args (ll) fix-obsolete)
   (let ((obsolete-name (pop ll))
         (current-name (pop ll))
@@ -276,10 +281,18 @@ markdown
 ** Startup
 *** Better Defaults
 #+begin_src emacs-lisp
-(setq undo-limit 80000000)
-(setq evil-want-fine-undo t)
-(setq auto-save-default t)
-(setq global-subword-mode 1)
+(global-auto-revert-mode 1)
+(whitespace-mode -1)
+(setq inhibit-compacting-font-caches t
+      undo-limit 80000000
+      evil-want-fine-undo t
+      auto-save-default t
+      global-subword-mode 1)
+(setq-default delete-by-moving-to-trash t
+              tab-width 4
+              uniquify-buffer-name-style 'forward
+              window-combination-resize t
+              x-stretch-cursor nil)
 #+end_src
 
 *** =custom.el=
@@ -409,12 +422,13 @@ markdown
 
 ** Buffer, Frame and Window Configuration
 *** Buffer Config
+**** Buffer Navigation
 #+begin_src emacs-lisp
-(setq doom-fallback-buffer-name "► Doom"
-      +doom-dashboard-name "► Doom")
 #+end_src
-
 *** Frame Config
+#+begin_src emacs-lisp
+(when (equal window-system 'x) (toggle-frame-fullscreen))
+#+end_src
 **** Frame Title
 #+begin_src emacs-lisp
 (setq frame-title-format
@@ -432,7 +446,7 @@ markdown
 #+end_src
 
 *** Window Config
-**** Manage windows
+**** Window Navigation
 #+begin_src emacs-lisp
 (map!
  :leader
@@ -445,11 +459,6 @@ markdown
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
 (setq +ivy-buffer-preview t)
-#+end_src
-
-**** Window Resize
-#+begin_src emacs-lisp
-(setq-default window-combination-resize t)
 #+end_src
 
 ** Productivity
@@ -507,8 +516,9 @@ markdown
 ***** Remove visual hooks
 #+begin_src emacs-lisp
 (remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
-(remove-hook 'org-mode-hook #'org-superstar-mode)
+                                        ;(remove-hook 'org-mode-hook #'org-superstar-mode)
 #+end_src
+
 ***** Font Display
 ****** Org Defaults
 #+begin_src emacs-lisp
@@ -529,23 +539,25 @@ markdown
 
 ****** Headings
 #+begin_src emacs-lisp
-(custom-set-faces!
-  '(outline-1 :weight bold       :height 1.15)
-  '(outline-2 :weight bold       :height 1.12)
-  '(outline-3 :weight bold       :height 1.09)
-  '(outline-4 :weight semi-bold  :height 1.06)
-  '(outline-5 :weight semi-bold  :height 1.03)
-  '(outline-6 :weight semi-bold  :height 1.01)
-  '(outline-8 :weight semi-bold)
-  '(outline-9 :weight semi-bold)
+(after! org
+  (custom-set-faces!
+    '(org-level-1 :height 1.15 :inherit outline-1)
+    '(org-level-2 :height 1.13 :inherit outline-2)
+    '(org-level-3 :height 1.11 :inherit outline-3)
+    '(org-level-4 :height 1.09 :inherit outline-4)
+    '(org-level-5 :height 1.07 :inherit outline-5)
+    '(org-level-6 :height 1.05 :inherit outline-6)
+    '(org-level-7 :height 1.03 :inherit outline-7)
+    '(org-level-8 :height 1.01 :inherit outline-8)))
 
-  '(org-document-title           :height 1.2))
+(after! org
+  (custom-set-faces!
+    '(org-document-title :height 1.15)))
 #+end_src
 
 ***** Symbols
 ****** Bullets / Endings
 #+begin_src emacs-lisp
-(setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
 (setq org-ellipsis " ▾ ")
 #+end_src
 
@@ -678,6 +690,18 @@ markdown
          ":DOI: ${doi}\n"
          ":URL: ${url}\n"
          ":END:\n\n")))
+#+end_src
+
+*** Org-Ref
+#+begin_src emacs-lisp
+(use-package! org-ref
+  :after org
+  :init
+                                        ; code to run before loading org-ref
+  :config
+                                        ; code to run after loading org-ref
+  )
+(setq org-ref-default-bibliography '("~/Dropbox/research/zotLib.bib"))
 #+end_src
 
 *** Org-Roam

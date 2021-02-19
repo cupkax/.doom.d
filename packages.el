@@ -29,6 +29,8 @@
   :recipe (:host github
            :repo "fuxialexander/org-pdftools"))
 
+(package! org-ref)
+
 (package! org-roam-bibtex)
 
 (package! org-roam-server)
