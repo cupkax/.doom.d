@@ -18,7 +18,7 @@
  hydra
  (ligatures
   +extra)
- (modeline)
+ modeline
  ophints
  (popup
   +all
@@ -35,6 +35,7 @@
  fold
  (format
   +onsave)
+ multiple-cursors
  rotate-text
  snippets
                                          ;word-wrap  ; Disabled for performance
@@ -52,6 +53,8 @@
  :checkers
  (syntax
   +childframe)
+ (:if (executable-find "aspell") spell)
+ grammar
 
  :tools
  (eval
@@ -87,6 +90,7 @@
   +pyright)
  (sh
   +powershell)
+ yaml
 
  :email
  

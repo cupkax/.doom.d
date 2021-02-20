@@ -73,7 +73,7 @@ hl-todo
 hydra
 (ligatures
  +extra)
-(modeline)
+modeline
 ophints
 (popup
  +all
@@ -93,6 +93,7 @@ zen
 fold
 (format
  +onsave)
+multiple-cursors
 rotate-text
 snippets
                                         ;word-wrap  ; Disabled for performance
@@ -113,6 +114,8 @@ vc
 #+begin_src emacs-lisp
 (syntax
  +childframe)
+(:if (executable-find "aspell") spell)
+grammar
 #+end_src
 
 *** doom-tools
@@ -151,6 +154,7 @@ markdown
  +pyright)
 (sh
  +powershell)
+yaml
 #+end_src
 
 *** doom-config
@@ -378,6 +382,18 @@ markdown
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
 #+end_src
 
+***** Adjust roam numbers
+#+begin_src emacs-lisp
+(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
+  :around #'doom-modeline-buffer-file-name ; takes no args
+  (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+      (replace-regexp-in-string
+       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
+       "🢔(\\1-\\2-\\3) "
+       (subst-char-in-string ?_ ?  buffer-file-name))
+    (funcall orig-fun)))
+#+end_src
+
 *** Lines
 **** Line Numbers
 #+begin_src emacs-lisp
@@ -436,10 +452,6 @@ markdown
 #+end_src
 
 ** Buffer, Frame and Window Configuration
-*** Buffer Config
-**** Buffer Navigation
-#+begin_src emacs-lisp
-#+end_src
 *** Frame Config
 #+begin_src emacs-lisp
 (when (equal window-system 'x) (toggle-frame-fullscreen))
@@ -473,6 +485,10 @@ markdown
 #+begin_src emacs-lisp
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (+ivy/switch-buffer))
 (setq +ivy-buffer-preview t)
 #+end_src
 
@@ -506,7 +522,6 @@ markdown
 *** Basic Config
 **** Defaults
 #+begin_src emacs-lisp
-(setq-default major-mode 'org-mode)
 (setq org-directory                     "~/git/org/"
       org-use-property-inheritance      t        ; Property inheritance for sublevels
       org-log-done                      'time    ; Record arguments when task is DONE
@@ -525,6 +540,22 @@ markdown
 (setq org-structure-template-alist
       '(("e" . "src emacs-lisp")
         ("p" . "src python")))
+
+;; Easier Org Buffer
+(evil-define-command evil-buffer-org-new (count file)
+  "Creates a new ORG buffer replacing the current window, optionally
+   editing a certain FILE"
+  :repeat nil
+  (interactive "P<f>")
+  (if file
+      (evil-edit file)
+    (let ((buffer (generate-new-buffer "*new org*")))
+      (set-window-buffer nil buffer)
+      (with-current-buffer buffer
+        (org-mode)))))
+(map! :leader
+      (:prefix "b"
+       :desc "New empty ORG buffer" "o" #'evil-buffer-org-new))
 #+end_src
 
 **** Visuals
@@ -569,17 +600,15 @@ markdown
     '(org-document-title :height 1.15)))
 #+end_src
 
-****** Show /empahsis/ markers
+****** Show /empahsis/ markers on cursor
 #+begin_src emacs-lisp
 (use-package! org-appear
   :hook (org-mode . org-appear-mode)
   :config
+  (setq org-hide-emphasis-markers t)
   (setq org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
-  ;; for proper first-time setup, `org-appear--set-fragments'
-  ;; needs to be run after other hooks have acted.
-  (run-at-time nil nil #'org-appear--set-fragments))
 #+end_src
 
 ***** Symbols
@@ -736,12 +765,9 @@ markdown
 #+begin_src emacs-lisp
 (use-package! org-ref
   :after org
-  :init
-                                        ; code to run before loading org-ref
   :config
-                                        ; code to run after loading org-ref
-  )
-(setq org-ref-default-bibliography '("~/Dropbox/research/zotLib.bib"))
+  (setq org-ref-default-bibliography '("~/Dropbox/research/zotLib.bib")
+        org-ref-completion-library 'org-ref-ivy-cite))
 #+end_src
 
 *** Org-Roam
@@ -799,9 +825,33 @@ markdown
 
 ** Writing
 *** Zen-mode
-Reduce zen scaling
 #+begin_src emacs-lisp
 (setq +zen-text-scale 0.25)
+(after! writeroom-mode
+  (add-hook 'writeroom-mode-hook
+            (defun +zen-cleaner-org ()
+              (when (and (eq major-mode 'org-mode) writeroom-mode)
+                (setq-local -display-line-numbers display-line-numbers
+                            display-line-numbers nil)
+                (setq-local -org-indent-mode org-indent-mode)
+                (org-indent-mode -1)
+                (when (featurep 'org-superstar)
+                  (setq-local -org-superstar-headline-bullets-list org-superstar-headline-bullets-list
+                              ;; org-superstar-headline-bullets-list '("🙐" "🙑" "🙒" "🙓" "🙔" "🙕" "🙖" "🙗")
+                              org-superstar-headline-bullets-list '("🙘" "🙙" "🙚" "🙛")
+                              -org-superstar-remove-leading-stars org-superstar-remove-leading-stars
+                              org-superstar-remove-leading-stars t)
+                  (org-superstar-restart)))))
+  (add-hook 'writeroom-mode-disable-hook
+            (defun +zen-dirty-org ()
+              (when (eq major-mode 'org-mode)
+                (setq-local display-line-numbers -display-line-numbers)
+                (when -org-indent-mode
+                  (org-indent-mode 1))
+                (when (featurep 'org-superstar)
+                  (setq-local org-superstar-headline-bullets-list -org-superstar-headline-bullets-list
+                              org-superstar-remove-leading-stars -org-superstar-remove-leading-stars)
+                  (org-superstar-restart))))))
 #+end_src
 
 ** Applications
@@ -812,9 +862,3 @@ Reduce zen scaling
       pdf-view-resize-factor 1.01)
 #+end_src
 
-** Miscellaneous
-*** Spray
-#+begin_src emacs-lisp
-                                        ;(setq spray-wpm 500
-                                        ;      spray-height 700)
-#+end_src

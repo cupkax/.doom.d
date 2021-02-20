@@ -73,6 +73,17 @@
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
 ;; Hide =utf-8-unix= if not needed:1 ends here
 
+;; [[file:README.org::*Adjust roam numbers][Adjust roam numbers:1]]
+(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
+  :around #'doom-modeline-buffer-file-name ; takes no args
+  (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+      (replace-regexp-in-string
+       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
+       "🢔(\\1-\\2-\\3) "
+       (subst-char-in-string ?_ ?  buffer-file-name))
+    (funcall orig-fun)))
+;; Adjust roam numbers:1 ends here
+
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
 (setq display-line-numbers-type nil)
 ;; Line Numbers:1 ends here
@@ -118,10 +129,6 @@
 (setq ivy-sort-max-size 50000)
 ;; Ivy:1 ends here
 
-;; [[file:README.org::*Buffer Navigation][Buffer Navigation:1]]
-
-;; Buffer Navigation:1 ends here
-
 ;; [[file:README.org::*Frame Config][Frame Config:1]]
 (when (equal window-system 'x) (toggle-frame-fullscreen))
 ;; Frame Config:1 ends here
@@ -151,6 +158,10 @@
 ;; [[file:README.org::*Window Split][Window Split:1]]
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
+
+(defadvice! prompt-for-buffer (&rest _)
+  :after '(evil-window-split evil-window-vsplit)
+  (+ivy/switch-buffer))
 (setq +ivy-buffer-preview t)
 ;; Window Split:1 ends here
 
@@ -166,7 +177,6 @@
 ;; YASnippet:1 ends here
 
 ;; [[file:README.org::*Defaults][Defaults:1]]
-(setq-default major-mode 'org-mode)
 (setq org-directory                     "~/git/org/"
       org-use-property-inheritance      t        ; Property inheritance for sublevels
       org-log-done                      'time    ; Record arguments when task is DONE
@@ -185,6 +195,22 @@
 (setq org-structure-template-alist
       '(("e" . "src emacs-lisp")
         ("p" . "src python")))
+
+;; Easier Org Buffer
+(evil-define-command evil-buffer-org-new (count file)
+  "Creates a new ORG buffer replacing the current window, optionally
+   editing a certain FILE"
+  :repeat nil
+  (interactive "P<f>")
+  (if file
+      (evil-edit file)
+    (let ((buffer (generate-new-buffer "*new org*")))
+      (set-window-buffer nil buffer)
+      (with-current-buffer buffer
+        (org-mode)))))
+(map! :leader
+      (:prefix "b"
+       :desc "New empty ORG buffer" "o" #'evil-buffer-org-new))
 ;; Defaults:1 ends here
 
 ;; [[file:README.org::*Remove visual hooks][Remove visual hooks:1]]
@@ -222,17 +248,15 @@
     '(org-document-title :height 1.15)))
 ;; Headings:1 ends here
 
-;; [[file:README.org::*Show /empahsis/ markers][Show /empahsis/ markers:1]]
+;; [[file:README.org::*Show /empahsis/ markers on cursor][Show /empahsis/ markers on cursor:1]]
 (use-package! org-appear
   :hook (org-mode . org-appear-mode)
   :config
+  (setq org-hide-emphasis-markers t)
   (setq org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
-  ;; for proper first-time setup, `org-appear--set-fragments'
-  ;; needs to be run after other hooks have acted.
-  (run-at-time nil nil #'org-appear--set-fragments))
-;; Show /empahsis/ markers:1 ends here
+;; Show /empahsis/ markers on cursor:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (after! org-superstar
@@ -378,12 +402,9 @@
 ;; [[file:README.org::*Org-Ref][Org-Ref:1]]
 (use-package! org-ref
   :after org
-  :init
-                                        ; code to run before loading org-ref
   :config
-                                        ; code to run after loading org-ref
-  )
-(setq org-ref-default-bibliography '("~/Dropbox/research/zotLib.bib"))
+  (setq org-ref-default-bibliography '("~/Dropbox/research/zotLib.bib")
+        org-ref-completion-library 'org-ref-ivy-cite))
 ;; Org-Ref:1 ends here
 
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
@@ -434,6 +455,31 @@
 
 ;; [[file:README.org::*Zen-mode][Zen-mode:1]]
 (setq +zen-text-scale 0.25)
+(after! writeroom-mode
+  (add-hook 'writeroom-mode-hook
+            (defun +zen-cleaner-org ()
+              (when (and (eq major-mode 'org-mode) writeroom-mode)
+                (setq-local -display-line-numbers display-line-numbers
+                            display-line-numbers nil)
+                (setq-local -org-indent-mode org-indent-mode)
+                (org-indent-mode -1)
+                (when (featurep 'org-superstar)
+                  (setq-local -org-superstar-headline-bullets-list org-superstar-headline-bullets-list
+                              ;; org-superstar-headline-bullets-list '("🙐" "🙑" "🙒" "🙓" "🙔" "🙕" "🙖" "🙗")
+                              org-superstar-headline-bullets-list '("🙘" "🙙" "🙚" "🙛")
+                              -org-superstar-remove-leading-stars org-superstar-remove-leading-stars
+                              org-superstar-remove-leading-stars t)
+                  (org-superstar-restart)))))
+  (add-hook 'writeroom-mode-disable-hook
+            (defun +zen-dirty-org ()
+              (when (eq major-mode 'org-mode)
+                (setq-local display-line-numbers -display-line-numbers)
+                (when -org-indent-mode
+                  (org-indent-mode 1))
+                (when (featurep 'org-superstar)
+                  (setq-local org-superstar-headline-bullets-list -org-superstar-headline-bullets-list
+                              org-superstar-remove-leading-stars -org-superstar-remove-leading-stars)
+                  (org-superstar-restart))))))
 ;; Zen-mode:1 ends here
 
 ;; [[file:README.org::*PDF Tools][PDF Tools:1]]
@@ -441,8 +487,3 @@
 (setq pdf-annot-activate-created-annotations t
       pdf-view-resize-factor 1.01)
 ;; PDF Tools:1 ends here
-
-;; [[file:README.org::*Spray][Spray:1]]
-                                        ;(setq spray-wpm 500
-                                        ;      spray-height 700)
-;; Spray:1 ends here
