@@ -10,8 +10,6 @@
  :ui
  doom
  doom-dashboard
- ;(emoji
- ; +unicode)
  hl-todo
  hydra
  (ligatures
@@ -34,7 +32,7 @@
  fold
  (format
   +onsave)
- parinfer
+ ;parinfer
  multiple-cursors
  rotate-text
  snippets
@@ -90,7 +88,6 @@
   +poetry)
  (sh
   +powershell)
- yaml
 
  :email
  

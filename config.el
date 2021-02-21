@@ -30,8 +30,9 @@
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
 (setq inhibit-compacting-font-caches t)
-(setq doom-font                (font-spec :family "Fira Code" :size 16)
-      doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'medium :size 21))
+(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
+      doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'semibold :size 21)
+      doom-unicode-font        (font-spec :family "DejaVuSansMono Nerd Font"))
 ;; Fonts:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
@@ -66,6 +67,17 @@
 
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
 ;; Hide =utf-8-unix= if not needed:1 ends here
+
+;; [[file:README.org::*Adjust roam numbers][Adjust roam numbers:1]]
+(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
+  :around #'doom-modeline-buffer-file-name ; takes no args
+  (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+      (replace-regexp-in-string
+       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
+       "🢔(\\1-\\2-\\3) "
+       (subst-char-in-string ?_ ?  buffer-file-name))
+    (funcall orig-fun)))
+;; Adjust roam numbers:1 ends here
 
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
 (setq display-line-numbers-type nil)
@@ -106,6 +118,21 @@
       ivy-sort-max-size 50000)
 ;; Ivy:1 ends here
 
+;; [[file:README.org::*Frame Title][Frame Title:1]]
+(setq frame-title-format
+      '(""
+        (:eval
+         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
+             (replace-regexp-in-string
+              ".*/[0-9]*-?" "☰ "
+              (subst-char-in-string ?_ ?  buffer-file-name))
+           "%b"))
+        (:eval
+         (let ((project-name (projectile-project-name)))
+           (unless (string= "-" project-name)
+             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
+;; Frame Title:1 ends here
+
 ;; [[file:README.org::*Window Navigation][Window Navigation:1]]
 (map!
  :leader
@@ -116,17 +143,11 @@
 ;; [[file:README.org::*Window Split][Window Split:1]]
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
-
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
   (+ivy/switch-buffer))
 (setq +ivy-buffer-preview t)
 ;; Window Split:1 ends here
-
-;; [[file:README.org::*LSP][LSP:1]]
-(setq lsp-ui-sideline-enable nil
-      lsp-enable-symbol-highlighting nil)
-;; LSP:1 ends here
 
 ;; [[file:README.org::*Company mode][Company mode:1]]
 (after! company
@@ -146,11 +167,12 @@
       org-list-allow-alphabetical t
       org-export-in-background t
       org-catch-invisible-edits 'smart
-      org-cycle-separator-lines  0
-      org-attach-id-dir (concat org-roam-directory "data/"))
+      org-cycle-separator-lines  0)
+      ;org-attach-id-dir (concat org-roam-directory "data/"))
+
 
 ;; Ignore org default template
-(set-file-template! "\\.org$" :ignore t)
+;(set-file-template! "\\.org$" :ignore t)
 
 ;; Org block templates
 (setq org-structure-template-alist
@@ -164,7 +186,8 @@
 ;; Org Defaults:1 ends here
 
 ;; [[file:README.org::*Mixed Pitch Mode][Mixed Pitch Mode:1]]
-(add-hook! 'org-mode-hook #'+org-pretty-mode #'mixed-pitch-mode)
+;(add-hook! 'org-mode-hook #'+org-pretty-mode)
+(add-hook! 'org-mode-hook #'mixed-pitch-mode)
 (setq mixed-pitch-set-height t)
 ;; Mixed Pitch Mode:1 ends here
 
@@ -189,16 +212,15 @@
     '(org-document-title :height 1.15)))
 ;; Headings:1 ends here
 
-;; [[file:README.org::*Show /empahsis/ markers on cursor][Show /empahsis/ markers on cursor:1]]
+;; [[file:README.org::*Show /empahsis/ markers][Show /empahsis/ markers:1]]
 (use-package! org-appear
-  :after org-mode
   :hook (org-mode . org-appear-mode)
   :config
   (setq org-hide-emphasis-markers t)
   (setq org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
-;; Show /empahsis/ markers on cursor:1 ends here
+;; Show /empahsis/ markers:1 ends here
 
 ;; [[file:README.org::*Bullets / Endings][Bullets / Endings:1]]
 (after! org-superstar
@@ -206,15 +228,15 @@
         org-superstar-prettify-item-bullets t ))
 
 (setq org-ellipsis " ▾ "
-      org-hide-leading-stars t
-      org-priority-highest ?A
-      org-priority-lowest ?E
-      org-priority-faces
-      '((?A . 'all-the-icons-red)
-        (?B . 'all-the-icons-orange)
-        (?C . 'all-the-icons-yellow)
-        (?D . 'all-the-icons-green)
-        (?E . 'all-the-icons-blue)))
+      org-hide-leading-stars t)
+;      org-priority-highest ?A
+;      org-priority-lowest ?E
+;      org-priority-faces
+;      '((?A . 'all-the-icons-red)
+;        (?B . 'all-the-icons-orange)
+;        (?C . 'all-the-icons-yellow)
+;        (?D . 'all-the-icons-green)
+;        (?E . 'all-the-icons-blue)))
 ;; Bullets / Endings:1 ends here
 
 ;; [[file:README.org::*Other Symbols][Other Symbols:1]]
@@ -276,7 +298,6 @@
 
 ;; [[file:README.org::*Bibtex][Bibtex:1]]
 (use-package! bibtex-completion
-  :defer
   :config
   (setq bibtex-completion-notes-path   "~/git/phd/notes/"
         bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"

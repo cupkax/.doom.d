@@ -7,8 +7,6 @@
 (package! poet-theme)
 (package! spacemacs-theme)
 
-(package! helm-bibtex)
-
 (unpin! org-mode)
 
 (package! org-pretty-table-mode
@@ -20,6 +18,8 @@
 (package! org-appear
   :recipe (:host github
            :repo "awth13/org-appear"))
+
+(package! helm-bibtex)
 
 (package! org-download
   :recipe (:host github
