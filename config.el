@@ -30,7 +30,7 @@
 
 ;; [[file:README.org::*Fonts][Fonts:1]]
 (setq inhibit-compacting-font-caches t)
-(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
+(setq doom-font                (font-spec :family "Fira Code" :size 16)
       doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'medium :size 21))
 ;; Fonts:1 ends here
 
@@ -106,21 +106,6 @@
       ivy-sort-max-size 50000)
 ;; Ivy:1 ends here
 
-;; [[file:README.org::*Frame Title][Frame Title:1]]
-(setq frame-title-format
-      '(""
-        (:eval
-         (if (s-contains-p org-roam-directory (or buffer-file-name ""))
-             (replace-regexp-in-string
-              ".*/[0-9]*-?" "☰ "
-              (subst-char-in-string ?_ ?  buffer-file-name))
-           "%b"))
-        (:eval
-         (let ((project-name (projectile-project-name)))
-           (unless (string= "-" project-name)
-             (format (if (buffer-modified-p)  " ◉ %s" "  ●  %s") project-name))))))
-;; Frame Title:1 ends here
-
 ;; [[file:README.org::*Window Navigation][Window Navigation:1]]
 (map!
  :leader
@@ -143,14 +128,24 @@
       lsp-enable-symbol-highlighting nil)
 ;; LSP:1 ends here
 
+;; [[file:README.org::*Company mode][Company mode:1]]
+(after! company
+  (setq company-idle-delay nil
+        company-minimum-prefix-length 2
+        company-show-numbers t)
+  (add-hook 'evil-normal-state-entry-hook #'company-abort)
+  (setq-default history-length 1000)
+  (setq-default prescient-history-length 1000))
+;; Company mode:1 ends here
+
 ;; [[file:README.org::*Defaults][Defaults:1]]
 (setq org-directory "~/git/org/"
       org-startup-folded 'overview
-      org-use-property-inheritance t        
-      org-log-done 'time   
-      org-list-allow-alphabetical t       
-      org-export-in-background t        
-      org-catch-invisible-edits 'smart   
+      org-use-property-inheritance t
+      org-log-done 'time
+      org-list-allow-alphabetical t
+      org-export-in-background t
+      org-catch-invisible-edits 'smart
       org-cycle-separator-lines  0
       org-attach-id-dir (concat org-roam-directory "data/"))
 

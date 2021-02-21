@@ -35,11 +35,6 @@
 
 (package! org-ref)
 
-(package! org-roam-sbl-show-broken-links
-  :recipe (:host github
-           :repo "twitchy-ears/org-roam-sbl-show-broken-links"
-           :branch "main"))
-
 (package! org-roam-bibtex)
 
 (package! org-roam-server)
