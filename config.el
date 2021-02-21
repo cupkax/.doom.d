@@ -31,14 +31,8 @@
 ;; [[file:README.org::*Fonts][Fonts:1]]
 (setq inhibit-compacting-font-caches t)
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
-      doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'semibold :size 21)
-      doom-unicode-font        (font-spec :family "DejaVuSansMono Nerd Font"))
+      doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'medium :size 21))
 ;; Fonts:1 ends here
-
-;; [[file:README.org::*Unicode][Unicode:1]]
-;(after! unicode-fonts
-;  (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
-;; Unicode:1 ends here
 
 ;; [[file:README.org::*Theme][Theme:1]]
 (setq doom-theme 'poet)
@@ -73,17 +67,6 @@
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
 ;; Hide =utf-8-unix= if not needed:1 ends here
 
-;; [[file:README.org::*Adjust roam numbers][Adjust roam numbers:1]]
-(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
-  :around #'doom-modeline-buffer-file-name ; takes no args
-  (if (s-contains-p org-roam-directory (or buffer-file-name ""))
-      (replace-regexp-in-string
-       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
-       "🢔(\\1-\\2-\\3) "
-       (subst-char-in-string ?_ ?  buffer-file-name))
-    (funcall orig-fun)))
-;; Adjust roam numbers:1 ends here
-
 ;; [[file:README.org::*Line Numbers][Line Numbers:1]]
 (setq display-line-numbers-type nil)
 ;; Line Numbers:1 ends here
@@ -100,6 +83,10 @@
 (setq doom-localleader-key ",")
 ;; Change local leader:1 ends here
 
+;; [[file:README.org::*Global Substitute][Global Substitute:1]]
+(setq evil-ex-substitute-global t)
+;; Global Substitute:1 ends here
+
 ;; [[file:README.org::*Key delay][Key delay:1]]
 (setq which-key-idle-delay 0.5)
 ;; Key delay:1 ends here
@@ -114,24 +101,10 @@
    ))
 ;; Replace =evil= with unicode:1 ends here
 
-;; [[file:README.org::*Deft][Deft:1]]
-(use-package deft
-      :after org
-      :config
-      (setq deft-recursive t)
-      (setq deft-use-filter-string-for-filename t)
-      (setq deft-default-extension "org")
-      (setq deft-directory "~/git/phd/notes/"))
-;; Deft:1 ends here
-
 ;; [[file:README.org::*Ivy][Ivy:1]]
-(setq ivy-read-action-function #'ivy-hydra-read-action)
-(setq ivy-sort-max-size 50000)
+(setq ivy-read-action-function #'ivy-hydra-read-action
+      ivy-sort-max-size 50000)
 ;; Ivy:1 ends here
-
-;; [[file:README.org::*Frame Config][Frame Config:1]]
-(when (equal window-system 'x) (toggle-frame-fullscreen))
-;; Frame Config:1 ends here
 
 ;; [[file:README.org::*Frame Title][Frame Title:1]]
 (setq frame-title-format
@@ -165,28 +138,21 @@
 (setq +ivy-buffer-preview t)
 ;; Window Split:1 ends here
 
-;; [[file:README.org::*Parentheses][Parentheses:1]]
-(sp-local-pair
- '(org-mode)
- "<<" ">>"
- :actions '(insert))
-;; Parentheses:1 ends here
-
-;; [[file:README.org::*YASnippet][YASnippet:1]]
-(setq yas-triggers-in-field t)
-;; YASnippet:1 ends here
+;; [[file:README.org::*LSP][LSP:1]]
+(setq lsp-ui-sideline-enable nil
+      lsp-enable-symbol-highlighting nil)
+;; LSP:1 ends here
 
 ;; [[file:README.org::*Defaults][Defaults:1]]
-(setq org-directory                     "~/git/org/"
-      org-use-property-inheritance      t        ; Property inheritance for sublevels
-      org-log-done                      'time    ; Record arguments when task is DONE
-      org-list-allow-alphabetical       t        ; Alphabetical bullets
-      org-export-in-background          t        ; Export in background
-      org-catch-invisible-edits         'smart   ; Check invisible region before insert/delete
-      org-cycle-separator-lines              0)
-
-(remove-hook 'text-mode-hook #'visual-line-mode) ; Remove visual line mode
-(add-hook 'text-mode-hook #'auto-fill-mode)      ; Enable auto fill mode
+(setq org-directory "~/git/org/"
+      org-startup-folded 'overview
+      org-use-property-inheritance t        
+      org-log-done 'time   
+      org-list-allow-alphabetical t       
+      org-export-in-background t        
+      org-catch-invisible-edits 'smart   
+      org-cycle-separator-lines  0
+      org-attach-id-dir (concat org-roam-directory "data/"))
 
 ;; Ignore org default template
 (set-file-template! "\\.org$" :ignore t)
@@ -195,27 +161,7 @@
 (setq org-structure-template-alist
       '(("e" . "src emacs-lisp")
         ("p" . "src python")))
-
-;; Easier Org Buffer
-(evil-define-command evil-buffer-org-new (count file)
-  "Creates a new ORG buffer replacing the current window, optionally
-   editing a certain FILE"
-  :repeat nil
-  (interactive "P<f>")
-  (if file
-      (evil-edit file)
-    (let ((buffer (generate-new-buffer "*new org*")))
-      (set-window-buffer nil buffer)
-      (with-current-buffer buffer
-        (org-mode)))))
-(map! :leader
-      (:prefix "b"
-       :desc "New empty ORG buffer" "o" #'evil-buffer-org-new))
 ;; Defaults:1 ends here
-
-;; [[file:README.org::*Remove visual hooks][Remove visual hooks:1]]
-;(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
-;; Remove visual hooks:1 ends here
 
 ;; [[file:README.org::*Org Defaults][Org Defaults:1]]
 (setq org-startup-indented t
@@ -250,6 +196,7 @@
 
 ;; [[file:README.org::*Show /empahsis/ markers on cursor][Show /empahsis/ markers on cursor:1]]
 (use-package! org-appear
+  :after org-mode
   :hook (org-mode . org-appear-mode)
   :config
   (setq org-hide-emphasis-markers t)
@@ -310,37 +257,6 @@
                                         ;(plist-put +ligatures-extra-symbols :name "⁍")
 ;; Other Symbols:1 ends here
 
-;; [[file:README.org::*LSP Mode][LSP Mode:1]]
-(cl-defmacro lsp-org-babel-enable (lang)
-  "Support LANG in org source code block."
-  (setq centaur-lsp 'lsp-mode)
-  (cl-check-type lang stringp)
-  (let* ((edit-pre (intern (format "org-babel-edit-prep:%s" lang)))
-         (intern-pre (intern (format "lsp--%s" (symbol-name edit-pre)))))
-    `(progn
-       (defun ,intern-pre (info)
-         (let ((file-name (->> info caddr (alist-get :file))))
-           (unless file-name
-             (setq file-name (make-temp-file "babel-lsp-")))
-           (setq buffer-file-name file-name)
-           (lsp-deferred)))
-       (put ',intern-pre 'function-documentation
-            (format "Enable lsp-mode in the buffer of org source block (%s)."
-                    (upcase ,lang)))
-       (if (fboundp ',edit-pre)
-           (advice-add ',edit-pre :after ',intern-pre)
-         (progn
-           (defun ,edit-pre (info)
-             (,intern-pre info))
-           (put ',edit-pre 'function-documentation
-                (format "Prepare local buffer environment for org source block (%s)."
-                        (upcase ,lang))))))))
-(defvar org-babel-lang-list
-  '("python" "ipython" "bash" "sh" "emacs-lisp"))
-(dolist (lang org-babel-lang-list)
-  (eval `(lsp-org-babel-enable ,lang)))
-;; LSP Mode:1 ends here
-
 ;; [[file:README.org::*=org-babel= evaluation arguements][=org-babel= evaluation arguements:1]]
 (setq org-babel-default-header-args
       '((:session  . "none")
@@ -352,16 +268,6 @@
         (:tangle   . "no")
         (:comments . "link")))
 ;; =org-babel= evaluation arguements:1 ends here
-
-;; [[file:README.org::*=org-babel= languages][=org-babel= languages:1]]
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (org        . t)
-     (python     . t)
-     (shell      . t)
-     (xml        . t)))
-;; =org-babel= languages:1 ends here
 
 ;; [[file:README.org::*=org-babel= python][=org-babel= python:1]]
 (setq org-babel-python-command "python3")
@@ -375,6 +281,7 @@
 
 ;; [[file:README.org::*Bibtex][Bibtex:1]]
 (use-package! bibtex-completion
+  :defer
   :config
   (setq bibtex-completion-notes-path   "~/git/phd/notes/"
         bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
@@ -408,9 +315,13 @@
 ;; Org-Ref:1 ends here
 
 ;; [[file:README.org::*Basic Config][Basic Config:1]]
-(setq org-roam-directory        "~/git/phd/notes/")
-(setq org-roam-db-update-method 'immediate)
-(add-hook! 'org-roam-mode-hook #'org-roam-db-build-cache)
+(after! org-roam
+  (setq org-roam-directory        "~/git/phd/notes/"
+        org-roam-db-update-method 'immediate
+        +org-roam-open-buffer-on-find-file nil
+        org-roam-buffer-width 0.25)
+  (set-company-backend! 'org-mode 'company-capf)
+  (add-hook! 'org-roam-mode-hook #'org-roam-db-build-cache))
 ;; Basic Config:1 ends here
 
 ;; [[file:README.org::*Org Roam Bibtex][Org Roam Bibtex:1]]
@@ -442,7 +353,12 @@
 
 ;; [[file:README.org::*Org Noter][Org Noter:1]]
 (after! org-noter
-  (setq org-noter-notes-search-path (list "~/git/phd/notes/")))
+  (setq org-noter-always-create-frame t
+        org-noter-doc-split-fraction '(0.65 . 0.35)
+        org-noter-separate-notes-from-heading t
+        org-noter-auto-save-last-location t
+        org-noter-doc-property-in-notes t
+        org-noter-notes-search-path (list "~/git/phd/notes/")))
 ;; Org Noter:1 ends here
 
 ;; [[file:README.org::*Pandoc][Pandoc:1]]
@@ -455,31 +371,6 @@
 
 ;; [[file:README.org::*Zen-mode][Zen-mode:1]]
 (setq +zen-text-scale 0.25)
-(after! writeroom-mode
-  (add-hook 'writeroom-mode-hook
-            (defun +zen-cleaner-org ()
-              (when (and (eq major-mode 'org-mode) writeroom-mode)
-                (setq-local -display-line-numbers display-line-numbers
-                            display-line-numbers nil)
-                (setq-local -org-indent-mode org-indent-mode)
-                (org-indent-mode -1)
-                (when (featurep 'org-superstar)
-                  (setq-local -org-superstar-headline-bullets-list org-superstar-headline-bullets-list
-                              ;; org-superstar-headline-bullets-list '("🙐" "🙑" "🙒" "🙓" "🙔" "🙕" "🙖" "🙗")
-                              org-superstar-headline-bullets-list '("🙘" "🙙" "🙚" "🙛")
-                              -org-superstar-remove-leading-stars org-superstar-remove-leading-stars
-                              org-superstar-remove-leading-stars t)
-                  (org-superstar-restart)))))
-  (add-hook 'writeroom-mode-disable-hook
-            (defun +zen-dirty-org ()
-              (when (eq major-mode 'org-mode)
-                (setq-local display-line-numbers -display-line-numbers)
-                (when -org-indent-mode
-                  (org-indent-mode 1))
-                (when (featurep 'org-superstar)
-                  (setq-local org-superstar-headline-bullets-list -org-superstar-headline-bullets-list
-                              org-superstar-remove-leading-stars -org-superstar-remove-leading-stars)
-                  (org-superstar-restart))))))
 ;; Zen-mode:1 ends here
 
 ;; [[file:README.org::*PDF Tools][PDF Tools:1]]

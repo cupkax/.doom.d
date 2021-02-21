@@ -57,18 +57,16 @@
  +childframe)
 (ivy
  +prescient
- +icons
- +fuzzy)
+ +icons)
 #+end_src
 
 *** doom-ui
 #+name: doom-ui
 #+begin_src emacs-lisp
-deft
 doom
 doom-dashboard
-(emoji
- +unicode)
+;(emoji
+; +unicode)
 hl-todo
 hydra
 (ligatures
@@ -90,9 +88,11 @@ zen
 #+begin_src emacs-lisp
 (evil
  +everywhere)
+file-templates
 fold
 (format
  +onsave)
+parinfer
 multiple-cursors
 rotate-text
 snippets
@@ -144,14 +144,14 @@ markdown
 (org
  +dragndrop
  +gnuplot
- +hugo
  +noter
  +pandoc
  +pretty
  +roam)
 (python
  +lsp
- +pyright)
+ +pyright
+ +poetry)
 (sh
  +powershell)
 yaml
@@ -193,6 +193,10 @@ yaml
 #+end_src
 
 *** Org
+**** Ivy-bibtex
+#+begin_src emacs-lisp
+(package! helm-bibtex)
+#+end_src
 **** Org Mode
 #+begin_src emacs-lisp
 (unpin! org-mode)
@@ -218,22 +222,11 @@ yaml
            :repo "awth13/org-appear"))
 #+end_src
 
-**** Ivy/Helm Bibtex
-#+begin_src emacs-lisp
-(package! helm-bibtex)
-#+end_src
-
 **** Org Download
 #+begin_src emacs-lisp
 (package! org-download
   :recipe (:host github
             :repo "abo-abo/org-download"))
-#+end_src
-
-
-**** Org Helm Rifle
-#+begin_src emacs-lisp
-(package! helm-org-rifle)
 #+end_src
 
 
@@ -260,6 +253,14 @@ yaml
 #+end_src
 
 **** Org Roam
+***** Org-Roam broken links
+#+begin_src emacs-lisp
+(package! org-roam-sbl-show-broken-links
+  :recipe (:host github
+           :repo "twitchy-ears/org-roam-sbl-show-broken-links"
+           :branch "main"))
+#+end_src
+
 ***** Org Roam Bibtex
 #+begin_src emacs-lisp
 (package! org-roam-bibtex)
@@ -282,16 +283,6 @@ yaml
 #+end_src
 
 * Doom Config
-** TODO =Emacs 28= Fix
-#+begin_src emacs-lisp :tangle no
-(define-advice define-obsolete-function-alias (:filter-args (ll) fix-obsolete)
-  (let ((obsolete-name (pop ll))
-        (current-name (pop ll))
-        (when (if ll (pop ll) "1"))
-        (docstring (if ll (pop ll) nil)))
-    (list obsolete-name current-name when docstring)))
-#+end_src
-
 ** Lexical Bindings
 #+begin_src emacs-lisp
 ;;; config.el -*- lexical-binding: t; -*-
@@ -332,14 +323,7 @@ yaml
 #+begin_src emacs-lisp
 (setq inhibit-compacting-font-caches t)
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
-      doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'semibold :size 21)
-      doom-unicode-font        (font-spec :family "DejaVuSansMono Nerd Font"))
-#+end_src
-
-**** Unicode
-#+begin_src emacs-lisp
-;(after! unicode-fonts
-;  (push "Symbola" (cadr (assoc "Miscellaneous Symbols" unicode-fonts-block-font-mapping))))
+      doom-variable-pitch-font (font-spec :family "Alegreya" :weight 'medium :size 21))
 #+end_src
 
 *** Theme
@@ -383,7 +367,7 @@ yaml
 #+end_src
 
 ***** Adjust roam numbers
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
   :around #'doom-modeline-buffer-file-name ; takes no args
   (if (s-contains-p org-roam-directory (or buffer-file-name ""))
@@ -416,6 +400,11 @@ yaml
 (setq doom-localleader-key ",")
 #+end_src
 
+*** Global Substitute
+#+begin_src emacs-lisp
+(setq evil-ex-substitute-global t)
+#+end_src
+
 *** Which-key
 **** Key delay
 #+begin_src emacs-lisp
@@ -435,7 +424,7 @@ yaml
 
 ** Navigation
 *** Deft
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package deft
       :after org
       :config
@@ -447,13 +436,13 @@ yaml
 
 *** Ivy
 #+begin_src emacs-lisp
-(setq ivy-read-action-function #'ivy-hydra-read-action)
-(setq ivy-sort-max-size 50000)
+(setq ivy-read-action-function #'ivy-hydra-read-action
+      ivy-sort-max-size 50000)
 #+end_src
 
 ** Buffer, Frame and Window Configuration
 *** Frame Config
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (when (equal window-system 'x) (toggle-frame-fullscreen))
 #+end_src
 **** Frame Title
@@ -493,10 +482,16 @@ yaml
 #+end_src
 
 ** Productivity
+*** LSP
+#+begin_src emacs-lisp
+(setq lsp-ui-sideline-enable nil
+      lsp-enable-symbol-highlighting nil)
+#+end_src
+
 *** Company mode
 #+begin_src emacs-lisp :tangle no
 (after! company
-  (setq company-idle-delay 0.25
+  (setq company-idle-delay nil
         company-minimum-prefix-length 2
         company-show-numbers t)
   (add-hook 'evil-normal-state-entry-hook #'company-abort)
@@ -504,34 +499,19 @@ yaml
   (setq-default prescient-history-length 1000))
 #+end_src
 
-*** Parentheses
-#+begin_src emacs-lisp
-(sp-local-pair
- '(org-mode)
- "<<" ">>"
- :actions '(insert))
-#+end_src
-
-** Languages
-*** YASnippet
-#+begin_src emacs-lisp
-(setq yas-triggers-in-field t)
-#+end_src
-
 ** Org Mode
 *** Basic Config
 **** Defaults
 #+begin_src emacs-lisp
-(setq org-directory                     "~/git/org/"
-      org-use-property-inheritance      t        ; Property inheritance for sublevels
-      org-log-done                      'time    ; Record arguments when task is DONE
-      org-list-allow-alphabetical       t        ; Alphabetical bullets
-      org-export-in-background          t        ; Export in background
-      org-catch-invisible-edits         'smart   ; Check invisible region before insert/delete
-      org-cycle-separator-lines              0)
-
-(remove-hook 'text-mode-hook #'visual-line-mode) ; Remove visual line mode
-(add-hook 'text-mode-hook #'auto-fill-mode)      ; Enable auto fill mode
+(setq org-directory "~/git/org/"
+      org-startup-folded 'overview
+      org-use-property-inheritance t        
+      org-log-done 'time   
+      org-list-allow-alphabetical t       
+      org-export-in-background t        
+      org-catch-invisible-edits 'smart   
+      org-cycle-separator-lines  0
+      org-attach-id-dir (concat org-roam-directory "data/"))
 
 ;; Ignore org default template
 (set-file-template! "\\.org$" :ignore t)
@@ -540,30 +520,9 @@ yaml
 (setq org-structure-template-alist
       '(("e" . "src emacs-lisp")
         ("p" . "src python")))
-
-;; Easier Org Buffer
-(evil-define-command evil-buffer-org-new (count file)
-  "Creates a new ORG buffer replacing the current window, optionally
-   editing a certain FILE"
-  :repeat nil
-  (interactive "P<f>")
-  (if file
-      (evil-edit file)
-    (let ((buffer (generate-new-buffer "*new org*")))
-      (set-window-buffer nil buffer)
-      (with-current-buffer buffer
-        (org-mode)))))
-(map! :leader
-      (:prefix "b"
-       :desc "New empty ORG buffer" "o" #'evil-buffer-org-new))
 #+end_src
 
 **** Visuals
-***** Remove visual hooks
-#+begin_src emacs-lisp
-;(remove-hook 'org-mode-hook #'org-fancy-priorities-mode)
-#+end_src
-
 ***** Font Display
 ****** Org Defaults
 #+begin_src emacs-lisp
@@ -603,6 +562,7 @@ yaml
 ****** Show /empahsis/ markers on cursor
 #+begin_src emacs-lisp
 (use-package! org-appear
+  :after org-mode
   :hook (org-mode . org-appear-mode)
   :config
   (setq org-hide-emphasis-markers t)
@@ -667,7 +627,7 @@ yaml
 #+end_src
 
 **** LSP Mode
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (cl-defmacro lsp-org-babel-enable (lang)
   "Support LANG in org source code block."
   (setq centaur-lsp 'lsp-mode)
@@ -713,7 +673,7 @@ yaml
 #+end_src
 
 **** =org-babel= languages
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
@@ -737,6 +697,7 @@ yaml
 *** Bibtex
 #+begin_src emacs-lisp
 (use-package! bibtex-completion
+  :defer
   :config
   (setq bibtex-completion-notes-path   "~/git/phd/notes/"
         bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
@@ -773,9 +734,13 @@ yaml
 *** Org-Roam
 **** Basic Config
 #+begin_src emacs-lisp
-(setq org-roam-directory        "~/git/phd/notes/")
-(setq org-roam-db-update-method 'immediate)
-(add-hook! 'org-roam-mode-hook #'org-roam-db-build-cache)
+(after! org-roam
+  (setq org-roam-directory        "~/git/phd/notes/"
+        org-roam-db-update-method 'immediate
+        +org-roam-open-buffer-on-find-file nil
+        org-roam-buffer-width 0.25)
+  (set-company-backend! 'org-mode 'company-capf)
+  (add-hook! 'org-roam-mode-hook #'org-roam-db-build-cache))
 #+end_src
 
 **** Org Roam Bibtex
@@ -809,7 +774,12 @@ yaml
 *** Org Noter
 #+begin_src emacs-lisp
 (after! org-noter
-  (setq org-noter-notes-search-path (list "~/git/phd/notes/")))
+  (setq org-noter-always-create-frame t
+        org-noter-doc-split-fraction '(0.65 . 0.35)
+        org-noter-separate-notes-from-heading t
+        org-noter-auto-save-last-location t
+        org-noter-doc-property-in-notes t
+        org-noter-notes-search-path (list "~/git/phd/notes/")))
 #+end_src
 
 *** Export
@@ -827,31 +797,6 @@ yaml
 *** Zen-mode
 #+begin_src emacs-lisp
 (setq +zen-text-scale 0.25)
-(after! writeroom-mode
-  (add-hook 'writeroom-mode-hook
-            (defun +zen-cleaner-org ()
-              (when (and (eq major-mode 'org-mode) writeroom-mode)
-                (setq-local -display-line-numbers display-line-numbers
-                            display-line-numbers nil)
-                (setq-local -org-indent-mode org-indent-mode)
-                (org-indent-mode -1)
-                (when (featurep 'org-superstar)
-                  (setq-local -org-superstar-headline-bullets-list org-superstar-headline-bullets-list
-                              ;; org-superstar-headline-bullets-list '("🙐" "🙑" "🙒" "🙓" "🙔" "🙕" "🙖" "🙗")
-                              org-superstar-headline-bullets-list '("🙘" "🙙" "🙚" "🙛")
-                              -org-superstar-remove-leading-stars org-superstar-remove-leading-stars
-                              org-superstar-remove-leading-stars t)
-                  (org-superstar-restart)))))
-  (add-hook 'writeroom-mode-disable-hook
-            (defun +zen-dirty-org ()
-              (when (eq major-mode 'org-mode)
-                (setq-local display-line-numbers -display-line-numbers)
-                (when -org-indent-mode
-                  (org-indent-mode 1))
-                (when (featurep 'org-superstar)
-                  (setq-local org-superstar-headline-bullets-list -org-superstar-headline-bullets-list
-                              org-superstar-remove-leading-stars -org-superstar-remove-leading-stars)
-                  (org-superstar-restart))))))
 #+end_src
 
 ** Applications

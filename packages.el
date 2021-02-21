@@ -7,6 +7,8 @@
 (package! poet-theme)
 (package! spacemacs-theme)
 
+(package! helm-bibtex)
+
 (unpin! org-mode)
 
 (package! org-pretty-table-mode
@@ -19,13 +21,9 @@
   :recipe (:host github
            :repo "awth13/org-appear"))
 
-(package! helm-bibtex)
-
 (package! org-download
   :recipe (:host github
             :repo "abo-abo/org-download"))
-
-(package! helm-org-rifle)
 
 (package! org-noter)
 
@@ -36,6 +34,11 @@
            :repo "fuxialexander/org-pdftools"))
 
 (package! org-ref)
+
+(package! org-roam-sbl-show-broken-links
+  :recipe (:host github
+           :repo "twitchy-ears/org-roam-sbl-show-broken-links"
+           :branch "main"))
 
 (package! org-roam-bibtex)
 

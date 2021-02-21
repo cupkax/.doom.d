@@ -5,15 +5,13 @@
   +childframe)
  (ivy
   +prescient
-  +icons
-  +fuzzy)
+  +icons)
 
  :ui
- deft
  doom
  doom-dashboard
- (emoji
-  +unicode)
+ ;(emoji
+ ; +unicode)
  hl-todo
  hydra
  (ligatures
@@ -32,9 +30,11 @@
  :editor
  (evil
   +everywhere)
+ file-templates
  fold
  (format
   +onsave)
+ parinfer
  multiple-cursors
  rotate-text
  snippets
@@ -80,14 +80,14 @@
  (org
   +dragndrop
   +gnuplot
-  +hugo
   +noter
   +pandoc
   +pretty
   +roam)
  (python
   +lsp
-  +pyright)
+  +pyright
+  +poetry)
  (sh
   +powershell)
  yaml
