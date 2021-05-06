@@ -2,16 +2,17 @@
 (doom!
  :completion
  (company
-  +childframe)
+  +tng)
  (ivy
   +prescient
   +icons)
 
  :ui
- doom
+ ;deft
+ ;doom
  doom-dashboard
  hl-todo
- hydra
+ ;hydra
  (ligatures
   +extra)
  modeline
@@ -22,26 +23,24 @@
  unicode
  (window-select
   +numbers)
- workspaces
  zen
 
  :editor
  (evil
   +everywhere)
- file-templates
  fold
- (format
-  +onsave)
- ;parinfer
+ format
  multiple-cursors
  rotate-text
  snippets
-                                         ;word-wrap  ; Disabled for performance
+ word-wrap
 
  :emacs
  (dired
   +icons)
  electric
+ (ibuffer
+  +icons)
  undo
  vc
 
@@ -51,10 +50,13 @@
  :checkers
  (syntax
   +childframe)
- (:if (executable-find "aspell") spell)
- grammar
+ (spell
+  +enchant
+  +flyspell)
+ ;grammar
 
  :tools
+ ;debugger
  (eval
   +overlay)
  (lookup
@@ -63,8 +65,7 @@
   +offline)
  (lsp
   +peek)
- (magit
-  +forge)
+ magit
  pdf
  rgb
 
@@ -74,18 +75,16 @@
  :lang
  data
  emacs-lisp
- markdown
+ (markdown
+  +grip)
  (org
   +dragndrop
-  +gnuplot
-  +noter
   +pandoc
   +pretty
   +roam)
  (python
   +lsp
-  +pyright
-  +poetry)
+  +pyright)
  (sh
   +powershell)
 
@@ -98,5 +97,5 @@
  :config
  (default
    +bindings
-   +smartparens)
- )
+   +smartparens))
+(load! "+init")
