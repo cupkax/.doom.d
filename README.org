@@ -120,7 +120,7 @@
 #+name: doom-completion
 #+begin_src emacs-lisp
 (company
- +tng)
+ +childframe)
 (ivy
  +prescient
  +icons)
@@ -129,7 +129,7 @@
 **** doom-ui
 #+name: doom-ui
 #+begin_src emacs-lisp
-;deft
+deft
 ;doom
 doom-dashboard
 hl-todo
@@ -137,6 +137,7 @@ hl-todo
 (ligatures
  +extra)
 modeline
+;nav-flash
 ophints
 (popup
  +all
@@ -144,6 +145,7 @@ ophints
 unicode
 (window-select
  +numbers)
+;workspaces
 zen
 #+end_src
 
@@ -154,8 +156,8 @@ zen
  +everywhere)
 fold
 format
-multiple-cursors
-rotate-text
+;multiple-cursors
+;rotate-text
 snippets
 word-wrap
 #+end_src
@@ -168,7 +170,8 @@ word-wrap
 electric
 (ibuffer
  +icons)
-undo
+(undo
+ +tree)
 vc
 #+end_src
 
@@ -205,8 +208,7 @@ rgb
 #+begin_src emacs-lisp
 data
 emacs-lisp
-(markdown
- +grip)
+markdown
 (org
  +dragndrop
  +pandoc
@@ -215,8 +217,7 @@ emacs-lisp
 (python
  +lsp
  +pyright)
-(sh
- +powershell)
+sh
 #+end_src
 
 **** doom-config
@@ -251,12 +252,6 @@ emacs-lisp
 (package! all-the-icons-dired)
 #+end_src
 
-**** Tables
-#+begin_src emacs-lisp
-(package! org-pretty-table
-  :recipe (:host github :repo "Fuco1/org-pretty-table"))
-#+end_src
-
 **** Theme
 ***** Theme-Changer
 #+begin_src emacs-lisp
@@ -266,7 +261,6 @@ emacs-lisp
 ***** Theme packages
 #+begin_src emacs-lisp
 (unpin! doom-themes)
-;(package! doom-themes)
 (package! poet-theme)
 (package! spacemacs-theme
   :recipe (:local-repo "lisp/spacemacs-theme")
@@ -284,11 +278,6 @@ emacs-lisp
 **** Base Package
 #+begin_src emacs-lisp
 (unpin! org-mode)
-#+end_src
-
-**** Org-Chef
-#+begin_src emacs-lisp
-(package! org-chef)
 #+end_src
 
 **** Visuals
@@ -322,12 +311,12 @@ emacs-lisp
 #+end_src
 
 **** Org Capture
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (package! doct)
 #+end_src
 
 **** Org Download
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! org-download
   :recipe (:host github
            :repo "abo-abo/org-download"))
@@ -342,7 +331,7 @@ emacs-lisp
 #+end_src
 
 **** Org-ql
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! org-ql)
 (package! helm-org-ql)
 #+end_src
@@ -364,7 +353,7 @@ emacs-lisp
 #+end_src
 
 **** Org Super Agenda
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (package! org-super-agenda)
 #+end_src
 
@@ -409,6 +398,7 @@ emacs-lisp
       undo-limit 80000000
       evil-want-fine-undo t
       auto-save-default t
+      truncate-string-ellipsis "…"
       global-subword-mode 1)
 (setq-default delete-by-moving-to-trash t
               tab-width 4
@@ -573,7 +563,7 @@ emacs-lisp
 
 ** Navigation
 *** Deft
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (use-package deft
       :after org
       :config
@@ -966,7 +956,7 @@ appropriate.  In tables, insert a new row or end the table."
 #+end_src
 
 ***** Tables
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package! org-pretty-table
   :commands (org-pretty-table-mode global-org-pretty-table-mode))
 #+end_src
@@ -1247,7 +1237,7 @@ Not added when either:
 (after! writeroom-mode
   (defvar-local +zen--original-org-indent-mode-p nil)
   (defvar-local +zen--original-mixed-pitch-mode-p nil)
-  (defvar-local +zen--original-org-pretty-table-mode-p nil)
+  ;(defvar-local +zen--original-org-pretty-table-mode-p nil)
   (defun +zen-enable-mixed-pitch-mode-h ()
     "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
     (when (apply #'derived-mode-p +zen-mixed-pitch-modes)
@@ -1269,10 +1259,10 @@ Not added when either:
                 (add-hook! 'org-mode-hook 'adaptive-wrap-prefix-mode 'turn-off-auto-fill)
                 ;(add-hook! 'org-mode-hook 'visual-fill-column-mode)
                 (setq
-                 +zen--original-org-indent-mode-p org-indent-mode
-                 +zen--original-org-pretty-table-mode-p (bound-and-true-p org-pretty-table-mode))
-                (org-indent-mode -1)
-                (org-pretty-table-mode 1))))
+                 +zen--original-org-indent-mode-p org-indent-mode)
+                 ;+zen--original-org-pretty-table-mode-p (bound-and-true-p org-pretty-table-mode))
+                (org-indent-mode -1))))
+                ;(org-pretty-table-mode 1))))
   (add-hook 'writeroom-mode-disable-hook
             (defun +zen-nonprose-org-h ()
               "Reverse the effect of `+zen-prose-org'."

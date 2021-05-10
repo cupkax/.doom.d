@@ -2,13 +2,13 @@
 (doom!
  :completion
  (company
-  +tng)
+  +childframe)
  (ivy
   +prescient
   +icons)
 
  :ui
- ;deft
+ deft
  ;doom
  doom-dashboard
  hl-todo
@@ -16,6 +16,7 @@
  (ligatures
   +extra)
  modeline
+ ;nav-flash
  ophints
  (popup
   +all
@@ -23,6 +24,7 @@
  unicode
  (window-select
   +numbers)
+ ;workspaces
  zen
 
  :editor
@@ -30,8 +32,8 @@
   +everywhere)
  fold
  format
- multiple-cursors
- rotate-text
+ ;multiple-cursors
+ ;rotate-text
  snippets
  word-wrap
 
@@ -41,7 +43,8 @@
  electric
  (ibuffer
   +icons)
- undo
+ (undo
+  +tree)
  vc
 
  :term
@@ -75,8 +78,7 @@
  :lang
  data
  emacs-lisp
- (markdown
-  +grip)
+ markdown
  (org
   +dragndrop
   +pandoc
@@ -85,8 +87,7 @@
  (python
   +lsp
   +pyright)
- (sh
-  +powershell)
+ sh
 
  :email
  

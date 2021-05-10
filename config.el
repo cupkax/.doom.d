@@ -9,6 +9,7 @@
       undo-limit 80000000
       evil-want-fine-undo t
       auto-save-default t
+      truncate-string-ellipsis "…"
       global-subword-mode 1)
 (setq-default delete-by-moving-to-trash t
               tab-width 4
@@ -112,6 +113,16 @@
    '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . "◃\\1"))
    ))
 ;; Replace =evil= with unicode:1 ends here
+
+;; [[file:README.org::*Deft][Deft:1]]
+(use-package deft
+      :after org
+      :config
+      (setq deft-recursive t)
+      (setq deft-use-filter-string-for-filename t)
+      (setq deft-default-extension "org")
+      (setq deft-directory "~/git/org/"))
+;; Deft:1 ends here
 
 ;; [[file:README.org::*Ivy][Ivy:1]]
 (setq ivy-read-action-function #'ivy-hydra-read-action
@@ -474,11 +485,6 @@ appropriate.  In tables, insert a new row or end the table."
  :i [return] #'unpackaged/org-return-dwim)
 ;; Org Return:1 ends here
 
-;; [[file:README.org::*Tables][Tables:1]]
-(use-package! org-pretty-table
-  :commands (org-pretty-table-mode global-org-pretty-table-mode))
-;; Tables:1 ends here
-
 ;; [[file:README.org::*LSP Mode][LSP Mode:1]]
 (cl-defmacro lsp-org-babel-enable (lang)
   "Support LANG in org source code block."
@@ -696,7 +702,7 @@ Not added when either:
 (after! writeroom-mode
   (defvar-local +zen--original-org-indent-mode-p nil)
   (defvar-local +zen--original-mixed-pitch-mode-p nil)
-  (defvar-local +zen--original-org-pretty-table-mode-p nil)
+  ;(defvar-local +zen--original-org-pretty-table-mode-p nil)
   (defun +zen-enable-mixed-pitch-mode-h ()
     "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
     (when (apply #'derived-mode-p +zen-mixed-pitch-modes)
@@ -718,10 +724,10 @@ Not added when either:
                 (add-hook! 'org-mode-hook 'adaptive-wrap-prefix-mode 'turn-off-auto-fill)
                 ;(add-hook! 'org-mode-hook 'visual-fill-column-mode)
                 (setq
-                 +zen--original-org-indent-mode-p org-indent-mode
-                 +zen--original-org-pretty-table-mode-p (bound-and-true-p org-pretty-table-mode))
-                (org-indent-mode -1)
-                (org-pretty-table-mode 1))))
+                 +zen--original-org-indent-mode-p org-indent-mode)
+                 ;+zen--original-org-pretty-table-mode-p (bound-and-true-p org-pretty-table-mode))
+                (org-indent-mode -1))))
+                ;(org-pretty-table-mode 1))))
   (add-hook 'writeroom-mode-disable-hook
             (defun +zen-nonprose-org-h ()
               "Reverse the effect of `+zen-prose-org'."

@@ -4,13 +4,9 @@
 
 (package! all-the-icons-dired)
 
-(package! org-pretty-table
-  :recipe (:host github :repo "Fuco1/org-pretty-table"))
-
 (package! circadian)
 
 (unpin! doom-themes)
-;(package! doom-themes)
 (package! poet-theme)
 (package! spacemacs-theme
   :recipe (:local-repo "lisp/spacemacs-theme")
@@ -22,28 +18,23 @@
 
 (unpin! org-mode)
 
-(package! org-chef)
-
 (package! org-appear
   :recipe (:host github
            :repo "awth13/org-appear"))
 
 (package! helm-bibtex)
 
-(package! org-download
-  :recipe (:host github
-           :repo "abo-abo/org-download"))
+(package! doct)
 
 (package! org-pdftools
   :recipe (:host github
            :repo "fuxialexander/org-pdftools"))
 
-(package! org-ql)
-(package! helm-org-ql)
-
 (unpin! org-roam)
 
 (package! org-roam-bibtex)
+
+(package! org-super-agenda)
 
 (package! org-make-toc)
 
