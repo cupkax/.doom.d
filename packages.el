@@ -1,5 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 
+(unpin! deft)
+
 (package! flycheck-package)
 
 (package! all-the-icons-dired)
@@ -26,13 +28,7 @@
 
 (package! doct)
 
-(package! org-pdftools
-  :recipe (:host github
-           :repo "fuxialexander/org-pdftools"))
-
 (unpin! org-roam)
-
-(package! org-roam-bibtex)
 
 (package! org-super-agenda)
 
@@ -43,5 +39,3 @@
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"
            :files ("*.el" "filters" "preprocessors")))
-
-(package! with-shell-interpreter)

@@ -69,7 +69,7 @@
  (lsp
   +peek)
  magit
- pdf
+ ;pdf
  rgb
 
  :os
