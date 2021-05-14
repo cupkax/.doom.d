@@ -150,7 +150,8 @@ zen
 (evil
  +everywhere)
 fold
-format
+(format
+ +onsave)
 ;multiple-cursors
 ;rotate-text
 snippets
@@ -184,11 +185,9 @@ vc
 **** doom-tools
 #+name: doom-tools
 #+begin_src emacs-lisp
-;debugger
 (eval
  +overlay)
 (lookup
- +docsets
  +dictionary
  +offline)
 (lsp
@@ -209,9 +208,6 @@ markdown
  +pandoc
  +pretty
  +roam)
-(python
- +lsp
- +pyright)
 sh
 #+end_src
 
@@ -237,16 +233,11 @@ sh
 #+end_src
 
 *** Checker
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! flycheck-package)
 #+end_src
 
 *** Aesthetics
-**** Dired Icons
-#+begin_src emacs-lisp
-(package! all-the-icons-dired)
-#+end_src
-
 **** Theme
 ***** Theme-Changer
 #+begin_src emacs-lisp
@@ -870,20 +861,9 @@ sh
 
 *** Dictionary
 #+begin_src emacs-lisp
-(cond ((executable-find "enchant-2")  (setq-default ispell-program-name "enchant-2"))
-      ((executable-find "hunspell")   (progn (setq-default ispell-program-name "hunspell") (setq ispell-really-hunspell t)))
-      ((executable-find "aspell")     (setq-default ispell-program-name "aspell")))
-(setenv
-  "DICPATH"
-  (concat (getenv "HOME") "/Library/Spelling"))
-(setenv "LANG" "en-custom")
 (setq ispell-dictionary "en-custom")
-;(setq company-ispell-dictionary "en-custom")
-;(setq ispell-alternate-dictionary "en-custom")
 (setq ispell-local-dictionary-alist
       '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
-;(setq ispell-alternate-dictionary
-;     '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
 #+end_src
 
 ** Exit
