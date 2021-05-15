@@ -64,7 +64,6 @@
 (setq comp-async-jobs-number (string-to-number
                               (shell-command-to-string "nproc")))
 #+end_src
-
 *** =init.el=
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
@@ -177,9 +176,9 @@ vc
 (syntax
  +childframe)
 (spell
- +enchant
+ +hunspell
  +flyspell)
-;grammar
+grammar
 #+end_src
 
 **** doom-tools
@@ -218,7 +217,6 @@ sh
   +bindings
   +smartparens)
 #+end_src
-
 ** =package.el=
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle "packages.el" :comments no
@@ -231,12 +229,16 @@ sh
 #+begin_src emacs-lisp
 (unpin! deft)
 #+end_src
-
 *** Checker
+**** Spelling
 #+begin_src emacs-lisp :tangle no
 (package! flycheck-package)
 #+end_src
-
+**** Grammar
+#+begin_src emacs-lisp
+(unpin! langtool)
+(unpin! writegood-mode)
+#+end_src
 *** Aesthetics
 **** Theme
 ***** Theme-Changer
@@ -256,7 +258,6 @@ sh
   :recipe (:local-repo "lisp/mixed-pitch")
   :pin nil)
 #+end_src
-
 *** Org
 **** Base Package
 #+begin_src emacs-lisp
@@ -324,13 +325,11 @@ sh
            :files ("*.el" "filters" "preprocessors")))
 
 #+end_src
-
 * Doom Config
 ** Lexical Bindings
 #+begin_src emacs-lisp
 ;;; config.el -*- lexical-binding: t; -*-
 #+end_src
-
 ** Startup
 *** Better Defaults
 #+begin_src emacs-lisp
@@ -369,12 +368,11 @@ sh
 
 (add-hook 'find-file-hook 'cpkx/fuckoff-macwin)
 #+end_src
-
 ** Visual Settings
 *** Fonts
 #+begin_src emacs-lisp
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
-      doom-variable-pitch-font (font-spec :family "Overpass"                :size 24)
+      doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"                :size 24)
       doom-unicode-font        (font-spec :family "JuliaMono"               :size 16)
       doom-serif-font          (font-spec :family "IBM Plex Mono"   :weight 'light))
 #+end_src
@@ -429,7 +427,6 @@ sh
 #+begin_src emacs-lisp
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
 #+end_src
-
 ** Keybindings
 *** General
 **** Auto-unbind
@@ -469,7 +466,6 @@ sh
    '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . "◃\\1"))
    ))
 #+end_src
-
 ** Navigation
 *** Deft
 #+begin_src emacs-lisp
@@ -487,7 +483,6 @@ sh
 (setq ivy-read-action-function #'ivy-hydra-read-action
       ivy-sort-max-size 50000)
 #+end_src
-
 ** Buffer, Frame and Window Configuration
 *** Window Config
 **** Window Navigation
@@ -509,7 +504,6 @@ sh
   (+ivy/switch-buffer))
 (setq +ivy-buffer-preview t)
 #+end_src
-
 ** Productivity
 *** Company mode
 #+begin_src emacs-lisp
@@ -520,35 +514,39 @@ sh
   (add-hook 'evil-normal-state-entry-hook #'company-abort))
 (setq-default history-length 1000)
 (setq-default prescient-history-length 1000)
-;(set-company-backend!
-;  '(text-mode
-;    markdown-mode
-;    gfm-mode)
-;  '(:seperate
-;    company-ispell
-;    company-files
-;    company-yasnippet))
-;(set-company-backend! 'org-mode '(company-yasnippet company-capf company-files company-elisp))
-;(set-company-backend! 'emacs-lisp-mode '(company-yasnippet company-elisp))
+(set-company-backend!
+  '(text-mode
+    markdown-mode
+    gfm-mode)
+  '(:seperate
+    company-ispell
+    company-files
+    company-yasnippet))
+(set-company-backend! 'org-mode '(company-yasnippet company-capf company-files company-elisp))
 ;(add-to-list 'company-backends '(company-capf company-files company-yasnippet company-semantic company-bbdb company-cmake company-keywords))
 #+end_src
-
 ** Org Mode
 *** Basic Config
 **** Defaults
 #+begin_src emacs-lisp
 (setq org-directory "~/git/org/"
       org-startup-folded 'overview
+      org-startup-with-inline-images t
       org-use-property-inheritance t
       org-log-done 'time
       org-list-allow-alphabetical t
       org-export-in-background t
       org-export-with-sub-superscripts '{}        ; don't treat lone _ / ^ as sub/superscripts, require _{} / ^{}
       org-catch-invisible-edits 'smart
-      org-cycle-separator-lines  0)
+      org-adapt-indentation nil
+      org-indent-mode nil
+      org-indent-indentation-per-level 1
+      org-blank-before-new-entry '((heading . nil)
+                                   (plain-list-item . nil))
+      org-cycle-separator-lines 1)
 
 ;; Ignore org default template
-(set-file-template! "\\.org$" :ignore t)
+;(set-file-template! "\\.org$" :ignore t)
 
 ;; Org block templates
 (setq org-structure-template-alist
@@ -564,6 +562,11 @@ sh
 #+end_src
 
 **** Visuals
+***** Initial Hooks
+#+begin_src emacs-lisp
+(add-hook! 'org-mode-hook #'auto-fill-mode)
+#+end_src
+
 ***** Font Display
 ****** Org Defaults
 #+begin_src emacs-lisp
@@ -677,7 +680,6 @@ sh
   :around #'org-superstar-mode
   (ignore-errors (apply orig-fn args)))
 #+end_src
-
 *** Bibtex
 #+begin_src emacs-lisp
 (use-package! bibtex-completion
@@ -703,7 +705,6 @@ sh
          ":URL: ${url}\n"
          ":END:\n\n")))
 #+end_src
-
 *** TODO Org Capture
 #+begin_src emacs-lisp :noweb no-export
 (use-package! doct
@@ -737,7 +738,6 @@ sh
                               "%i"))
                   ))))
 #+end_src
-
 *** Org-Roam
 #+begin_src emacs-lisp
 (after! org-roam
@@ -754,7 +754,6 @@ sh
   (when (y-or-n-p "Add tags? ")
     (insert (format "%s" "\n#+roam_tags: ")))))
 #+end_src
-
 *** Pandoc
 **** Org-Pandoc
 #+begin_src emacs-lisp
@@ -770,7 +769,6 @@ sh
 (use-package! org-pandoc-import
   :after org)
 #+end_src
-
 *** Misc
 **** Convert UPPERCASE KEYWORDS to lowercase keywords
 #+begin_src emacs-lisp
@@ -787,7 +785,6 @@ sh
           (setq count (1+ count))))
       (message "Replaced %d occurances" count))))
 #+end_src
-
 ** Writing
 *** Mixed Pitch Mode
 #+begin_src emacs-lisp
@@ -816,16 +813,13 @@ sh
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
 ;(add-hook! 'text-mode-hook #'mixed-pitch-mode)
 #+end_src
-
 *** Zen
 #+begin_src emacs-lisp
 (setq +zen-text-scale 0.25)
 (defvar +zen-serif-p t
   "Whether to use a serifed font with `mixed-pitch-mode'.")
 (after! writeroom-mode
-  (defvar-local +zen--original-org-indent-mode-p nil)
   (defvar-local +zen--original-mixed-pitch-mode-p nil)
-  ;(defvar-local +zen--original-org-pretty-table-mode-p nil)
   (defun +zen-enable-mixed-pitch-mode-h ()
     "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
     (when (apply #'derived-mode-p +zen-mixed-pitch-modes)
@@ -835,37 +829,23 @@ sh
             (funcall (if +zen-serif-p #'mixed-pitch-serif-mode #'mixed-pitch-mode) 1))
         (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1)))))
   (pushnew! writeroom--local-variables
-            'visual-fill-column-width
-            'org-adapt-indentation)
+            'visual-fill-column-width)
   (add-hook 'writeroom-mode-enable-hook
             (defun +zen-prose-org-h ()
               "Reformat the current Org buffer appearance for prose."
               (when (eq major-mode 'org-mode)
-                (setq visual-fill-column-width 80
-                      org-adapt-indentation nil
-                      adaptive-wrap-prefix-mode 1)
-                (add-hook! 'org-mode-hook 'adaptive-wrap-prefix-mode 'turn-off-auto-fill)
-                ;(add-hook! 'org-mode-hook 'visual-fill-column-mode)
-                (setq
-                 +zen--original-org-indent-mode-p org-indent-mode)
-                 ;+zen--original-org-pretty-table-mode-p (bound-and-true-p org-pretty-table-mode))
-                (org-indent-mode -1))))
-                ;(org-pretty-table-mode 1))))
-  (add-hook 'writeroom-mode-disable-hook
-            (defun +zen-nonprose-org-h ()
-              "Reverse the effect of `+zen-prose-org'."
-              (when (eq major-mode 'org-mode)
-                (when +zen--original-org-indent-mode-p (org-indent-mode 1))
-                ))))
+                (setq visual-fill-column-width 80)))))
 #+end_src
-
 *** Dictionary
 #+begin_src emacs-lisp
-(setq ispell-dictionary "en-custom")
-(setq ispell-local-dictionary-alist
-      '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+(setq spell-program-name "hunspell"
+      ispell-really-hunspell t)
+      (setenv "DICTIONARY" "english")
+(setq ispell-dictionary "english"
+      ispell-local-dictionary-alist
+      '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
+      ispell-extra-args '("--sug-mode=ultra"))
 #+end_src
-
 ** Exit
 *** Sync org files to dropbox
 #+begin_src emacs-lisp
