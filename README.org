@@ -63,6 +63,7 @@
 
 (setq comp-async-jobs-number (string-to-number
                               (shell-command-to-string "nproc")))
+(setq evil-respect-visual-line-mode t)
 #+end_src
 *** =init.el=
 :PROPERTIES:
@@ -162,7 +163,7 @@ word-wrap
 #+begin_src emacs-lisp
 (dired
  +icons)
-electric
+;electric
 (ibuffer
  +icons)
 (undo
@@ -177,7 +178,8 @@ vc
  +childframe)
 (spell
  +hunspell
- +flyspell)
+ +everywhere)
+; +flyspell)
 grammar
 #+end_src
 
@@ -192,7 +194,7 @@ grammar
 (lsp
  +peek)
 magit
-;pdf
+pdf
 rgb
 #+end_src
 
@@ -234,12 +236,22 @@ sh
 #+begin_src emacs-lisp :tangle no
 (package! flycheck-package)
 #+end_src
+***** Lexic
+#+begin_src emacs-lisp
+(package! lexic
+  :recipe (:host github
+           :repo "tecosaur/lexic"))
+#+end_src
 **** Grammar
 #+begin_src emacs-lisp
 (unpin! langtool)
 (unpin! writegood-mode)
 #+end_src
 *** Aesthetics
+**** Indent
+#+begin_src emacs-lisp
+(package! aggressive-indent)
+#+end_src
 **** Theme
 ***** Theme-Changer
 #+begin_src emacs-lisp
@@ -251,19 +263,21 @@ sh
 (unpin! doom-themes)
 (package! poet-theme)
 #+end_src
-
 **** Mixed-Pitch
 #+begin_src emacs-lisp
 (package! mixed-pitch
   :recipe (:local-repo "lisp/mixed-pitch")
   :pin nil)
 #+end_src
+**** Align
+#+begin_src emacs-lisp
+(package! valign)
+#+end_src
 *** Org
 **** Base Package
 #+begin_src emacs-lisp
 (unpin! org-mode)
 #+end_src
-
 **** Visuals
 ***** Tags
 #+begin_src emacs-lisp
@@ -276,24 +290,20 @@ sh
   :recipe (:host github
            :repo "awth13/org-appear"))
 #+end_src
-
 **** Ivy/Helm Bibtex
 #+begin_src emacs-lisp
 (package! helm-bibtex)
 #+end_src
-
 **** Org Capture
 #+begin_src emacs-lisp
 (package! doct)
 #+end_src
-
 **** Org Download
 #+begin_src emacs-lisp :tangle no
 (package! org-download
   :recipe (:host github
            :repo "abo-abo/org-download"))
 #+end_src
-
 
 **** Org Roam
 ***** Org-Roam package
@@ -305,17 +315,14 @@ sh
 #+begin_src emacs-lisp :tangle no
 (package! org-roam-bibtex)
 #+end_src
-
 **** Org Super Agenda
 #+begin_src emacs-lisp
 (package! org-super-agenda)
 #+end_src
-
 **** Org TOC
 #+begin_src emacs-lisp
 (package! org-make-toc)
 #+end_src
-
 **** Org Pandoc
 #+begin_src emacs-lisp
 (package! ox-pandoc)
@@ -331,31 +338,41 @@ sh
 ;;; config.el -*- lexical-binding: t; -*-
 #+end_src
 ** Startup
+*** Identity
+#+begin_src emacs-lisp
+(setq user-full-name    "cupkax"
+      user-mail-address "vedantsansare23@gmail.com")
+#+end_src
 *** Better Defaults
 #+begin_src emacs-lisp
+(setq disabled-command-function nil)
+(setq enable-local-eval t)
 (global-auto-revert-mode 1)
 (whitespace-mode -1)
 (setq inhibit-compacting-font-caches t
       undo-limit 80000000
       load-prefer-newer t
       evil-want-fine-undo t
-      auto-save-default t
-      ;truncate-string-ellipsis "…"
-      global-subword-mode 1)
-(setq-default delete-by-moving-to-trash t
-              tab-width 4
-              uniquify-buffer-name-style 'forward
-              window-combination-resize t
-              x-stretch-cursor nil)
+      truncate-lines t
+      global-subword-mode 1
+      delete-by-moving-to-trash t
+      tab-width 4
+      indent-tabs-mode nil
+      uniquify-buffer-name-style 'forward
+      window-combination-resize t
+      x-stretch-cursor nil
+      scroll-margin 3
+      scroll-conservatively 1000
+      scroll-up-aggressively 0.001
+      scroll-down-aggressively 0.001
+      scroll-preserve-screen-position 'always)
 #+end_src
-
 *** =custom.el=
 #+begin_src emacs-lisp
 (setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
 #+end_src
-
 *** =utf-8-unix= System
 #+begin_src emacs-lisp
 (prefer-coding-system 'utf-8-unix)
@@ -372,21 +389,22 @@ sh
 *** Fonts
 #+begin_src emacs-lisp
 (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
-      doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"                :size 24)
+      doom-variable-pitch-font (font-spec :family "Overpass"                :size 24)
       doom-unicode-font        (font-spec :family "JuliaMono"               :size 16)
       doom-serif-font          (font-spec :family "IBM Plex Mono"   :weight 'light))
 #+end_src
-
 *** Theme
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-nord)
-;(use-package circadian
-;  :config
-;  (setq circadian-themes '(("6:00"  . doom-nord)
-;                           ("18:30" . doom-dracula)))
-;  (circadian-setup))
-#+end_src
+(setq doom-theme 'doom-vibrant)
+                                        ;(use-package circadian
+                                        ;  :config
+                                        ;  (setq circadian-themes '(("6:00"  . doom-nord)
+                                        ;                           ("18:30" . doom-dracula)))
+                                        ;  (circadian-setup))
 
+(setq doom-themes-enable-bold t
+      doom-themes-enable-italic t)
+#+end_src
 *** Modeline
 **** Change red text
 #+begin_src emacs-lisp
@@ -416,13 +434,11 @@ sh
 
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
 #+end_src
-
 *** Lines
 **** Line Numbers
 #+begin_src emacs-lisp
 (setq display-line-numbers-type nil)
 #+end_src
-
 **** HL-Mode
 #+begin_src emacs-lisp
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
@@ -433,23 +449,24 @@ sh
 #+begin_src emacs-lisp
 (general-auto-unbind-keys)
 #+end_src
-
 *** Evil
 **** Move beyond eol
 #+begin_src emacs-lisp
-(setq evil-move-beyond-eol t)
-#+end_src
+(setq evil-move-beyond-eol t
+      evil-move-cursor-back nil
+      evil-kill-on-visual-paste nil
+      evil-visual-region-expanded t)
 
+(defalias #'forward-evil-word #'forward-evil-symbol)
+#+end_src
 **** Global Substitute
 #+begin_src emacs-lisp
 (setq evil-ex-substitute-global t)
 #+end_src
-
 *** Change local leader
 #+begin_src emacs-lisp
 (setq doom-localleader-key ",")
 #+end_src
-
 *** Which-key
 **** Key delay
 #+begin_src emacs-lisp
@@ -470,14 +487,23 @@ sh
 *** Deft
 #+begin_src emacs-lisp
 (use-package deft
-      :after org
-      :config
-      (setq deft-recursive t)
-      (setq deft-use-filter-string-for-filename t)
-      (setq deft-default-extension "org")
-      (setq deft-directory "~/git/org/"))
+  :after org
+  :config
+  (setq deft-recursive t)
+  deft-use-filter-string-for-filename t
+  deft-default-extension "org"
+  deft-directory "~/git/org/"
+  deft-strip-summary-regexp (concat "\\("
+                                    "[\n\t]"                    ;; blank
+                                    "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
+                                    "\\)")
+  deft-time-format "  %A, %B %e %Y (%H:%M)")
+(add-hook! 'deft-mode-hook
+  (defun my-deft-buffer-config-h ()
+    (hl-line-mode 1)
+    (setq-local evil-normal-state-cursor (list nil)
+                evil-insert-state-cursor (list nil))))
 #+end_src
-
 *** Ivy
 #+begin_src emacs-lisp
 (setq ivy-read-action-function #'ivy-hydra-read-action
@@ -504,26 +530,176 @@ sh
   (+ivy/switch-buffer))
 (setq +ivy-buffer-preview t)
 #+end_src
+*** Frame Config
+**** Remember frame dimensions
+#+begin_src emacs-lisp
+;;;###autoload
+(defun my-save-frame-dimensions-h ()
+  "Caches the current frame dimensions and position."
+  (if-let ((main-frame (car-safe (visible-frame-list))))
+      (doom-store-put 'last-frame-size
+                      (list (frame-position main-frame)
+                            (frame-width main-frame)
+                            (frame-height main-frame)
+                            (frame-parameter main-frame 'fullscreen)))))
+;;;###autoload
+(defun my-restore-frame-dimensions-h ()
+  "Restore frame dimensions and position from `my-save-frame-dimensions-h'."
+  (if-let (dims (doom-store-get 'last-frame-size "default"))
+      (cl-destructuring-bind ((left . top) width height fullscreen) dims
+        (setq initial-frame-alist
+              (append initial-frame-alist
+                      `((left . ,left)
+                        (top . ,top)
+                        (width . ,width)
+                        (height . ,height)
+                        (fullscreen . ,fullscreen)))))
+    (add-to-list 'default-frame-alist '(height . 40))
+    (add-to-list 'default-frame-alist '(width . 140))))
+
+(add-hook 'kill-emacs-hook #'my-save-frame-dimensions-h)
+(my-restore-frame-dimensions-h)
+#+end_src
 ** Productivity
+*** Automatic Indentation
+#+begin_src emacs-lisp
+(use-package! aggressive-indent
+  :hook (emacs-lisp-mode . aggressive-indent-mode))
+#+end_src
 *** Company mode
+**** Autoloads
+***** Complete with Company
+#+begin_src emacs-lisp
+;;;###autoload
+(defun my-company-indent-or-complete-common (arg)
+  "Tab key action for current point.
+
+This function tries to insert a tab character, trigger a snippet or complete a
+word with company.
+
+The order for this selection is:
+
+- Org table
+- Yasnippet
+- Indent region
+- Indent line
+- Indent org-mode line
+- Indent org-mode headline
+- Indent org-mode item from a list
+- Indent markdown-mode line
+- Indent rst-mode line
+- Complete with company
+
+The action selection happens in this order and stops as soon as the first action
+works."
+  (interactive "P")
+  (if (org-table-p)
+      (orgtbl-tab arg)
+    (if (or (not yas-minor-mode)
+            (null (yas-expand)))
+        (cond ((use-region-p) (indent-region (region-beginning) (region-end)))
+              (t (let ((old-point (point))
+                       (old-tick (buffer-chars-modified-tick))
+                       (tab-always-indent t))
+                   (indent-for-tab-command arg)
+                   (when (and (eq old-point (point))
+                              (eq old-tick (buffer-chars-modified-tick)))
+                     (unless (pcase major-mode
+                               ('org-mode (or (org-indent-line)
+                                              (org-cycle-level)
+                                              (org-cycle-item-indentation)))
+                               ('markdown-mode (markdown-indent-line))
+                               ('rst-mode (rst-indent-line nil))
+                               (_ nil))
+                       (company-complete-common))))))
+      (company-abort))))
+#+end_src
+***** Complete when company popup is visible
+#+begin_src emacs-lisp
+;;;###autoload
+(defun my-completion-yasnippet-or-completion ()
+  "Tab key action when company popup is visible.
+
+This function tries to expand a snippet, complete a common prefix on a company
+completion, or move the company selction to the next item."
+  (interactive)
+  (if (or (not yas-minor-mode)
+          (null (yas-expand)))
+      (company-complete-common-or-cycle)
+    (company-abort)))
+#+end_src
+***** Complete on return
+#+begin_src emacs-lisp
+;;;###autoload
+(defun my-completion-complete-selection-or-return ()
+  "Return key action when company popup is visible.
+
+This function will select current company item if user already selected one, or
+insert a new line character."
+  (interactive)
+  (if company-selection
+      (company-complete-selection)
+    (company-abort)
+    (execute-kbd-macro (read-kbd-macro "<return>"))))
+#+end_src
+**** Company Config
 #+begin_src emacs-lisp
 (after! company
-  (setq company-idle-delay 0
-        company-minimum-prefix-length 2)
-  (setq company-show-numbers t)
+  (setq company-idle-delay nil
+        company-minimum-prefix-length 2
+        tab-always-indent 'complete
+        company-show-numbers t
+        company-box-doc-enable nil)
+  (setq company-frontends (delq 'company-pseudo-tooltip-frontend company-frontends))
+
   (add-hook 'evil-normal-state-entry-hook #'company-abort))
-(setq-default history-length 1000)
-(setq-default prescient-history-length 1000)
-(set-company-backend!
-  '(text-mode
-    markdown-mode
-    gfm-mode)
-  '(:seperate
-    company-ispell
-    company-files
-    company-yasnippet))
-(set-company-backend! 'org-mode '(company-yasnippet company-capf company-files company-elisp))
-;(add-to-list 'company-backends '(company-capf company-files company-yasnippet company-semantic company-bbdb company-cmake company-keywords))
+
+(setq-default history-length 1000
+              prescient-history-length 1000)
+
+
+; Company keymap
+(map! :after company
+      (:map global-map
+       :i [tab] #'my-company-indent-or-complete-common)
+      (:map company-active-map
+       :g [tab] #'my-completion-yasnippet-or-completion
+       :g [backtab] #'company-select-previous
+       :g [down] #'company-select-next
+       :g [up] #'company-select-previous
+       :g [return] #'my-completion-complete-selection-or-return
+       :g "C-S-j" #'company-next-page
+       :g "C-S-k" #'company-previous-page
+       :g "C-/" #'company-show-doc-buffer))
+#+end_src
+*** LSP
+#+begin_src emacs-lisp
+(use-package! lsp-ui
+  :defer t
+  :custom
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-doc-enable t))
+#+end_src
+*** Save all buffers
+#+begin_src emacs-lisp
+;;;###autoload
+(defadvice! my-save-all-buffers-a (&rest _)
+  "Advice to run `save-some-buffers' before a function.
+
+This is a part of the full auto-save feature."
+  :before (list #'save-buffers-kill-emacs #'my-tabs-close-buffer-tab)
+  (save-some-buffers t t))
+
+
+(setq auto-save-default t)
+(auto-save-visited-mode 1)
+(add-hook! 'auto-save-hook #'my-save-all-buffers-a)
+(add-function :after after-focus-change-function #'my-save-all-buffers-a)
+#+end_src
+*** Smartparens
+#+begin_src emacs-lisp
+(after! smartparens
+  (show-smartparens-global-mode 1))
 #+end_src
 ** Org Mode
 *** Basic Config
@@ -539,11 +715,10 @@ sh
       org-export-with-sub-superscripts '{}        ; don't treat lone _ / ^ as sub/superscripts, require _{} / ^{}
       org-catch-invisible-edits 'smart
       org-adapt-indentation nil
-      org-indent-mode nil
       org-indent-indentation-per-level 1
+      org-cycle-separator-lines 1
       org-blank-before-new-entry '((heading . nil)
-                                   (plain-list-item . nil))
-      org-cycle-separator-lines 1)
+                                   (plain-list-item . nil)))
 
 ;; Ignore org default template
 ;(set-file-template! "\\.org$" :ignore t)
@@ -560,20 +735,17 @@ sh
       :n "g <left>" #'org-up-element
       :n "g <right>" #'org-down-element)
 #+end_src
-
 **** Visuals
 ***** Initial Hooks
 #+begin_src emacs-lisp
 (add-hook! 'org-mode-hook #'auto-fill-mode)
 #+end_src
-
 ***** Font Display
 ****** Org Defaults
 #+begin_src emacs-lisp
 (setq org-fontify-quote-and-verse-blocks t
       org-hide-emphasis-markers t)
 #+end_src
-
 ****** Headings
 #+begin_src emacs-lisp
 (custom-set-faces!
@@ -590,12 +762,12 @@ sh
 (custom-set-faces!
   '(org-document-title :height 1.20))
 #+end_src
-
 ****** Show /empahsis/ markers
 #+begin_src emacs-lisp
 (use-package! org-appear
+  :defer t
   :hook (org-mode . org-appear-mode)
-  :config
+  :init
   (setq org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
@@ -610,7 +782,6 @@ sh
 
 (add-hook 'org-mode-hook #'locally-defer-font-lock)
 #+end_src
-
 ***** Symbols
 ****** Bullets / Endings
 #+begin_src emacs-lisp
@@ -636,7 +807,6 @@ sh
                                       ("*" . "+")
                                       ("1." . "a."))))
 #+end_src
-
 ****** Other Symbols
 #+begin_src emacs-lisp
 (appendq! +ligatures-extra-symbols
@@ -672,13 +842,20 @@ sh
   )
                                         ;(plist-put +ligatures-extra-symbols :name "⁍")
 #+end_src
-
 ****** Fix visual hooks
 #+begin_src emacs-lisp
 (defadvice! shut-up-org-problematic-hooks (orig-fn &rest args)
   :around #'org-fancy-priorities-mode
   :around #'org-superstar-mode
   (ignore-errors (apply orig-fn args)))
+#+end_src
+***** Align
+#+begin_src emacs-lisp
+(use-package! valign
+  :defer t
+  :init
+  (setq valign-fancy-bar t
+        valign-mode 1))
 #+end_src
 *** Bibtex
 #+begin_src emacs-lisp
@@ -815,7 +992,9 @@ sh
 #+end_src
 *** Zen
 #+begin_src emacs-lisp
-(setq +zen-text-scale 0.25)
+(setq writeroom-mode-line t
+      +zen-text-scale 0.25
+      +zen-text-scale 1)
 (defvar +zen-serif-p t
   "Whether to use a serifed font with `mixed-pitch-mode'.")
 (after! writeroom-mode
@@ -837,6 +1016,7 @@ sh
                 (setq visual-fill-column-width 80)))))
 #+end_src
 *** Dictionary
+**** Hunspell
 #+begin_src emacs-lisp
 (setq spell-program-name "hunspell"
       ispell-really-hunspell t)
@@ -845,6 +1025,43 @@ sh
       ispell-local-dictionary-alist
       '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
       ispell-extra-args '("--sug-mode=ultra"))
+#+end_src
+**** Lexic
+#+begin_src emacs-lisp
+;;;###autoload
+(defun my-spell-fu-find-urls (point-start point-end)
+  (let ((url-ranges (list)))
+    (save-match-data
+      (save-excursion
+        (goto-char point-start)
+        (while (re-search-forward browse-url-button-regexp point-end t)
+          (push (cons (match-beginning 0) (match-end 0)) url-ranges))
+        url-ranges))))
+;;;###autoload
+(defun my-spell-fu-check-range (point-start point-end)
+  "Check spelling for POINT-START & POINT-END ignoring urls."
+  (spell-fu--remove-overlays point-start point-end)
+  (with-syntax-table spell-fu-syntax-table
+    (save-match-data
+      (save-excursion
+        (goto-char point-start)
+        (while (re-search-forward spell-fu-word-regexp point-end t)
+          (let ((url-ranges (my-spell-fu-find-urls point-start point-end))
+                (word-start (match-beginning 0))
+                (word-end (match-end 0)))
+            (unless (seq-some (lambda (range)
+                                (or (and (> word-start (car range))
+                                         (< word-start (cdr range)))
+                                    (and (> word-end (car range))
+                                         (< word-end (cdr range)))))
+                              url-ranges)
+              (when (spell-fu--check-faces-at-point
+                     word-start
+                     spell-fu-faces-include
+                     spell-fu-faces-exclude)
+                (spell-fu-check-word word-start word-end (match-string-no-properties 0))))))))))
+(after! spell-fu
+  (setq spell-fu-check-range 'my-spell-fu-check-range))
 #+end_src
 ** Exit
 *** Sync org files to dropbox
