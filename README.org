@@ -15,12 +15,12 @@
   - [[#packageel][package.el]]
     - [[#prevent-byte-compile][Prevent Byte Compile]]
     - [[#deft][Deft]]
-    - [[#checker][Checker]]
     - [[#aesthetics][Aesthetics]]
     - [[#org][Org]]
 - [[#doom-config][Doom Config]]
   - [[#lexical-bindings][Lexical Bindings]]
   - [[#startup][Startup]]
+    - [[#identity][Identity]]
     - [[#better-defaults][Better Defaults]]
     - [[#customel][custom.el]]
     - [[#utf-8-unix-system][utf-8-unix System]]
@@ -32,21 +32,24 @@
   - [[#keybindings][Keybindings]]
     - [[#general][General]]
     - [[#evil][Evil]]
-    - [[#change-local-leader][Change local leader]]
     - [[#which-key][Which-key]]
   - [[#navigation][Navigation]]
     - [[#deft][Deft]]
     - [[#ivy][Ivy]]
   - [[#buffer-frame-and-window-configuration][Buffer, Frame and Window Configuration]]
     - [[#window-config][Window Config]]
+    - [[#frame-config][Frame Config]]
+    - [[#buffer-config][Buffer Config]]
   - [[#productivity][Productivity]]
+    - [[#automatic-indentation][Automatic Indentation]]
     - [[#company-mode][Company mode]]
+    - [[#lsp][LSP]]
+    - [[#smartparens][Smartparens]]
   - [[#org-mode][Org Mode]]
     - [[#basic-config][Basic Config]]
     - [[#bibtex][Bibtex]]
     - [[#org-capture][Org Capture]]
     - [[#org-roam][Org-Roam]]
-    - [[#pandoc][Pandoc]]
     - [[#misc][Misc]]
   - [[#writing][Writing]]
     - [[#mixed-pitch-mode][Mixed Pitch Mode]]
@@ -120,7 +123,6 @@
  +prescient
  +icons)
 #+end_src
-
 **** doom-ui
 #+name: doom-ui
 #+begin_src emacs-lisp
@@ -143,26 +145,24 @@ unicode
 ;workspaces
 zen
 #+end_src
-
 **** doom-editor
 #+name: doom-editor
 #+begin_src emacs-lisp
 (evil
  +everywhere)
-fold
-(format
- +onsave)
+;fold
+;(format
+; +onsave)
 ;multiple-cursors
 ;rotate-text
 snippets
 word-wrap
 #+end_src
-
 **** doom-emacs
 #+name: doom-emacs
 #+begin_src emacs-lisp
-(dired
- +icons)
+;(dired
+; +icons)
 ;electric
 (ibuffer
  +icons)
@@ -170,7 +170,6 @@ word-wrap
  +tree)
 vc
 #+end_src
-
 **** doom-checkers
 #+name: doom-checkers
 #+begin_src emacs-lisp
@@ -180,9 +179,8 @@ vc
  +hunspell
  +everywhere)
 ; +flyspell)
-grammar
+;grammar
 #+end_src
-
 **** doom-tools
 #+name: doom-tools
 #+begin_src emacs-lisp
@@ -197,7 +195,6 @@ magit
 pdf
 rgb
 #+end_src
-
 **** doom-lang
 #+name: doom-lang
 #+begin_src emacs-lisp
@@ -211,7 +208,6 @@ markdown
  +roam)
 sh
 #+end_src
-
 **** doom-config
 #+name: doom-config
 #+begin_src emacs-lisp
@@ -231,22 +227,6 @@ sh
 #+begin_src emacs-lisp
 (unpin! deft)
 #+end_src
-*** Checker
-**** Spelling
-#+begin_src emacs-lisp :tangle no
-(package! flycheck-package)
-#+end_src
-***** Lexic
-#+begin_src emacs-lisp
-(package! lexic
-  :recipe (:host github
-           :repo "tecosaur/lexic"))
-#+end_src
-**** Grammar
-#+begin_src emacs-lisp
-(unpin! langtool)
-(unpin! writegood-mode)
-#+end_src
 *** Aesthetics
 **** Indent
 #+begin_src emacs-lisp
@@ -257,11 +237,11 @@ sh
 #+begin_src emacs-lisp
 (package! circadian)
 #+end_src
-
 ***** Theme packages
 #+begin_src emacs-lisp
 (unpin! doom-themes)
 (package! poet-theme)
+(package! spacemacs-theme)
 #+end_src
 **** Mixed-Pitch
 #+begin_src emacs-lisp
@@ -283,7 +263,6 @@ sh
 #+begin_src emacs-lisp
 (package! org-pretty-tags)
 #+end_src
-
 ***** Marker visibility
 #+begin_src emacs-lisp
 (package! org-appear
@@ -292,45 +271,20 @@ sh
 #+end_src
 **** Ivy/Helm Bibtex
 #+begin_src emacs-lisp
-(package! helm-bibtex)
+(package! ivy-bibtex)
 #+end_src
 **** Org Capture
 #+begin_src emacs-lisp
 (package! doct)
 #+end_src
-**** Org Download
-#+begin_src emacs-lisp :tangle no
-(package! org-download
-  :recipe (:host github
-           :repo "abo-abo/org-download"))
-#+end_src
-
 **** Org Roam
 ***** Org-Roam package
 #+begin_src emacs-lisp
 (unpin! org-roam)
 #+end_src
-
-***** Org Roam Bibtex
-#+begin_src emacs-lisp :tangle no
-(package! org-roam-bibtex)
-#+end_src
-**** Org Super Agenda
-#+begin_src emacs-lisp
-(package! org-super-agenda)
-#+end_src
 **** Org TOC
 #+begin_src emacs-lisp
 (package! org-make-toc)
-#+end_src
-**** Org Pandoc
-#+begin_src emacs-lisp
-(package! ox-pandoc)
-(package! org-pandoc-import
-  :recipe (:host github
-           :repo "tecosaur/org-pandoc-import"
-           :files ("*.el" "filters" "preprocessors")))
-
 #+end_src
 * Doom Config
 ** Lexical Bindings
@@ -463,16 +417,11 @@ sh
 #+begin_src emacs-lisp
 (setq evil-ex-substitute-global t)
 #+end_src
-*** Change local leader
-#+begin_src emacs-lisp
-(setq doom-localleader-key ",")
-#+end_src
 *** Which-key
 **** Key delay
 #+begin_src emacs-lisp
 (setq which-key-idle-delay 0.15)
 #+end_src
-
 **** Replace =evil= with unicode
 #+begin_src emacs-lisp
 (setq which-key-allow-multiple-replacements t)
@@ -520,7 +469,6 @@ sh
  :desc "Switch to Up Window"    "<up>"      #'evil-window-up
  :desc "Switch to Down Window"  "<down>"    #'evil-window-down)
 #+end_src
-
 **** Window Split
 #+begin_src emacs-lisp
 (setq evil-vsplit-window-right t
@@ -559,6 +507,23 @@ sh
 
 (add-hook 'kill-emacs-hook #'my-save-frame-dimensions-h)
 (my-restore-frame-dimensions-h)
+#+end_src
+*** Buffer Config
+**** Save all buffers
+#+begin_src emacs-lisp
+;;;###autoload
+(defadvice! my-save-all-buffers-a (&rest _)
+  "Advice to run `save-some-buffers' before a function.
+
+This is a part of the full auto-save feature."
+  :before (list #'save-buffers-kill-emacs #'my-tabs-close-buffer-tab)
+  (save-some-buffers t t))
+
+
+(setq auto-save-default t)
+(auto-save-visited-mode 1)
+(add-hook! 'auto-save-hook #'my-save-all-buffers-a)
+(add-function :after after-focus-change-function #'my-save-all-buffers-a)
 #+end_src
 ** Productivity
 *** Automatic Indentation
@@ -680,22 +645,6 @@ insert a new line character."
   (lsp-ui-sideline-show-hover t)
   (lsp-ui-doc-enable t))
 #+end_src
-*** Save all buffers
-#+begin_src emacs-lisp
-;;;###autoload
-(defadvice! my-save-all-buffers-a (&rest _)
-  "Advice to run `save-some-buffers' before a function.
-
-This is a part of the full auto-save feature."
-  :before (list #'save-buffers-kill-emacs #'my-tabs-close-buffer-tab)
-  (save-some-buffers t t))
-
-
-(setq auto-save-default t)
-(auto-save-visited-mode 1)
-(add-hook! 'auto-save-hook #'my-save-all-buffers-a)
-(add-function :after after-focus-change-function #'my-save-all-buffers-a)
-#+end_src
 *** Smartparens
 #+begin_src emacs-lisp
 (after! smartparens
@@ -709,19 +658,15 @@ This is a part of the full auto-save feature."
       org-startup-folded 'overview
       org-startup-with-inline-images t
       org-use-property-inheritance t
-      org-log-done 'time
       org-list-allow-alphabetical t
-      org-export-in-background t
-      org-export-with-sub-superscripts '{}        ; don't treat lone _ / ^ as sub/superscripts, require _{} / ^{}
       org-catch-invisible-edits 'smart
       org-adapt-indentation nil
       org-indent-indentation-per-level 1
       org-cycle-separator-lines 1
       org-blank-before-new-entry '((heading . nil)
-                                   (plain-list-item . nil)))
-
-;; Ignore org default template
-;(set-file-template! "\\.org$" :ignore t)
+                                   (plain-list-item . nil))
+      org-fontify-quote-and-verse-blocks t
+      org-hide-emphasis-markers t)
 
 ;; Org block templates
 (setq org-structure-template-alist
@@ -741,11 +686,6 @@ This is a part of the full auto-save feature."
 (add-hook! 'org-mode-hook #'auto-fill-mode)
 #+end_src
 ***** Font Display
-****** Org Defaults
-#+begin_src emacs-lisp
-(setq org-fontify-quote-and-verse-blocks t
-      org-hide-emphasis-markers t)
-#+end_src
 ****** Headings
 #+begin_src emacs-lisp
 (custom-set-faces!
@@ -771,16 +711,6 @@ This is a part of the full auto-save feature."
   (setq org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
-#+end_src
-****** Font Lock
-#+begin_src emacs-lisp :tangle no
-(defun locally-defer-font-lock ()
-  "Set jit-lock defer and stealth, when buffer is over a certain size."
-  (when (> (buffer-size) 50000)
-    (setq-local jit-lock-defer-time 0.05
-                jit-lock-stealth-time 1)))
-
-(add-hook 'org-mode-hook #'locally-defer-font-lock)
 #+end_src
 ***** Symbols
 ****** Bullets / Endings
@@ -821,8 +751,6 @@ This is a part of the full auto-save feature."
             :end_quote     "❯"
             :caption       "☰"
             :header        "›"
-            :begin_export  "⯮"
-            :end_export    "⯬"
             ))
 (set-ligatures! 'org-mode
   :merge t
@@ -837,17 +765,8 @@ This is a part of the full auto-save feature."
   :end_quote     "#+end_quote"
   :caption       "#+caption:"
   :header        "#+header:"
-  :begin_export  "#+begin_export"
-  :end_export    "#+end_export"
   )
                                         ;(plist-put +ligatures-extra-symbols :name "⁍")
-#+end_src
-****** Fix visual hooks
-#+begin_src emacs-lisp
-(defadvice! shut-up-org-problematic-hooks (orig-fn &rest args)
-  :around #'org-fancy-priorities-mode
-  :around #'org-superstar-mode
-  (ignore-errors (apply orig-fn args)))
 #+end_src
 ***** Align
 #+begin_src emacs-lisp
@@ -931,21 +850,6 @@ This is a part of the full auto-save feature."
   (when (y-or-n-p "Add tags? ")
     (insert (format "%s" "\n#+roam_tags: ")))))
 #+end_src
-*** Pandoc
-**** Org-Pandoc
-#+begin_src emacs-lisp
-(use-package! ox-pandoc
-  :after org)
-;; default options for all output formats
-(setq org-pandoc-options          '((standalone . _))
-      org-pandoc-options-for-docx '((standalone . nil)))
-#+end_src
-
-**** Org Import Pandoc
-#+begin_src emacs-lisp
-(use-package! org-pandoc-import
-  :after org)
-#+end_src
 *** Misc
 **** Convert UPPERCASE KEYWORDS to lowercase keywords
 #+begin_src emacs-lisp
@@ -1025,43 +929,6 @@ This is a part of the full auto-save feature."
       ispell-local-dictionary-alist
       '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
       ispell-extra-args '("--sug-mode=ultra"))
-#+end_src
-**** Lexic
-#+begin_src emacs-lisp
-;;;###autoload
-(defun my-spell-fu-find-urls (point-start point-end)
-  (let ((url-ranges (list)))
-    (save-match-data
-      (save-excursion
-        (goto-char point-start)
-        (while (re-search-forward browse-url-button-regexp point-end t)
-          (push (cons (match-beginning 0) (match-end 0)) url-ranges))
-        url-ranges))))
-;;;###autoload
-(defun my-spell-fu-check-range (point-start point-end)
-  "Check spelling for POINT-START & POINT-END ignoring urls."
-  (spell-fu--remove-overlays point-start point-end)
-  (with-syntax-table spell-fu-syntax-table
-    (save-match-data
-      (save-excursion
-        (goto-char point-start)
-        (while (re-search-forward spell-fu-word-regexp point-end t)
-          (let ((url-ranges (my-spell-fu-find-urls point-start point-end))
-                (word-start (match-beginning 0))
-                (word-end (match-end 0)))
-            (unless (seq-some (lambda (range)
-                                (or (and (> word-start (car range))
-                                         (< word-start (cdr range)))
-                                    (and (> word-end (car range))
-                                         (< word-end (cdr range)))))
-                              url-ranges)
-              (when (spell-fu--check-faces-at-point
-                     word-start
-                     spell-fu-faces-include
-                     spell-fu-faces-exclude)
-                (spell-fu-check-word word-start word-end (match-string-no-properties 0))))))))))
-(after! spell-fu
-  (setq spell-fu-check-range 'my-spell-fu-check-range))
 #+end_src
 ** Exit
 *** Sync org files to dropbox
