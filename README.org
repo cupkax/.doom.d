@@ -130,7 +130,7 @@ deft
 ;doom
 doom-dashboard
 hl-todo
-;hydra
+hydra
 (ligatures
  +extra)
 modeline
@@ -202,10 +202,14 @@ data
 emacs-lisp
 markdown
 (org
+ +gnuplot
+ +jupyter
  +dragndrop
  +pandoc
  +pretty
  +roam)
+(python
+ +lsp)
 sh
 #+end_src
 **** doom-config
@@ -280,6 +284,10 @@ sh
 **** Org TOC
 #+begin_src emacs-lisp
 (package! org-make-toc)
+#+end_src
+*** Jupyter
+#+begin_src emacs-lisp
+(unpin! jupyter)
 #+end_src
 * Doom Config
 ** Lexical Bindings
@@ -423,19 +431,19 @@ sh
 ** Navigation
 *** Deft
 #+begin_src emacs-lisp
-(use-package deft
-  :defer t
-  :after org
-  :config
-  (setq deft-recursive t)
-  deft-use-filter-string-for-filename t
-  deft-default-extension "org"
-  deft-directory "~/git/org/"
-  deft-strip-summary-regexp (concat "\\("
-                                    "[\n\t]"                    ;; blank
-                                    "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
-                                    "\\)")
-  deft-time-format "  %A, %B %e %Y (%H:%M)")
+                                        ;(use-package deft
+                                        ;  :defer t
+                                        ;  :after org
+                                        ;  :config
+(setq deft-directory "~/git/org/"
+      deft-recursive t
+      deft-use-filter-string-for-filename t
+      deft-default-extension "org"
+      deft-strip-summary-regexp (concat "\\("
+                                        "[\n\t]"                    ;; blank
+                                        "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
+                                        "\\)")
+      deft-time-format "  %A, %B %e %Y (%H:%M)")
 (add-hook! 'deft-mode-hook
   (defun my-deft-buffer-config-h ()
     (hl-line-mode 1)
@@ -516,6 +524,25 @@ This is a part of the full auto-save feature."
  :after after-focus-change-function #'my-save-all-buffers-a)
 #+end_src
 ** Productivity
+*** Jupyter
+#+begin_src emacs-lisp
+(use-package! jupyter
+ ; :straight (:no-native-compile t))
+  :ensure t
+  :defer t
+  :init
+
+  (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
+                                                       (:session . "py")
+                                                       (:kernel . "python3")
+                                                       (:exports . "both")
+                                                       (:results . "scalar"))))
+#+end_src
+*** Python
+#+begin_src emacs-lisp
+(after! lsp-python-ms
+  (set-lsp-priority! 'mspyls 1))
+#+end_src
 *** Automatic Indentation
 #+begin_src emacs-lisp
 (use-package! aggressive-indent
@@ -625,7 +652,8 @@ insert a new line character."
        :g [return] #'my-completion-complete-selection-or-return))
 #+end_src
 *** LSP
-#+begin_src emacs-lisp
+**** LSP UI
+#+begin_src emacs-lisp :tangle no
 (use-package! lsp-ui
   :defer t
   :custom
@@ -658,6 +686,9 @@ insert a new line character."
 ;; Org block templates
 (setq org-structure-template-alist
       '(("e" . "src emacs-lisp")))
+
+(with-eval-after-load 'flycheck
+  (flycheck-add-mode 'proselint 'org-mode))
 
                                         ;Keymap
 (map! :map evil-org-mode-map
@@ -760,6 +791,17 @@ insert a new line character."
   :init
   (setq valign-fancy-bar t
         valign-mode 1))
+#+end_src
+**** Org-src
+#+begin_src emacs-lisp
+(after! org
+  (setq org-src-window-setup 'current-window
+  org-return-follows-link t
+  org-babel-load-languages '((emacs-lisp . t)
+                             (python . t)
+                             (dot . t)
+                             (jupyter . t))
+  org-confirm-babel-evaluate nil))
 #+end_src
 *** Bibtex
 #+begin_src emacs-lisp
