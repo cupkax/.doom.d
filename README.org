@@ -127,7 +127,7 @@
 #+name: doom-ui
 #+begin_src emacs-lisp
 deft
-;doom
+doom
 doom-dashboard
 hl-todo
 hydra
@@ -707,13 +707,13 @@ insert a new line character."
 ****** Headings
 #+begin_src emacs-lisp
 (custom-set-faces!
-  '(outline-1 :weight extra-bold :height 1.1)
-  '(outline-2 :weight bold       :height 1.09)
-  '(outline-3 :weight bold       :height 1.07)
-  '(outline-4 :weight semi-bold  :height 1.05)
-  '(outline-5 :weight semi-bold  :height 1.03)
-  '(outline-6 :weight semi-bold  :height 1.01)
-  '(outline-7 :weight semi-bold  :height 1.01)
+  '(outline-1 :weight extra-bold :height 1.25)
+  '(outline-2 :weight bold       :height 1.18)
+  '(outline-3 :weight bold       :height 1.15)
+  '(outline-4 :weight semi-bold  :height 1.12)
+  '(outline-5 :weight semi-bold  :height 1.09)
+  '(outline-6 :weight semi-bold  :height 1.06)
+  '(outline-7 :weight semi-bold  :height 1.06)
   '(outline-8 :weight semi-bold)
   '(outline-9 :weight semi-bold))
 
@@ -729,6 +729,16 @@ insert a new line character."
   (setq org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
+#+end_src
+****** Defer Font Lock
+#+begin_src emacs-lisp
+(defun locally-defer-font-lock ()
+  "Set jit-lock defer and stealth, when buffer is over a certain size."
+  (when (> (buffer-size) 50000)
+    (setq-local jit-lock-defer-time 0.05
+                jit-lock-stealth-time 1)))
+
+(add-hook 'org-mode-hook #'locally-defer-font-lock)
 #+end_src
 ***** Symbols
 ****** Bullets / Endings
@@ -795,13 +805,12 @@ insert a new line character."
 **** Org-src
 #+begin_src emacs-lisp
 (after! org
-  (setq org-src-window-setup 'current-window
-  org-return-follows-link t
-  org-babel-load-languages '((emacs-lisp . t)
+  (setq org-return-follows-link t
+        org-babel-load-languages '((emacs-lisp . t)
                              (python . t)
                              (dot . t)
                              (jupyter . t))
-  org-confirm-babel-evaluate nil))
+        org-confirm-babel-evaluate nil))
 #+end_src
 *** Bibtex
 #+begin_src emacs-lisp

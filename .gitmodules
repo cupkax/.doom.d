@@ -1,0 +1,3 @@
+[submodule "lisp/mixed-pitch"]
+	path = lisp/mixed-pitch
+	url = https://gitlab.com/tecosaur/mixed-pitch
