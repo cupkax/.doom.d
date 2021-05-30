@@ -59,165 +59,103 @@
     - [[#sync-org-files-to-dropbox][Sync org files to dropbox]]
 :END:
 * Doom Core
-** Init
-*** =+init=
-#+begin_src emacs-lisp :tangle "+init.el" :noweb no-export :comments none
-;;; ~/.doom.d/+init.el -*- lexical-binding: t; -*-
-
-(setq comp-async-jobs-number (string-to-number
-                              (shell-command-to-string "nproc")))
-(setq evil-respect-visual-line-mode t)
-#+end_src
-*** =init.el=
+** =init.el=
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
 :END:
 #+name: init.el
-#+begin_src emacs-lisp :tangle "init.el" :noweb no-export :comments none
+#+begin_src emacs-lisp :tangle "init.el" :noweb no-export :comments no
 ;;; init.el -*- lexical-binding: t; -*-
 (doom!
  :completion
- <<doom-completion>>
+ (company
+  +childframe)
+ (ivy
+  +prescient
+  +icons)
 
  :ui
- <<doom-ui>>
+ deft
+ doom
+ doom-dashboard
+ hl-todo
+ hydra
+ (ligatures
+  +extra)
+ modeline
+ nav-flash
+ ophints
+ (popup
+  +all
+  +defaults)
+ unicode
+ (window-select
+  +numbers)
+ zen
 
  :editor
- <<doom-editor>>
+ (evil
+  +everywhere)
+ format
+ snippets
+ word-wrap
 
  :emacs
- <<doom-emacs>>
+ (ibuffer
+  +icons)
+ electric
+ (undo
+  +tree)
+ vc
 
  :term
- <<doom-term>>
-
+ vterm
+ 
  :checkers
- <<doom-checkers>>
+ (syntax)
+ (spell
+  +hunspell
+  +everywhere)
 
  :tools
- <<doom-tools>>
+ (eval
+  +overlay)
+ (lookup
+  +dictionary
+  +offline)
+ (lsp
+  +peek)
+ magit
+ pdf
+ rgb
 
  :os
- <<doom-os>>
 
  :lang
- <<doom-lang>>
+ data
+ emacs-lisp
+ markdown
+ (org
+  +gnuplot
+  +jupyter
+  +dragndrop
+  +pandoc
+  +pretty
+  +roam)
+ (python
+  +lsp)
+ sh
 
  :email
- <<doom-email>>
 
  :app
- <<doom-app>>
 
  :config
- <<doom-config>>)
-(load! "+init")
-#+end_src
+ (default
+   +bindings
+   +smartparens)
 
-**** doom-completion
-#+name: doom-completion
-#+begin_src emacs-lisp
-(company
- +childframe)
-(ivy
- +prescient
- +icons)
-#+end_src
-**** doom-ui
-#+name: doom-ui
-#+begin_src emacs-lisp
-deft
-doom
-doom-dashboard
-hl-todo
-hydra
-(ligatures
- +extra)
-modeline
-;nav-flash
-ophints
-(popup
- +all
- +defaults)
-unicode
-(window-select
- +numbers)
-;workspaces
-zen
-#+end_src
-**** doom-editor
-#+name: doom-editor
-#+begin_src emacs-lisp
-(evil
- +everywhere)
-;fold
-format
-; +onsave)
-;multiple-cursors
-;rotate-text
-snippets
-word-wrap
-#+end_src
-**** doom-emacs
-#+name: doom-emacs
-#+begin_src emacs-lisp
-;(dired
-; +icons)
-;electric
-(ibuffer
- +icons)
-(undo
- +tree)
-vc
-#+end_src
-**** doom-checkers
-#+name: doom-checkers
-#+begin_src emacs-lisp
-(syntax
- +childframe)
-(spell
- +hunspell
- +everywhere)
-; +flyspell)
-;grammar
-#+end_src
-**** doom-tools
-#+name: doom-tools
-#+begin_src emacs-lisp
-(eval
- +overlay)
-(lookup
- +dictionary
- +offline)
-(lsp
- +peek)
-magit
-pdf
-rgb
-#+end_src
-**** doom-lang
-#+name: doom-lang
-#+begin_src emacs-lisp
-data
-emacs-lisp
-markdown
-(org
- +gnuplot
- +jupyter
- +dragndrop
- +pandoc
- +pretty
- +roam)
-(python
- +lsp)
-sh
-#+end_src
-**** doom-config
-#+name: doom-config
-#+begin_src emacs-lisp
-(default
-  +bindings
-  +smartparens)
+ )
 #+end_src
 ** =package.el=
 :PROPERTIES:
@@ -257,6 +195,12 @@ sh
 #+begin_src emacs-lisp
 (unpin! org-mode)
 #+end_src
+**** Org Heading
+#+begin_src emacs-lisp
+(package! org-ol-tree
+  :recipe (:host github
+           :repo "Townk/org-ol-tree"))
+#+end_src
 **** Visuals
 ***** Tags
 #+begin_src emacs-lisp
@@ -276,10 +220,23 @@ sh
 #+begin_src emacs-lisp
 (package! doct)
 #+end_src
+**** Org-Pandoc Import
+#+begin_src emacs-lisp
+(package! org-pandoc-import
+  :recipe (:host github
+           :repo "tecosaur/org-pandoc-import"
+           :files ("*.el" "filters" "preprocessors")))
+#+end_src
 **** Org Roam
 ***** Org-Roam package
 #+begin_src emacs-lisp
 (unpin! org-roam)
+#+end_src
+**** Org-Transclusion
+#+begin_src emacs-lisp
+(package! org-transclusion
+  :recipe (:host github
+           :repo "nobiot/org-transclusion"))
 #+end_src
 **** Org TOC
 #+begin_src emacs-lisp
@@ -359,6 +316,9 @@ sh
 
 (setq doom-themes-enable-bold t
       doom-themes-enable-italic t)
+(remove-hook 'window-setup-hook #'doom-init-theme-h)
+(add-hook 'after-init-hook #'doom-init-theme-h 'append)
+(delq! t custom-theme-load-path)
 #+end_src
 *** Modeline
 **** Change red text
@@ -507,7 +467,7 @@ sh
 #+end_src
 *** Buffer Config
 **** Save all buffers
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;;;###autoload
 (defadvice! my-save-all-buffers-a (&rest _)
   "Advice to run `save-some-buffers' before a function.
@@ -683,10 +643,6 @@ insert a new line character."
       org-fontify-quote-and-verse-blocks t
       org-hide-emphasis-markers t)
 
-;; Org block templates
-(setq org-structure-template-alist
-      '(("e" . "src emacs-lisp")))
-
 (with-eval-after-load 'flycheck
   (flycheck-add-mode 'proselint 'org-mode))
 
@@ -700,8 +656,17 @@ insert a new line character."
 #+end_src
 **** Visuals
 ***** Initial Hooks
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (add-hook! 'org-mode-hook #'auto-fill-mode)
+#+end_src
+***** Org-Ol Tree
+#+begin_src emacs-lisp
+(use-package! org-ol-tree
+  :commands org-ol-tree)
+(map! :map org-mode-map
+      :after org
+      :localleader
+      :desc "Outline" "O" #'org-ol-tree)
 #+end_src
 ***** Font Display
 ****** Headings
@@ -802,8 +767,14 @@ insert a new line character."
   (setq valign-fancy-bar t
         valign-mode 1))
 #+end_src
-**** Org-src
+**** Org-babel
 #+begin_src emacs-lisp
+;; Org block templates
+(setq org-structure-template-alist
+      '(("e" . "src emacs-lisp")
+        ("p" . "jupyter-python")))
+
+
 (after! org
   (setq org-return-follows-link t
         org-babel-load-languages '((emacs-lisp . t)
@@ -889,6 +860,14 @@ insert a new line character."
   (when (y-or-n-p "Add tags? ")
     (insert (format "%s" "\n#+roam_tags: ")))))
 #+end_src
+**** Org-Transclusion
+#+begin_src emacs-lisp
+(use-package! org-transclusion
+  :commands org-transclusion-mode
+  :init
+  (map! :after org :map org-mode-map
+        "<f12>" #'org-transclusion-mode))
+#+end_src
 *** Misc
 **** Convert UPPERCASE KEYWORDS to lowercase keywords
 #+begin_src emacs-lisp
@@ -905,9 +884,26 @@ insert a new line character."
           (setq count (1+ count))))
       (message "Replaced %d occurances" count))))
 #+end_src
+**** Org Pandoc Import
+#+begin_src emacs-lisp
+(use-package! org-pandoc-import
+  :after org)
+#+end_src
 ** Writing
 *** Mixed Pitch Mode
+
 #+begin_src emacs-lisp
+(defvar mixed-pitch-modes '(org-mode markdown-mode gfm-mode Info-mode)
+  "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
+(defun init-mixed-pitch-h ()
+  "Hook `mixed-pitch-mode' into each mode in `mixed-pitch-modes'.
+Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
+  (when (memq major-mode mixed-pitch-modes)
+    (mixed-pitch-mode 1))
+  (dolist (hook mixed-pitch-modes)
+    (add-hook (intern (concat (symbol-name hook) "-hook")) #'mixed-pitch-mode)))
+(add-hook 'doom-init-ui-hook #'init-mixed-pitch-h)
+
 (autoload #'mixed-pitch-serif-mode "mixed-pitch"
   "Change the default face of the current buffer to a serifed variable pitch, while keeping some faces fixed pitch." t)
 
@@ -928,10 +924,6 @@ insert a new line character."
 (set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijlt]\\)" 0 font-shape-gstring]))
 (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
 
-
-
-(add-hook! 'org-mode-hook #'mixed-pitch-mode)
-;(add-hook! 'text-mode-hook #'mixed-pitch-mode)
 #+end_src
 *** Zen
 #+begin_src emacs-lisp
