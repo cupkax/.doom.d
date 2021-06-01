@@ -928,8 +928,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
 *** Zen
 #+begin_src emacs-lisp
 (setq writeroom-mode-line t
-      +zen-text-scale 0.25
-      +zen-text-scale 1)
+      +zen-text-scale 0.25)
 (defvar +zen-serif-p t
   "Whether to use a serifed font with `mixed-pitch-mode'.")
 (after! writeroom-mode
