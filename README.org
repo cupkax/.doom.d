@@ -9,14 +9,13 @@
 :END:
 :CONTENTS:
 - [[#doom-core][Doom Core]]
-  - [[#init][Init]]
-    - [[#init][+init]]
-    - [[#initel][init.el]]
+  - [[#initel][init.el]]
   - [[#packageel][package.el]]
     - [[#prevent-byte-compile][Prevent Byte Compile]]
     - [[#deft][Deft]]
     - [[#aesthetics][Aesthetics]]
     - [[#org][Org]]
+    - [[#jupyter][Jupyter]]
 - [[#doom-config][Doom Config]]
   - [[#lexical-bindings][Lexical Bindings]]
   - [[#startup][Startup]]
@@ -30,17 +29,18 @@
     - [[#modeline][Modeline]]
     - [[#lines][Lines]]
   - [[#keybindings][Keybindings]]
-    - [[#general][General]]
     - [[#evil][Evil]]
     - [[#which-key][Which-key]]
   - [[#navigation][Navigation]]
     - [[#deft][Deft]]
     - [[#ivy][Ivy]]
   - [[#buffer-frame-and-window-configuration][Buffer, Frame and Window Configuration]]
-    - [[#window-config][Window Config]]
     - [[#frame-config][Frame Config]]
+    - [[#window-config][Window Config]]
     - [[#buffer-config][Buffer Config]]
   - [[#productivity][Productivity]]
+    - [[#jupyter][Jupyter]]
+    - [[#python][Python]]
     - [[#automatic-indentation][Automatic Indentation]]
     - [[#company-mode][Company mode]]
     - [[#lsp][LSP]]
@@ -113,9 +113,9 @@
  
  :checkers
  (syntax)
- (spell
-  +hunspell
-  +everywhere)
+ (:if
+  (executable-find "hunspell")
+  spell)
 
  :tools
  (eval
@@ -484,7 +484,21 @@ This is a part of the full auto-save feature."
  :after after-focus-change-function #'my-save-all-buffers-a)
 #+end_src
 ** Productivity
-*** Jupyter
+*** LSP
+**** LSP UI
+#+begin_src emacs-lisp :tangle no
+(use-package! lsp-ui
+  :defer t
+  :custom
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-doc-enable t))
+#+end_src
+**** Python
+#+begin_src emacs-lisp
+(after! lsp-python-ms
+  (set-lsp-priority! 'mspyls 1))
+#+end_src
+**** Jupyter
 #+begin_src emacs-lisp
 (use-package! jupyter
  ; :straight (:no-native-compile t))
@@ -497,16 +511,6 @@ This is a part of the full auto-save feature."
                                                        (:kernel . "python3")
                                                        (:exports . "both")
                                                        (:results . "scalar"))))
-#+end_src
-*** Python
-#+begin_src emacs-lisp
-(after! lsp-python-ms
-  (set-lsp-priority! 'mspyls 1))
-#+end_src
-*** Automatic Indentation
-#+begin_src emacs-lisp
-(use-package! aggressive-indent
-  :hook (emacs-lisp-mode . aggressive-indent-mode))
 #+end_src
 *** Company mode
 **** Autoloads
@@ -594,7 +598,15 @@ insert a new line character."
         company-box-doc-enable nil)
   (setq company-frontends (delq 'company-pseudo-tooltip-frontend company-frontends))
 
-  (add-hook 'evil-normal-state-entry-hook #'company-abort))
+  (add-hook 'evil-normal-state-entry-hook #'company-abort)
+  (set-company-backend!
+  '(text-mode
+    markdown-mode
+    gfm-mode)
+  '(:seperate
+    company-ispell
+    company-files
+    company-yasnippet)))
 
 (setq-default history-length 1000
               prescient-history-length 1000)
@@ -611,14 +623,10 @@ insert a new line character."
        :g [up] #'company-select-previous
        :g [return] #'my-completion-complete-selection-or-return))
 #+end_src
-*** LSP
-**** LSP UI
-#+begin_src emacs-lisp :tangle no
-(use-package! lsp-ui
-  :defer t
-  :custom
-  (lsp-ui-sideline-show-hover t)
-  (lsp-ui-doc-enable t))
+*** Automatic Indentation
+#+begin_src emacs-lisp
+(use-package! aggressive-indent
+  :hook (emacs-lisp-mode . aggressive-indent-mode))
 #+end_src
 *** Smartparens
 #+begin_src emacs-lisp
@@ -957,7 +965,8 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
       (setenv "DICTIONARY" "english")
 (setq ispell-dictionary "english"
       ispell-local-dictionary-alist
-      '(("en-custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
+      '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
+      ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
       ispell-extra-args '("--sug-mode=ultra"))
 #+end_src
 ** Exit
