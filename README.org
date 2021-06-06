@@ -179,6 +179,8 @@
 #+begin_src emacs-lisp
 (unpin! doom-themes)
 (package! spacemacs-theme)
+(package! poet-theme)
+(package! circadian)
 #+end_src
 **** Mixed-Pitch
 #+begin_src emacs-lisp
@@ -305,14 +307,18 @@
 ** Visual Settings
 *** Fonts
 #+begin_src emacs-lisp
-(setq doom-font                (font-spec :family "JetBrainsMono Nerd Font" :size 16)
-      doom-variable-pitch-font (font-spec :family "Overpass"                :size 24)
-      doom-unicode-font        (font-spec :family "JuliaMono"               :size 16)
-      doom-serif-font          (font-spec :family "IBM Plex Mono"   :weight 'light))
+(setq doom-font                 (font-spec :family "JetBrainsMono Nerd Font" :size 16)
+      doom-variable-pitch-font  (font-spec :family "Alegreya" :size 21 :weight 'regular)
+      doom-unicode-font         (font-spec :family "JuliaMono"               :size 16))
+      ;doom-serif-font           (font-spec :family "IBM Plex Mono"   :weight 'light))
 #+end_src
 *** Theme
 #+begin_src emacs-lisp
-(setq doom-theme 'doom-one)
+(use-package circadian
+  :config
+  (setq circadian-themes '(("6:00"  . spacemacs-light)
+                           ("18:30" . spacemacs-dark)))
+  (circadian-setup))
 
 (setq doom-themes-enable-bold t
       doom-themes-enable-italic t)
@@ -664,29 +670,52 @@ insert a new line character."
 #+end_src
 **** Visuals
 ***** Initial Hooks
+Autofill mode currently disabled
 #+begin_src emacs-lisp :tangle no
 (add-hook! 'org-mode-hook #'auto-fill-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook #'+org-pretty-mode #'org-pretty-tags-mode)
+#+end_src
+***** Pretty Tags
+#+begin_src emacs-lisp
+(use-package org-pretty-tags
+  :config
+  (setq org-pretty-tags-surrogate-strings
+        `(("game"          . ,(all-the-icons-faicon   "gamepad" :face 'all-the-icons-purple  :v-adjust 0.01))
+          ("survival"      . ,(all-the-icons-wicon    "fire"    :face 'all-the-icons-purple  :v-adjust 0.01))
+          ("simulation"    . ,(all-the-icons-fileicon "robot"   :face 'all-the-icons-purple  :v-adjust 0.01))
+          ))
+  (org-pretty-tags-global-mode))
 #+end_src
 ***** Org-Ol Tree
 #+begin_src emacs-lisp
 (use-package! org-ol-tree
-  :commands org-ol-tree)
-(map! :map org-mode-map
-      :after org
-      :localleader
-      :desc "Outline" "O" #'org-ol-tree)
+  :commands org-ol-tree
+  :init
+  (map! :map org-mode-map
+        :localleader :prefix ("g" . "goto")
+        :desc "Open outline"  "o" #'org-ol-tree)
+
+  (setq org-ol-tree-ui-window-header-format
+        '((:eval (concat " ☰ " (propertize "Outline" 'face '(:inherit 'my-default-ui :height 0.8)))))
+        org-ol-tree-ui-window-auto-resize nil
+        org-ol-tree-ui-window-max-width 0.2 
+        org-ol-tree-ui-window-position 'left)
+  (add-hook 'org-ol-tree-mode-hook #'+word-wrap-mode))
 #+end_src
 ***** Font Display
 ****** Headings
 #+begin_src emacs-lisp
 (custom-set-faces!
-  '(outline-1 :weight extra-bold :height 1.25)
-  '(outline-2 :weight bold       :height 1.18)
-  '(outline-3 :weight bold       :height 1.15)
-  '(outline-4 :weight semi-bold  :height 1.12)
-  '(outline-5 :weight semi-bold  :height 1.09)
-  '(outline-6 :weight semi-bold  :height 1.06)
-  '(outline-7 :weight semi-bold  :height 1.06)
+  '(outline-1 :weight extra-bold :height 1.35)
+  '(outline-2 :weight bold       :height 1.30)
+  '(outline-3 :weight bold       :height 1.25)
+  '(outline-4 :weight semi-bold  :height 1.20)
+  '(outline-5 :weight semi-bold  :height 1.15)
+  '(outline-6 :weight semi-bold  :height 1.10)
+  '(outline-7 :weight semi-bold  :height 1.05)
   '(outline-8 :weight semi-bold)
   '(outline-9 :weight semi-bold))
 
@@ -716,7 +745,7 @@ insert a new line character."
 ***** Symbols
 ****** Bullets / Endings
 #+begin_src emacs-lisp
-(setq org-ellipsis " ▾ "
+(setq org-ellipsis " "
       org-priority-highest ?A
       org-priority-lowest ?E
       org-priority-faces
@@ -899,56 +928,20 @@ insert a new line character."
 #+end_src
 ** Writing
 *** Mixed Pitch Mode
-
 #+begin_src emacs-lisp
-(defvar mixed-pitch-modes '(org-mode markdown-mode gfm-mode Info-mode)
-  "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
-(defun init-mixed-pitch-h ()
-  "Hook `mixed-pitch-mode' into each mode in `mixed-pitch-modes'.
-Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
-  (when (memq major-mode mixed-pitch-modes)
-    (mixed-pitch-mode 1))
-  (dolist (hook mixed-pitch-modes)
-    (add-hook (intern (concat (symbol-name hook) "-hook")) #'mixed-pitch-mode)))
-(add-hook 'doom-init-ui-hook #'init-mixed-pitch-h)
-
-(autoload #'mixed-pitch-serif-mode "mixed-pitch"
-  "Change the default face of the current buffer to a serifed variable pitch, while keeping some faces fixed pitch." t)
-
-(after! mixed-pitch
-  (defface variable-pitch-serif
-    '((t (:family "serif")))
-    "A variable-pitch face with serifs."
-    :group 'basic-faces)
-  (setq mixed-pitch-set-height t)
-  (setq variable-pitch-serif-font (font-spec :family "Alegreya" :size 21 :weight 'regular))
-  (set-face-attribute 'variable-pitch-serif nil :font variable-pitch-serif-font)
-  (defun mixed-pitch-serif-mode (&optional arg)
-    "Change the default face of the current buffer to a serifed variable pitch, while keeping some faces fixed pitch."
-    (interactive)
-    (let ((mixed-pitch-face 'variable-pitch-serif))
-      (mixed-pitch-mode (or arg 'toggle)))))
+(add-hook! 'org-mode-hook #'mixed-pitch-mode)
+(setq mixed-pitch-variable-pitch-cursor nil
+      mixed-pitch-set-height t)
 
 (set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijlt]\\)" 0 font-shape-gstring]))
 (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
-
 #+end_src
+
 *** Zen
 #+begin_src emacs-lisp
 (setq writeroom-mode-line t
       +zen-text-scale 0.25)
-(defvar +zen-serif-p t
-  "Whether to use a serifed font with `mixed-pitch-mode'.")
 (after! writeroom-mode
-  (defvar-local +zen--original-mixed-pitch-mode-p nil)
-  (defun +zen-enable-mixed-pitch-mode-h ()
-    "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
-    (when (apply #'derived-mode-p +zen-mixed-pitch-modes)
-      (if writeroom-mode
-          (progn
-            (setq +zen--original-mixed-pitch-mode-p mixed-pitch-mode)
-            (funcall (if +zen-serif-p #'mixed-pitch-serif-mode #'mixed-pitch-mode) 1))
-        (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1)))))
   (pushnew! writeroom--local-variables
             'visual-fill-column-width)
   (add-hook 'writeroom-mode-enable-hook
@@ -957,6 +950,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
               (when (eq major-mode 'org-mode)
                 (setq visual-fill-column-width 80)))))
 #+end_src
+
 *** Dictionary
 **** Hunspell
 #+begin_src emacs-lisp
@@ -966,9 +960,10 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
 (setq ispell-dictionary "english"
       ispell-local-dictionary-alist
       '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
-      ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
+      ;ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
       ispell-extra-args '("--sug-mode=ultra"))
 #+end_src
+
 ** Exit
 *** Sync org files to dropbox
 #+begin_src emacs-lisp
