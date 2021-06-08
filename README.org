@@ -332,13 +332,11 @@
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "orange"))
 #+end_src
-
 **** Show time
 #+begin_src emacs-lisp
 (setq display-time-24hr-format t)
 (display-time-mode 1)
 #+end_src
-
 **** Hide Redundant Stuff
 ***** Remove default load average
 #+begin_src emacs-lisp
@@ -397,24 +395,24 @@
 ** Navigation
 *** Deft
 #+begin_src emacs-lisp
-                                        ;(use-package deft
-                                        ;  :defer t
-                                        ;  :after org
-                                        ;  :config
-(setq deft-directory "~/git/org/"
-      deft-recursive t
-      deft-use-filter-string-for-filename t
-      deft-default-extension "org"
-      deft-strip-summary-regexp (concat "\\("
-                                        "[\n\t]"                    ;; blank
-                                        "\\|^#\\+[[:upper:]_]+:.*$" ;; org-mode metadata
-                                        "\\)")
-      deft-time-format "  %A, %B %e %Y (%H:%M)")
-(add-hook! 'deft-mode-hook
-  (defun my-deft-buffer-config-h ()
-    (hl-line-mode 1)
-    (setq-local evil-normal-state-cursor (list nil)
-                evil-insert-state-cursor (list nil))))
+(use-package deft
+  :defer t
+  :after org
+  :config
+  (setq deft-directory "~/git/org/"
+        deft-recursive t
+        deft-use-filter-string-for-filename t
+        deft-default-extension "org"
+        deft-strip-summary-regexp (concat "\\("
+                                          "[\n\t]"                    ;; blank
+                                          "\\|^#\\+[[:upper:]_]+:.*$"
+                                          "\\)")
+        deft-time-format "  %A, %B %e %Y (%H:%M)")
+  (add-hook! 'deft-mode-hook
+    (defun my-deft-buffer-config-h ()
+      (hl-line-mode 1)
+      (setq-local evil-normal-state-cursor (list nil)
+                  evil-insert-state-cursor (list nil)))))
 #+end_src
 *** Ivy
 #+begin_src emacs-lisp
@@ -446,7 +444,7 @@
                         (width . ,width)
                         (height . ,height)
                         (fullscreen . ,fullscreen)))))
-    (add-to-list 'default-frame-alist '(height . 40))
+    (add-to-list 'default-frame-alist '(height . 60))
     (add-to-list 'default-frame-alist '(width . 140))))
 
 (add-hook 'kill-emacs-hook #'my-save-frame-dimensions-h)
@@ -722,7 +720,7 @@ Autofill mode currently disabled
 (custom-set-faces!
   '(org-document-title :height 1.20))
 #+end_src
-****** Show /empahsis/ markers
+****** Show /emphasis/ markers
 #+begin_src emacs-lisp
 (use-package! org-appear
   :defer t
@@ -936,11 +934,10 @@ Autofill mode currently disabled
 (set-char-table-range composition-function-table ?f '(["\\(?:ff?[fijlt]\\)" 0 font-shape-gstring]))
 (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
 #+end_src
-
 *** Zen
 #+begin_src emacs-lisp
 (setq writeroom-mode-line t
-      +zen-text-scale 0.25)
+      +zen-text-scale 0.75)
 (after! writeroom-mode
   (pushnew! writeroom--local-variables
             'visual-fill-column-width)
@@ -950,7 +947,6 @@ Autofill mode currently disabled
               (when (eq major-mode 'org-mode)
                 (setq visual-fill-column-width 80)))))
 #+end_src
-
 *** Dictionary
 **** Hunspell
 #+begin_src emacs-lisp
@@ -1016,7 +1012,6 @@ If EXTRA-ARGS is not nil, this function will append its value to the result."
 (after! spell-fu
   (setq spell-fu-check-range 'my-spell-fu-check-range))
 #+end_src
-
 ** Exit
 *** Sync org files to dropbox
 #+begin_src emacs-lisp
