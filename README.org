@@ -740,7 +740,7 @@ Autofill mode currently disabled
 ***** Symbols
 ****** Bullets / Endings
 #+begin_src emacs-lisp
-(setq org-ellipsis " "
+(setq org-ellipsis "  "
       org-priority-highest ?A
       org-priority-lowest ?E
       org-priority-faces
