@@ -112,11 +112,11 @@
  vterm
  
  :checkers
- (syntax)
- (:if
-  (executable-find "hunspell")
-  spell)
-
+ syntax
+ (spell
+  +aspell
+  +everywhere)
+ 
  :tools
  (eval
   +overlay)
@@ -184,9 +184,7 @@
 #+end_src
 **** Mixed-Pitch
 #+begin_src emacs-lisp
-(package! mixed-pitch
-  :recipe (:local-repo "lisp/mixed-pitch")
-  :pin nil)
+(package! mixed-pitch)
 #+end_src
 **** Align
 #+begin_src emacs-lisp
@@ -230,7 +228,6 @@
            :files ("*.el" "filters" "preprocessors")))
 #+end_src
 **** Org Roam
-***** Org-Roam package
 #+begin_src emacs-lisp
 (unpin! org-roam)
 #+end_src
@@ -950,15 +947,21 @@ Autofill mode currently disabled
 *** Dictionary
 **** Hunspell
 #+begin_src emacs-lisp
-(defconst my-hunspell-local-data-dir (expand-file-name "~/Library/Spelling")
+(defconst my-aspell-local-data-dir (expand-file-name "~/.local/share/aspell")
   "Directory of Aspell dictionaries.")
 
-(unless (file-exists-p my-hunspell-local-data-dir)
-  (mkdir my-hunspell-local-data-dir t))
+(unless (file-exists-p my-aspell-local-data-dir)
+  (mkdir my-aspell-local-data-dir t))
+
+(defconst my-aspell--personal-dictionary (expand-file-name "personal.en.pws" my-aspell-local-data-dir)
+  "File path for my personal word dictionaries.")
+
+(when (not (file-exists-p my-aspell--personal-dictionary))
+  (append-to-file "personal_ws-1.1 en 0 utf-8" nil my-aspell--personal-dictionary))
 
 ;;;###autoload
-(defun my-hunspell-cmd-flags (&optional camel-case &rest extra-args)
-  "Return the list of arguments Emacs should use to run hunspell.
+(defun my-aspell-cmd-flags (&optional camel-case &rest extra-args)
+  "Return the list of arguments Emacs should use to run aspell.
 
 You can use this list of arguments directly as the value of `ispell-extra-args'.
 If CAMEL-CASE is a non-nil value, the list of arguments will include the
@@ -967,14 +970,13 @@ If CAMEL-CASE is a non-nil value, the list of arguments will include the
 If EXTRA-ARGS is not nil, this function will append its value to the result."
   (append '("--sug-mode=ultra") extra-args (when camel-case '("--camel-case"))))
 
-(setq spell-program-name "hunspell"
-      ispell-really-hunspell t)
-(setenv "DICTIONARY" "english")
-(setq ispell-dictionary "english"
-      ispell-local-dictionary-alist
-      '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
-      ispell-personal-dictionary (expand-file-name ".ispell_personal" my-hunspell-local-data-dir )
-      ispell-extra-args (my-hunspell-cmd-flags t))
+(after! ispell
+  (setq ispell-personal-dictionary my-aspell--personal-dictionary
+        ispell-really-aspell t
+        ispell-local-dictionary-alist
+        '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
+
+        ispell-extra-args (my-aspell-cmd-flags t)))
 
 ;; Ignore URL spell check
 ;;;###autoload
