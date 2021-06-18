@@ -502,8 +502,6 @@ This is a part of the full auto-save feature."
 **** Jupyter
 #+begin_src emacs-lisp
 (use-package! jupyter
- ; :straight (:no-native-compile t))
-  :ensure t
   :defer t
   :init
 
