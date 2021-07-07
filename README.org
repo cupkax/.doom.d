@@ -62,6 +62,7 @@
 ** =init.el=
 :PROPERTIES:
 :header-args:emacs-lisp: :tangle no
+:ID:       51a698fa-c170-43bd-85d9-9b7991516933
 :END:
 #+name: init.el
 #+begin_src emacs-lisp :tangle "init.el" :noweb no-export :comments no
@@ -75,7 +76,7 @@
   +icons)
 
  :ui
- deft
+ ;deft
  doom
  doom-dashboard
  hl-todo
@@ -110,13 +111,13 @@
 
  :term
  vterm
- 
+
  :checkers
  syntax
  (spell
   +aspell
   +everywhere)
- 
+
  :tools
  (eval
   +overlay)
@@ -140,8 +141,7 @@
   +jupyter
   +dragndrop
   +pandoc
-  +pretty
-  +roam)
+  +pretty)
  (python
   +lsp)
  sh
@@ -162,20 +162,25 @@
 :header-args:emacs-lisp: :tangle "packages.el" :comments no
 :END:
 *** Prevent Byte Compile
+:PROPERTIES:
+:ID:       9a5597c1-930a-4fcc-8119-9729a5cbe8d8
+:END:
 #+begin_src emacs-lisp
 ;; -*- no-byte-compile: t; -*-
 #+end_src
-*** Deft
-#+begin_src emacs-lisp
-(unpin! deft)
-#+end_src
 *** Aesthetics
 **** Indent
+:PROPERTIES:
+:ID:       052c8968-e7e6-4ea5-b48d-0820a850992a
+:END:
 #+begin_src emacs-lisp
 (package! aggressive-indent)
 #+end_src
 **** Theme
 ***** Theme packages
+:PROPERTIES:
+:ID:       e5885805-1ccd-4e0a-b443-26867ee48d6f
+:END:
 #+begin_src emacs-lisp
 (unpin! doom-themes)
 (package! spacemacs-theme)
@@ -183,44 +188,62 @@
 (package! circadian)
 #+end_src
 **** Mixed-Pitch
+:PROPERTIES:
+:ID:       6bb0d72d-dcf4-4309-82d8-de9029456a1e
+:END:
 #+begin_src emacs-lisp
 (package! mixed-pitch)
 #+end_src
 **** Align
+:PROPERTIES:
+:ID:       79109170-c3e6-4930-a8c4-88138aab4083
+:END:
 #+begin_src emacs-lisp
 (package! valign)
 #+end_src
 *** Org
 **** Base Package
+:PROPERTIES:
+:ID:       47404fd4-9969-4d29-847a-6fa91ffb476a
+:END:
 #+begin_src emacs-lisp
 (unpin! org-mode)
 #+end_src
-**** Org Heading
-#+begin_src emacs-lisp
-(package! org-ol-tree
-  :recipe (:host github
-           :repo "Townk/org-ol-tree"))
-#+end_src
 **** Visuals
 ***** Tags
+:PROPERTIES:
+:ID:       ab48ffdf-d87c-4a20-b9d0-48fb4073e954
+:END:
 #+begin_src emacs-lisp
 (package! org-pretty-tags)
 #+end_src
 ***** Marker visibility
+:PROPERTIES:
+:ID:       53f842a2-8996-45b0-a41a-ddad239f50d5
+:END:
 #+begin_src emacs-lisp
 (package! org-appear
   :recipe (:host github
            :repo "awth13/org-appear"))
 #+end_src
 **** Ivy/Helm Bibtex
+:PROPERTIES:
+:ID:       054fea13-ab6c-4bf8-9497-a8561e6b7acb
+:END:
 #+begin_src emacs-lisp
 (package! ivy-bibtex)
 #+end_src
 **** Org Capture
+:PROPERTIES:
+:ID:       7466bf16-1612-451b-b3c4-bc0e2ab695b8
+:END:
 #+begin_src emacs-lisp
 (package! doct)
 #+end_src
 **** Org-Pandoc Import
+:PROPERTIES:
+:ID:       e1c49db1-45a0-4c49-95b3-4e5ebd95a604
+:END:
 #+begin_src emacs-lisp
 (package! org-pandoc-import
   :recipe (:host github
@@ -228,35 +251,51 @@
            :files ("*.el" "filters" "preprocessors")))
 #+end_src
 **** Org Roam
+:PROPERTIES:
+:ID:       16946f12-1c0d-4531-b26e-c92640918610
+:END:
 #+begin_src emacs-lisp
-(unpin! org-roam)
+;(unpin! org-roam)
+(package! org-roam 
+  :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
 #+end_src
 **** Org-Transclusion
+:PROPERTIES:
+:ID:       fc4d3127-27c7-44d2-97b1-0d9f6104b80f
+:END:
 #+begin_src emacs-lisp
 (package! org-transclusion
   :recipe (:host github
            :repo "nobiot/org-transclusion"))
 #+end_src
 **** Org TOC
+:PROPERTIES:
+:ID:       83bcf723-181a-4c53-b401-db273c5f883d
+:END:
 #+begin_src emacs-lisp
 (package! org-make-toc)
 #+end_src
-*** Jupyter
-#+begin_src emacs-lisp
-(unpin! jupyter)
-#+end_src
 * Doom Config
 ** Lexical Bindings
+:PROPERTIES:
+:ID:       7b759353-de1e-4eb6-9e11-7a2a39a1fa53
+:END:
 #+begin_src emacs-lisp
 ;;; config.el -*- lexical-binding: t; -*-
 #+end_src
 ** Startup
 *** Identity
+:PROPERTIES:
+:ID:       3c812020-0fb6-420b-91ff-fba86e0bf90b
+:END:
 #+begin_src emacs-lisp
 (setq user-full-name    "cupkax"
       user-mail-address "vedantsansare23@gmail.com")
 #+end_src
 *** Better Defaults
+:PROPERTIES:
+:ID:       0d4ff944-2e1a-46c1-ab5b-49479a5c9b3e
+:END:
 #+begin_src emacs-lisp
 ;Enable Dangerous Commands
 (setq disabled-command-function nil)
@@ -284,12 +323,18 @@
 (global-auto-revert-mode 1)
 #+end_src
 *** =custom.el=
+:PROPERTIES:
+:ID:       1ba30ac8-a80d-416c-bd5a-1daed2d8ed89
+:END:
 #+begin_src emacs-lisp
 (setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
 #+end_src
 *** =utf-8-unix= System
+:PROPERTIES:
+:ID:       8208a6ce-b83e-4438-b760-4ca96a4ac5e7
+:END:
 #+begin_src emacs-lisp
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8)
@@ -303,6 +348,9 @@
 #+end_src
 ** Visual Settings
 *** Fonts
+:PROPERTIES:
+:ID:       8303f425-68ee-4034-b6d3-5e05a7a15c3b
+:END:
 #+begin_src emacs-lisp
 (setq doom-font                 (font-spec :family "JetBrainsMono Nerd Font" :size 16)
       doom-variable-pitch-font  (font-spec :family "Alegreya" :size 21 :weight 'regular)
@@ -310,6 +358,9 @@
       ;doom-serif-font           (font-spec :family "IBM Plex Mono"   :weight 'light))
 #+end_src
 *** Theme
+:PROPERTIES:
+:ID:       42980e87-54b8-4642-a0a6-c623cb6a5e20
+:END:
 #+begin_src emacs-lisp
 (use-package circadian
   :config
@@ -325,23 +376,35 @@
 #+end_src
 *** Modeline
 **** Change red text
+:PROPERTIES:
+:ID:       b3963139-7d7d-4fe9-aea9-3818fa42d4c8
+:END:
 #+begin_src emacs-lisp
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "orange"))
 #+end_src
 **** Show time
+:PROPERTIES:
+:ID:       0dcaab74-50f9-4704-b2b2-55a62c9994be
+:END:
 #+begin_src emacs-lisp
 (setq display-time-24hr-format t)
 (display-time-mode 1)
 #+end_src
 **** Hide Redundant Stuff
 ***** Remove default load average
+:PROPERTIES:
+:ID:       0b4e96b1-cb22-4cb7-892a-70dbe7458d39
+:END:
 #+begin_src emacs-lisp
 (setq-default display-time-default-load-average nil
               display-time-load-average nil)
 #+end_src
 
 ***** Hide =utf-8-unix= if not needed
+:PROPERTIES:
+:ID:       7db35ab0-08a9-489b-880c-ba87906fd60d
+:END:
 #+begin_src emacs-lisp
 (defun doom-modeline-conditional-buffer-encoding ()
   (setq-local doom-modeline-buffer-encoding
@@ -352,16 +415,25 @@
 #+end_src
 *** Lines
 **** Line Numbers
+:PROPERTIES:
+:ID:       bf205aa7-3054-4c83-83cd-e860619bffb6
+:END:
 #+begin_src emacs-lisp
 (setq display-line-numbers-type nil)
 #+end_src
 **** HL-Mode
+:PROPERTIES:
+:ID:       229c7f3d-c443-44fb-bb32-5bfbeb3c7094
+:END:
 #+begin_src emacs-lisp
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
 #+end_src
 ** Keybindings
 *** Evil
 **** Move beyond eol
+:PROPERTIES:
+:ID:       a1462b05-7695-4d3f-8dd1-f90a73b44c02
+:END:
 #+begin_src emacs-lisp
 (setq evil-move-beyond-eol t
       evil-move-cursor-back nil
@@ -371,15 +443,24 @@
 (defalias #'forward-evil-word #'forward-evil-symbol)
 #+end_src
 **** Global Substitute
+:PROPERTIES:
+:ID:       b23a827a-2638-4fd0-93ed-21591955e70f
+:END:
 #+begin_src emacs-lisp
 (setq evil-ex-substitute-global t)
 #+end_src
 *** Which-key
 **** Key delay
+:PROPERTIES:
+:ID:       84196456-f534-4988-b7a1-cf533b50a1f7
+:END:
 #+begin_src emacs-lisp
 (setq which-key-idle-delay 0.15)
 #+end_src
 **** Replace =evil= with unicode
+:PROPERTIES:
+:ID:       a274609a-6d3b-4db8-873f-ac63db693a8b
+:END:
 #+begin_src emacs-lisp
 (setq which-key-allow-multiple-replacements t)
 (after! which-key
@@ -390,28 +471,10 @@
    ))
 #+end_src
 ** Navigation
-*** Deft
-#+begin_src emacs-lisp
-(use-package deft
-  :defer t
-  :after org
-  :config
-  (setq deft-directory "~/git/org/"
-        deft-recursive t
-        deft-use-filter-string-for-filename t
-        deft-default-extension "org"
-        deft-strip-summary-regexp (concat "\\("
-                                          "[\n\t]"                    ;; blank
-                                          "\\|^#\\+[[:upper:]_]+:.*$"
-                                          "\\)")
-        deft-time-format "  %A, %B %e %Y (%H:%M)")
-  (add-hook! 'deft-mode-hook
-    (defun my-deft-buffer-config-h ()
-      (hl-line-mode 1)
-      (setq-local evil-normal-state-cursor (list nil)
-                  evil-insert-state-cursor (list nil)))))
-#+end_src
 *** Ivy
+:PROPERTIES:
+:ID:       f5396737-8e83-456c-804f-009a21de2a90
+:END:
 #+begin_src emacs-lisp
 (setq ivy-read-action-function #'ivy-hydra-read-action
       ivy-sort-max-size 50000)
@@ -419,6 +482,9 @@
 ** Buffer, Frame and Window Configuration
 *** Frame Config
 **** Remember frame dimensions
+:PROPERTIES:
+:ID:       4c140d0f-45a9-44fb-88bc-22e73b7e7ed8
+:END:
 #+begin_src emacs-lisp
 ;;;###autoload
 (defun my-save-frame-dimensions-h ()
@@ -449,6 +515,9 @@
 #+end_src
 *** Window Config
 **** Window Navigation
+:PROPERTIES:
+:ID:       0e976553-58f8-414e-b938-615837de3acc
+:END:
 #+begin_src emacs-lisp
 (map!
  :leader
@@ -458,6 +527,9 @@
  :desc "Switch to Down Window"  "<down>"    #'evil-window-down)
 #+end_src
 **** Window Split
+:PROPERTIES:
+:ID:       3c553f7c-cba4-4582-9924-69a323a712c8
+:END:
 #+begin_src emacs-lisp
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
@@ -465,24 +537,6 @@
   :after '(evil-window-split evil-window-vsplit)
   (+ivy/switch-buffer))
 (setq +ivy-buffer-preview t)
-#+end_src
-*** Buffer Config
-**** Save all buffers
-#+begin_src emacs-lisp :tangle no
-;;;###autoload
-(defadvice! my-save-all-buffers-a (&rest _)
-  "Advice to run `save-some-buffers' before a function.
-
-This is a part of the full auto-save feature."
-  :before (list #'save-buffers-kill-emacs #'my-tabs-close-buffer-tab)
-  (save-some-buffers t t))
-
-
-(setq auto-save-default t)
-(auto-save-visited-mode 1)
-(add-hook! 'auto-save-hook #'my-save-all-buffers-a)
-(add-function
- :after after-focus-change-function #'my-save-all-buffers-a)
 #+end_src
 ** Productivity
 *** LSP
@@ -494,26 +548,12 @@ This is a part of the full auto-save feature."
   (lsp-ui-sideline-show-hover t)
   (lsp-ui-doc-enable t))
 #+end_src
-**** Python
-#+begin_src emacs-lisp
-(after! lsp-python-ms
-  (set-lsp-priority! 'mspyls 1))
-#+end_src
-**** Jupyter
-#+begin_src emacs-lisp
-(use-package! jupyter
-  :defer t
-  :init
-
-  (setq org-babel-default-header-args:jupyter-python '((:async . "yes")
-                                                       (:session . "py")
-                                                       (:kernel . "python3")
-                                                       (:exports . "both")
-                                                       (:results . "scalar"))))
-#+end_src
 *** Company mode
 **** Autoloads
 ***** Complete with Company
+:PROPERTIES:
+:ID:       a23f0a3c-457d-4bbf-88d8-ed11cbfc8887
+:END:
 #+begin_src emacs-lisp
 ;;;###autoload
 (defun my-company-indent-or-complete-common (arg)
@@ -560,6 +600,9 @@ works."
       (company-abort))))
 #+end_src
 ***** Complete when company popup is visible
+:PROPERTIES:
+:ID:       a97ef872-7387-428b-9b71-c6ca4913f8aa
+:END:
 #+begin_src emacs-lisp
 ;;;###autoload
 (defun my-completion-yasnippet-or-completion ()
@@ -574,6 +617,9 @@ completion, or move the company selction to the next item."
     (company-abort)))
 #+end_src
 ***** Complete on return
+:PROPERTIES:
+:ID:       b049527e-21fc-4d61-b386-45498b6234ce
+:END:
 #+begin_src emacs-lisp
 ;;;###autoload
 (defun my-completion-complete-selection-or-return ()
@@ -588,6 +634,9 @@ insert a new line character."
     (execute-kbd-macro (read-kbd-macro "<return>"))))
 #+end_src
 **** Company Config
+:PROPERTIES:
+:ID:       6711baab-5068-42d7-91f9-ad3c5e1070f5
+:END:
 #+begin_src emacs-lisp
 (after! company
   (setq company-idle-delay nil
@@ -623,11 +672,17 @@ insert a new line character."
        :g [return] #'my-completion-complete-selection-or-return))
 #+end_src
 *** Automatic Indentation
+:PROPERTIES:
+:ID:       4eadad7d-1f22-4dfd-b91d-37f386b9626d
+:END:
 #+begin_src emacs-lisp
 (use-package! aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 #+end_src
 *** Smartparens
+:PROPERTIES:
+:ID:       41bbb541-6f37-486b-8ec9-9039eed34731
+:END:
 #+begin_src emacs-lisp
 (after! smartparens
   (show-smartparens-global-mode 1))
@@ -635,6 +690,9 @@ insert a new line character."
 ** Org Mode
 *** Basic Config
 **** Defaults
+:PROPERTIES:
+:ID:       5f8ef9fd-c9a5-48b2-adb3-10f6dc340e61
+:END:
 #+begin_src emacs-lisp
 (setq org-directory "~/git/org/"
       org-startup-folded 'overview
@@ -663,6 +721,9 @@ insert a new line character."
 #+end_src
 **** Visuals
 ***** Initial Hooks
+:PROPERTIES:
+:ID:       016a0cdb-1000-438b-9af2-bef1d992daea
+:END:
 Autofill mode currently disabled
 #+begin_src emacs-lisp :tangle no
 (add-hook! 'org-mode-hook #'auto-fill-mode)
@@ -672,6 +733,9 @@ Autofill mode currently disabled
 (add-hook 'org-mode-hook #'+org-pretty-mode #'org-pretty-tags-mode)
 #+end_src
 ***** Pretty Tags
+:PROPERTIES:
+:ID:       44522cb9-34b7-459e-96a8-57fcb99abf46
+:END:
 #+begin_src emacs-lisp
 (use-package org-pretty-tags
   :config
@@ -683,6 +747,9 @@ Autofill mode currently disabled
   (org-pretty-tags-global-mode))
 #+end_src
 ***** Org-Ol Tree
+:PROPERTIES:
+:ID:       5d3328a4-fb07-49e1-87b3-e507b500507b
+:END:
 #+begin_src emacs-lisp
 (use-package! org-ol-tree
   :commands org-ol-tree
@@ -694,12 +761,15 @@ Autofill mode currently disabled
   (setq org-ol-tree-ui-window-header-format
         '((:eval (concat " ☰ " (propertize "Outline" 'face '(:inherit 'my-default-ui :height 0.8)))))
         org-ol-tree-ui-window-auto-resize nil
-        org-ol-tree-ui-window-max-width 0.2 
+        org-ol-tree-ui-window-max-width 0.2
         org-ol-tree-ui-window-position 'left)
   (add-hook 'org-ol-tree-mode-hook #'+word-wrap-mode))
 #+end_src
 ***** Font Display
 ****** Headings
+:PROPERTIES:
+:ID:       ac1feaf1-cf3d-4aaf-9768-9979859cfb79
+:END:
 #+begin_src emacs-lisp
 (custom-set-faces!
   '(outline-1 :weight extra-bold :height 1.35)
@@ -716,6 +786,9 @@ Autofill mode currently disabled
   '(org-document-title :height 1.20))
 #+end_src
 ****** Show /emphasis/ markers
+:PROPERTIES:
+:ID:       0d1bcd55-dca9-441f-ac6b-825c51c11d12
+:END:
 #+begin_src emacs-lisp
 (use-package! org-appear
   :defer t
@@ -726,6 +799,9 @@ Autofill mode currently disabled
         org-appear-autolinks nil))
 #+end_src
 ****** Defer Font Lock
+:PROPERTIES:
+:ID:       fcb697c1-0bee-4778-9f63-df77b5b35207
+:END:
 #+begin_src emacs-lisp
 (defun locally-defer-font-lock ()
   "Set jit-lock defer and stealth, when buffer is over a certain size."
@@ -737,6 +813,9 @@ Autofill mode currently disabled
 #+end_src
 ***** Symbols
 ****** Bullets / Endings
+:PROPERTIES:
+:ID:       61977204-6ef5-4858-a206-cf7d32da463b
+:END:
 #+begin_src emacs-lisp
 (setq org-ellipsis "  "
       org-priority-highest ?A
@@ -760,6 +839,9 @@ Autofill mode currently disabled
         org-superstar-remove-leading-stars t))
 #+end_src
 ****** Other Symbols
+:PROPERTIES:
+:ID:       31b5206e-4fd4-4182-beda-ed6bfe385aa4
+:END:
 #+begin_src emacs-lisp
 (appendq! +ligatures-extra-symbols
           `(:checkbox      "☐"
@@ -790,6 +872,9 @@ Autofill mode currently disabled
   )
 #+end_src
 ***** Align
+:PROPERTIES:
+:ID:       55a968b2-d069-4f54-a21a-35c9642eab03
+:END:
 #+begin_src emacs-lisp
 (use-package! valign
   :defer t
@@ -798,6 +883,9 @@ Autofill mode currently disabled
         valign-mode 1))
 #+end_src
 **** Org-babel
+:PROPERTIES:
+:ID:       358e64de-54d2-436e-9070-4d229ce1dedd
+:END:
 #+begin_src emacs-lisp
 ;; Org block templates
 (setq org-structure-template-alist
@@ -814,6 +902,9 @@ Autofill mode currently disabled
         org-confirm-babel-evaluate nil))
 #+end_src
 *** Bibtex
+:PROPERTIES:
+:ID:       ec2bc4b8-8b9c-4eae-814d-c3d259a43886
+:END:
 #+begin_src emacs-lisp
 (use-package! bibtex-completion
   :defer t
@@ -827,7 +918,7 @@ Autofill mode currently disabled
         bibtex-completion-notes-template-multiple-files
         (concat
          "#+title: ${title}\n"
-         "#+roam_key: cite:${=key=}\n"
+         ;"#+roam_key: cite:${=key=}\n"
          "* TODO Notes\n"
          ":PROPERTIES:\n"
          ":Custom_ID: ${=key=}\n"
@@ -839,67 +930,44 @@ Autofill mode currently disabled
          ":URL: ${url}\n"
          ":END:\n\n")))
 #+end_src
-*** TODO Org Capture
-#+begin_src emacs-lisp :noweb no-export
-(use-package! doct
-  
-  :commands (doct))
-
-(after! org-capture
-  (setq org-capture-templates
-        (doct `(("PhD" :keys "p"
-                 :file "~/git/org/PhD.org"
-                 :prepend t
-                 :headline "PhD"
-                 :type entry
-                 :children (("Meeting" :keys "m"
-                             :template ("* TODO %u"
-                                        "%i"))
-                            ("Miscellaneous Tasks" :keys "t"
-                             :template ("* TODO %^{task}"
-                                        "DEADLINE: %^{do by}t"
-                                        "%i"))
-                            )
-                 )
-
-                ("Email" :keys "e"
-                   :file +org-capture-todo-file
-                   :prepend t
-                   :headline "Inbox"
-                   :type entry
-                   :template ("* TODO %^{type|reply to|contact} %\\3 %? :email:"
-                              "Send an email %^{ASAP|soon|eventually} to %^{recipiant}"
-                              " %^{topic}"
-                              "%i"))
-                  ))))
-#+end_src
-**** Test
-*** Org-Roam
+*** Roam
+:PROPERTIES:
+:ID:       0cbac01f-648e-4dc7-a99c-2baf4f0e2cd5
+:END:
 #+begin_src emacs-lisp
-(after! org-roam
-  (setq org-roam-directory "~/git/org/roam/"
-        org-roam-tag-sources '(prop all-directories)
-        org-roam-link-file-path-type 'relative
-        +org-roam-open-buffer-on-find-file nil
-        org-roam-completion-everywhere nil
-        org-roam-buffer-width 0.25
-        org-roam-db-update-method 'immediate)
-  (add-hook! 'org-roam-mode-hook #'org-roam-db-build-cache)
-  (defun cpkx/org-roam-prompt-tags ()
-  "Prompt user and ask if they want to input roam_tags during capture."
-  (when (y-or-n-p "Add tags? ")
-    (insert (format "%s" "\n#+roam_tags: ")))))
-#+end_src
-**** Org-Transclusion
-#+begin_src emacs-lisp
-(use-package! org-transclusion
-  :commands org-transclusion-mode
+(use-package! org-roam
   :init
-  (map! :after org :map org-mode-map
-        "<f12>" #'org-transclusion-mode))
+  (map! :leader
+        :prefix "n"
+        :desc "org-roam" "l" #'org-roam-buffer-toggle
+        :desc "org-roam-node-insert" "i" #'org-roam-node-insert
+        :desc "org-roam-node-find" "f" #'org-roam-node-find
+        :desc "org-roam-ref-find" "r" #'org-roam-ref-find
+        :desc "org-roam-show-graph" "g" #'org-roam-show-graph
+        :desc "org-roam-capture" "c" #'org-roam-capture
+        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today)
+  (setq org-roam-directory (file-truename "~/git/org/roam/")
+        org-roam-db-gc-threshold most-positive-fixnum
+        org-id-link-to-org-use-id t)
+  (add-to-list 'display-buffer-alist
+               '(("\\*org-roam\\*"
+                  (display-buffer-in-direction)
+                  (direction . right)
+                  (window-width . 0.33)
+                  (window-height . fit-window-to-buffer))))
+  :config
+  (setq org-roam-mode-sections
+        (list #'org-roam-backlinks-insert-section
+              #'org-roam-reflinks-insert-section
+              ;; #'org-roam-unlinked-references-insert-section
+              ))
+  (org-roam-setup))
 #+end_src
 *** Misc
 **** Convert UPPERCASE KEYWORDS to lowercase keywords
+:PROPERTIES:
+:ID:       d24fb249-b1d0-4a06-bd14-9aa0d6c11943
+:END:
 #+begin_src emacs-lisp
 (defun org-syntax-convert-keyword-case-to-lower ()
   "Convert all #+KEYWORDS to #+keywords."
@@ -915,12 +983,18 @@ Autofill mode currently disabled
       (message "Replaced %d occurances" count))))
 #+end_src
 **** Org Pandoc Import
+:PROPERTIES:
+:ID:       9324674c-453c-47a4-951c-b99102ffeb96
+:END:
 #+begin_src emacs-lisp
 (use-package! org-pandoc-import
   :after org)
 #+end_src
 ** Writing
 *** Mixed Pitch Mode
+:PROPERTIES:
+:ID:       fdf73dc3-cdce-4d1a-87f4-3d0a1223f022
+:END:
 #+begin_src emacs-lisp
 (add-hook! 'org-mode-hook #'mixed-pitch-mode)
 (setq mixed-pitch-variable-pitch-cursor nil
@@ -930,6 +1004,9 @@ Autofill mode currently disabled
 (set-char-table-range composition-function-table ?T '(["\\(?:Th\\)" 0 font-shape-gstring]))
 #+end_src
 *** Zen
+:PROPERTIES:
+:ID:       5c6c608b-39b1-4ec9-a93b-2b7448c2a941
+:END:
 #+begin_src emacs-lisp
 (setq writeroom-mode-line t
       +zen-text-scale 0.75)
@@ -944,76 +1021,24 @@ Autofill mode currently disabled
 #+end_src
 *** Dictionary
 **** Hunspell
+:PROPERTIES:
+:ID:       2f348bed-20d1-4d02-8af0-03bdbc4dc6b7
+:END:
 #+begin_src emacs-lisp
-(defconst my-aspell-local-data-dir (expand-file-name "~/.local/share/aspell")
-  "Directory of Aspell dictionaries.")
-
-(unless (file-exists-p my-aspell-local-data-dir)
-  (mkdir my-aspell-local-data-dir t))
-
-(defconst my-aspell--personal-dictionary (expand-file-name "personal.en.pws" my-aspell-local-data-dir)
-  "File path for my personal word dictionaries.")
-
-(when (not (file-exists-p my-aspell--personal-dictionary))
-  (append-to-file "personal_ws-1.1 en 0 utf-8" nil my-aspell--personal-dictionary))
-
-;;;###autoload
-(defun my-aspell-cmd-flags (&optional camel-case &rest extra-args)
-  "Return the list of arguments Emacs should use to run aspell.
-
-You can use this list of arguments directly as the value of `ispell-extra-args'.
-If CAMEL-CASE is a non-nil value, the list of arguments will include the
-\"--camel-case\" option.
-
-If EXTRA-ARGS is not nil, this function will append its value to the result."
-  (append '("--sug-mode=ultra") extra-args (when camel-case '("--camel-case"))))
-
 (after! ispell
-  (setq ispell-personal-dictionary my-aspell--personal-dictionary
+  (setq ispell-dictionary "en-custom"
+        ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
         ispell-really-aspell t
-        ispell-local-dictionary-alist
-        '(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
+        ;ispell-local-dictionary-alist
+        ;'(("english" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8))
 
-        ispell-extra-args (my-aspell-cmd-flags t)))
-
-;; Ignore URL spell check
-;;;###autoload
-(defun my-spell-fu-find-urls (point-start point-end)
-  (let ((url-ranges (list)))
-    (save-match-data
-      (save-excursion
-        (goto-char point-start)
-        (while (re-search-forward browse-url-button-regexp point-end t)
-          (push (cons (match-beginning 0) (match-end 0)) url-ranges))
-        url-ranges))))
-;;;###autoload
-(defun my-spell-fu-check-range (point-start point-end)
-  "Check spelling for POINT-START & POINT-END ignoring urls."
-  (spell-fu--remove-overlays point-start point-end)
-  (with-syntax-table spell-fu-syntax-table
-    (save-match-data
-      (save-excursion
-        (goto-char point-start)
-        (while (re-search-forward spell-fu-word-regexp point-end t)
-          (let ((url-ranges (my-spell-fu-find-urls point-start point-end))
-                (word-start (match-beginning 0))
-                (word-end (match-end 0)))
-            (unless (seq-some (lambda (range)
-                                (or (and (> word-start (car range))
-                                         (< word-start (cdr range)))
-                                    (and (> word-end (car range))
-                                         (< word-end (cdr range)))))
-                              url-ranges)
-              (when (spell-fu--check-faces-at-point
-                     word-start
-                     spell-fu-faces-include
-                     spell-fu-faces-exclude)
-                (spell-fu-check-word word-start word-end (match-string-no-properties 0))))))))))
-(after! spell-fu
-  (setq spell-fu-check-range 'my-spell-fu-check-range))
+        ))
 #+end_src
 ** Exit
 *** Sync org files to dropbox
+:PROPERTIES:
+:ID:       a90c87aa-69d1-4fe6-b69f-fdf698ef78eb
+:END:
 #+begin_src emacs-lisp
 (defun rsync-drop ()
   ;(setq shell-file-name "c:/msys64/usr/bin/bash.exe")
