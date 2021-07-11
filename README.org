@@ -3,61 +3,6 @@
 #+startup: fold
 #+property: header-args:emacs-lisp :tangle "config.el" :results silent
 #+property: header-args :tangle no :results silent
-* TOC
-:PROPERTIES:
-:TOC:      :include all :depth 3 :ignore this
-:END:
-:CONTENTS:
-- [[#doom-core][Doom Core]]
-  - [[#initel][init.el]]
-  - [[#packageel][package.el]]
-    - [[#prevent-byte-compile][Prevent Byte Compile]]
-    - [[#deft][Deft]]
-    - [[#aesthetics][Aesthetics]]
-    - [[#org][Org]]
-    - [[#jupyter][Jupyter]]
-- [[#doom-config][Doom Config]]
-  - [[#lexical-bindings][Lexical Bindings]]
-  - [[#startup][Startup]]
-    - [[#identity][Identity]]
-    - [[#better-defaults][Better Defaults]]
-    - [[#customel][custom.el]]
-    - [[#utf-8-unix-system][utf-8-unix System]]
-  - [[#visual-settings][Visual Settings]]
-    - [[#fonts][Fonts]]
-    - [[#theme][Theme]]
-    - [[#modeline][Modeline]]
-    - [[#lines][Lines]]
-  - [[#keybindings][Keybindings]]
-    - [[#evil][Evil]]
-    - [[#which-key][Which-key]]
-  - [[#navigation][Navigation]]
-    - [[#deft][Deft]]
-    - [[#ivy][Ivy]]
-  - [[#buffer-frame-and-window-configuration][Buffer, Frame and Window Configuration]]
-    - [[#frame-config][Frame Config]]
-    - [[#window-config][Window Config]]
-    - [[#buffer-config][Buffer Config]]
-  - [[#productivity][Productivity]]
-    - [[#jupyter][Jupyter]]
-    - [[#python][Python]]
-    - [[#automatic-indentation][Automatic Indentation]]
-    - [[#company-mode][Company mode]]
-    - [[#lsp][LSP]]
-    - [[#smartparens][Smartparens]]
-  - [[#org-mode][Org Mode]]
-    - [[#basic-config][Basic Config]]
-    - [[#bibtex][Bibtex]]
-    - [[#org-capture][Org Capture]]
-    - [[#org-roam][Org-Roam]]
-    - [[#misc][Misc]]
-  - [[#writing][Writing]]
-    - [[#mixed-pitch-mode][Mixed Pitch Mode]]
-    - [[#zen][Zen]]
-    - [[#dictionary][Dictionary]]
-  - [[#exit][Exit]]
-    - [[#sync-org-files-to-dropbox][Sync org files to dropbox]]
-:END:
 * Doom Core
 ** =init.el=
 :PROPERTIES:
@@ -84,7 +29,7 @@
  (ligatures
   +extra)
  modeline
- nav-flash
+ ;nav-flash
  ophints
  (popup
   +all
@@ -113,7 +58,8 @@
  vterm
 
  :checkers
- syntax
+ (syntax
+  +childframe)
  (spell
   +aspell
   +everywhere)
@@ -168,6 +114,13 @@
 #+begin_src emacs-lisp
 ;; -*- no-byte-compile: t; -*-
 #+end_src
+*** Completion
+:PROPERTIES:
+:ID:       cf6f3dbe-8586-4e26-8180-08c34a4ea185
+:END:
+#+begin_src emacs-lisp
+(package! orderless)
+#+end_src
 *** Aesthetics
 **** Indent
 :PROPERTIES:
@@ -177,9 +130,8 @@
 (package! aggressive-indent)
 #+end_src
 **** Theme
-***** Theme packages
 :PROPERTIES:
-:ID:       e5885805-1ccd-4e0a-b443-26867ee48d6f
+:ID:       bc919b7c-51a8-42e1-8b4b-16d8e4a26eba
 :END:
 #+begin_src emacs-lisp
 (unpin! doom-themes)
@@ -198,7 +150,7 @@
 :PROPERTIES:
 :ID:       79109170-c3e6-4930-a8c4-88138aab4083
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! valign)
 #+end_src
 *** Org
@@ -263,7 +215,7 @@
 :PROPERTIES:
 :ID:       fc4d3127-27c7-44d2-97b1-0d9f6104b80f
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! org-transclusion
   :recipe (:host github
            :repo "nobiot/org-transclusion"))
@@ -272,7 +224,7 @@
 :PROPERTIES:
 :ID:       83bcf723-181a-4c53-b401-db273c5f883d
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (package! org-make-toc)
 #+end_src
 * Doom Config
@@ -281,7 +233,7 @@
 :ID:       7b759353-de1e-4eb6-9e11-7a2a39a1fa53
 :END:
 #+begin_src emacs-lisp
-;;; config.el -*- lexical-binding: t; -*-
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 #+end_src
 ** Startup
 *** Identity
@@ -305,7 +257,6 @@
       undo-limit 80000000
       load-prefer-newer t
       evil-want-fine-undo t
-      truncate-lines t
       global-subword-mode 1
       delete-by-moving-to-trash t
       tab-width 4
@@ -355,7 +306,6 @@
 (setq doom-font                 (font-spec :family "JetBrainsMono Nerd Font" :size 16)
       doom-variable-pitch-font  (font-spec :family "Alegreya" :size 21 :weight 'regular)
       doom-unicode-font         (font-spec :family "JuliaMono"               :size 16))
-      ;doom-serif-font           (font-spec :family "IBM Plex Mono"   :weight 'light))
 #+end_src
 *** Theme
 :PROPERTIES:
@@ -368,11 +318,11 @@
                            ("18:30" . spacemacs-dark)))
   (circadian-setup))
 
-(setq doom-themes-enable-bold t
-      doom-themes-enable-italic t)
-(remove-hook 'window-setup-hook #'doom-init-theme-h)
-(add-hook 'after-init-hook #'doom-init-theme-h 'append)
-(delq! t custom-theme-load-path)
+;(setq doom-themes-enable-bold t
+;      doom-themes-enable-italic t)
+;(remove-hook 'window-setup-hook #'doom-init-theme-h)
+;(add-hook 'after-init-hook #'doom-init-theme-h 'append)
+;(delq! t custom-theme-load-path)
 #+end_src
 *** Modeline
 **** Change red text
@@ -392,20 +342,12 @@
 (display-time-mode 1)
 #+end_src
 **** Hide Redundant Stuff
-***** Remove default load average
 :PROPERTIES:
-:ID:       0b4e96b1-cb22-4cb7-892a-70dbe7458d39
+:ID:       5ae9ddd0-797d-4958-a251-a041760b1319
 :END:
 #+begin_src emacs-lisp
 (setq-default display-time-default-load-average nil
               display-time-load-average nil)
-#+end_src
-
-***** Hide =utf-8-unix= if not needed
-:PROPERTIES:
-:ID:       7db35ab0-08a9-489b-880c-ba87906fd60d
-:END:
-#+begin_src emacs-lisp
 (defun doom-modeline-conditional-buffer-encoding ()
   (setq-local doom-modeline-buffer-encoding
               (unless (or (eq buffer-file-coding-system 'utf-8-unix)
@@ -414,19 +356,28 @@
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
 #+end_src
 *** Lines
-**** Line Numbers
 :PROPERTIES:
-:ID:       bf205aa7-3054-4c83-83cd-e860619bffb6
+:ID:       540d526b-d7b8-491c-bd17-9f15166fbea6
 :END:
 #+begin_src emacs-lisp
 (setq display-line-numbers-type nil)
+(remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
 #+end_src
-**** HL-Mode
+*** Automatic Indentation
 :PROPERTIES:
-:ID:       229c7f3d-c443-44fb-bb32-5bfbeb3c7094
+:ID:       4eadad7d-1f22-4dfd-b91d-37f386b9626d
 :END:
 #+begin_src emacs-lisp
-(remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
+(use-package! aggressive-indent
+  :hook (emacs-lisp-mode . aggressive-indent-mode))
+#+end_src
+*** Smartparens
+:PROPERTIES:
+:ID:       41bbb541-6f37-486b-8ec9-9039eed34731
+:END:
+#+begin_src emacs-lisp
+(after! smartparens
+  (show-smartparens-global-mode 1))
 #+end_src
 ** Keybindings
 *** Evil
@@ -457,20 +408,7 @@
 #+begin_src emacs-lisp
 (setq which-key-idle-delay 0.15)
 #+end_src
-**** Replace =evil= with unicode
-:PROPERTIES:
-:ID:       a274609a-6d3b-4db8-873f-ac63db693a8b
-:END:
-#+begin_src emacs-lisp
-(setq which-key-allow-multiple-replacements t)
-(after! which-key
-  (pushnew!
-   which-key-replacement-alist
-   '(("" . "\\`+?evil[-:]?\\(?:a-\\)?\\(.*\\)") . (nil . "◂\\1"))
-   '(("\\`g s" . "\\`evilem--?motion-\\(.*\\)") . (nil . "◃\\1"))
-   ))
-#+end_src
-** Navigation
+** Completion
 *** Ivy
 :PROPERTIES:
 :ID:       f5396737-8e83-456c-804f-009a21de2a90
@@ -479,40 +417,37 @@
 (setq ivy-read-action-function #'ivy-hydra-read-action
       ivy-sort-max-size 50000)
 #+end_src
-** Buffer, Frame and Window Configuration
-*** Frame Config
-**** Remember frame dimensions
+*** Orderless
 :PROPERTIES:
-:ID:       4c140d0f-45a9-44fb-88bc-22e73b7e7ed8
+:ID:       738a02f7-ecd4-48e2-bf98-99aabbb836e8
 :END:
 #+begin_src emacs-lisp
-;;;###autoload
-(defun my-save-frame-dimensions-h ()
-  "Caches the current frame dimensions and position."
-  (if-let ((main-frame (car-safe (visible-frame-list))))
-      (doom-store-put 'last-frame-size
-                      (list (frame-position main-frame)
-                            (frame-width main-frame)
-                            (frame-height main-frame)
-                            (frame-parameter main-frame 'fullscreen)))))
-;;;###autoload
-(defun my-restore-frame-dimensions-h ()
-  "Restore frame dimensions and position from `my-save-frame-dimensions-h'."
-  (if-let (dims (doom-store-get 'last-frame-size "default"))
-      (cl-destructuring-bind ((left . top) width height fullscreen) dims
-        (setq initial-frame-alist
-              (append initial-frame-alist
-                      `((left . ,left)
-                        (top . ,top)
-                        (width . ,width)
-                        (height . ,height)
-                        (fullscreen . ,fullscreen)))))
-    (add-to-list 'default-frame-alist '(height . 60))
-    (add-to-list 'default-frame-alist '(width . 140))))
+(use-package! orderless
+  :init
+  (setq completion-styles '(orderless)
+        orderless-component-separator "[ &]"
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion)))))
+  (defun just-one-face (fn &rest args)
+  (let ((orderless-match-faces [completions-common-part]))
+    (apply fn args)))
 
-(add-hook 'kill-emacs-hook #'my-save-frame-dimensions-h)
-(my-restore-frame-dimensions-h)
+(advice-add 'company-capf--candidates :around #'just-one-face)
+  :config
+  (after! ivy
+    (setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))))
 #+end_src
+*** Company
+:PROPERTIES:
+:ID:       7fa0b298-1603-481c-8e76-8ee444d175be
+:END:
+#+begin_src emacs-lisp
+(after! company
+  (setq company-idle-delay 0
+        company-minimum-prefix-length 2)
+  (add-hook 'evil-normal-state-entry-hook #'company-abort))
+#+end_src
+** Buffer, Frame and Window Configuration
 *** Window Config
 **** Window Navigation
 :PROPERTIES:
@@ -538,155 +473,6 @@
   (+ivy/switch-buffer))
 (setq +ivy-buffer-preview t)
 #+end_src
-** Productivity
-*** LSP
-**** LSP UI
-#+begin_src emacs-lisp :tangle no
-(use-package! lsp-ui
-  :defer t
-  :custom
-  (lsp-ui-sideline-show-hover t)
-  (lsp-ui-doc-enable t))
-#+end_src
-*** Company mode
-**** Autoloads
-***** Complete with Company
-:PROPERTIES:
-:ID:       a23f0a3c-457d-4bbf-88d8-ed11cbfc8887
-:END:
-#+begin_src emacs-lisp
-;;;###autoload
-(defun my-company-indent-or-complete-common (arg)
-  "Tab key action for current point.
-
-This function tries to insert a tab character, trigger a snippet or complete a
-word with company.
-
-The order for this selection is:
-
-- Org table
-- Yasnippet
-- Indent region
-- Indent line
-- Indent org-mode line
-- Indent org-mode headline
-- Indent org-mode item from a list
-- Indent markdown-mode line
-- Indent rst-mode line
-- Complete with company
-
-The action selection happens in this order and stops as soon as the first action
-works."
-  (interactive "P")
-  (if (org-table-p)
-      (orgtbl-tab arg)
-    (if (or (not yas-minor-mode)
-            (null (yas-expand)))
-        (cond ((use-region-p) (indent-region (region-beginning) (region-end)))
-              (t (let ((old-point (point))
-                       (old-tick (buffer-chars-modified-tick))
-                       (tab-always-indent t))
-                   (indent-for-tab-command arg)
-                   (when (and (eq old-point (point))
-                              (eq old-tick (buffer-chars-modified-tick)))
-                     (unless (pcase major-mode
-                               ('org-mode (or (org-indent-line)
-                                              (org-cycle-level)
-                                              (org-cycle-item-indentation)))
-                               ('markdown-mode (markdown-indent-line))
-                               ('rst-mode (rst-indent-line nil))
-                               (_ nil))
-                       (company-complete-common))))))
-      (company-abort))))
-#+end_src
-***** Complete when company popup is visible
-:PROPERTIES:
-:ID:       a97ef872-7387-428b-9b71-c6ca4913f8aa
-:END:
-#+begin_src emacs-lisp
-;;;###autoload
-(defun my-completion-yasnippet-or-completion ()
-  "Tab key action when company popup is visible.
-
-This function tries to expand a snippet, complete a common prefix on a company
-completion, or move the company selction to the next item."
-  (interactive)
-  (if (or (not yas-minor-mode)
-          (null (yas-expand)))
-      (company-complete-common-or-cycle)
-    (company-abort)))
-#+end_src
-***** Complete on return
-:PROPERTIES:
-:ID:       b049527e-21fc-4d61-b386-45498b6234ce
-:END:
-#+begin_src emacs-lisp
-;;;###autoload
-(defun my-completion-complete-selection-or-return ()
-  "Return key action when company popup is visible.
-
-This function will select current company item if user already selected one, or
-insert a new line character."
-  (interactive)
-  (if company-selection
-      (company-complete-selection)
-    (company-abort)
-    (execute-kbd-macro (read-kbd-macro "<return>"))))
-#+end_src
-**** Company Config
-:PROPERTIES:
-:ID:       6711baab-5068-42d7-91f9-ad3c5e1070f5
-:END:
-#+begin_src emacs-lisp
-(after! company
-  (setq company-idle-delay nil
-        company-minimum-prefix-length 2
-        tab-always-indent 'complete
-        company-show-numbers t
-        company-box-doc-enable nil)
-  (setq company-frontends (delq 'company-pseudo-tooltip-frontend company-frontends))
-
-  (add-hook 'evil-normal-state-entry-hook #'company-abort)
-  (set-company-backend!
-  '(text-mode
-    markdown-mode
-    gfm-mode)
-  '(:seperate
-    company-ispell
-    company-files
-    company-yasnippet)))
-
-(setq-default history-length 1000
-              prescient-history-length 1000)
-
-
-; Company keymap
-(map! :after company
-      (:map global-map
-       :i [tab] #'my-company-indent-or-complete-common)
-      (:map company-active-map
-       :g [tab] #'my-completion-yasnippet-or-completion
-       :g [backtab] #'company-select-previous
-       :g [down] #'company-select-next
-       :g [up] #'company-select-previous
-       :g [return] #'my-completion-complete-selection-or-return))
-#+end_src
-*** Automatic Indentation
-:PROPERTIES:
-:ID:       4eadad7d-1f22-4dfd-b91d-37f386b9626d
-:END:
-#+begin_src emacs-lisp
-(use-package! aggressive-indent
-  :hook (emacs-lisp-mode . aggressive-indent-mode))
-#+end_src
-*** Smartparens
-:PROPERTIES:
-:ID:       41bbb541-6f37-486b-8ec9-9039eed34731
-:END:
-#+begin_src emacs-lisp
-(after! smartparens
-  (show-smartparens-global-mode 1))
-#+end_src
 ** Org Mode
 *** Basic Config
 **** Defaults
@@ -711,7 +497,7 @@ insert a new line character."
 (with-eval-after-load 'flycheck
   (flycheck-add-mode 'proselint 'org-mode))
 
-                                        ;Keymap
+;;Keymap
 (map! :map evil-org-mode-map
       :after evil-org
       :n "g <up>" #'org-backward-heading-same-level
@@ -724,11 +510,6 @@ insert a new line character."
 :PROPERTIES:
 :ID:       016a0cdb-1000-438b-9af2-bef1d992daea
 :END:
-Autofill mode currently disabled
-#+begin_src emacs-lisp :tangle no
-(add-hook! 'org-mode-hook #'auto-fill-mode)
-#+end_src
-
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook #'+org-pretty-mode #'org-pretty-tags-mode)
 #+end_src
@@ -745,25 +526,6 @@ Autofill mode currently disabled
           ("simulation"    . ,(all-the-icons-fileicon "robot"   :face 'all-the-icons-purple  :v-adjust 0.01))
           ))
   (org-pretty-tags-global-mode))
-#+end_src
-***** Org-Ol Tree
-:PROPERTIES:
-:ID:       5d3328a4-fb07-49e1-87b3-e507b500507b
-:END:
-#+begin_src emacs-lisp
-(use-package! org-ol-tree
-  :commands org-ol-tree
-  :init
-  (map! :map org-mode-map
-        :localleader :prefix ("g" . "goto")
-        :desc "Open outline"  "o" #'org-ol-tree)
-
-  (setq org-ol-tree-ui-window-header-format
-        '((:eval (concat " ☰ " (propertize "Outline" 'face '(:inherit 'my-default-ui :height 0.8)))))
-        org-ol-tree-ui-window-auto-resize nil
-        org-ol-tree-ui-window-max-width 0.2
-        org-ol-tree-ui-window-position 'left)
-  (add-hook 'org-ol-tree-mode-hook #'+word-wrap-mode))
 #+end_src
 ***** Font Display
 ****** Headings
@@ -827,11 +589,6 @@ Autofill mode currently disabled
         (?D . 'all-the-icons-green)
         (?E . 'all-the-icons-blue)))
 
-;Change list bullets with depth
-(setq org-list-demote-modify-bullet '(("+" . "-")
-                                      ("-" . "+")
-                                      ("*" . "+")
-                                      ("1." . "a.")))
 
 (after! org-superstar
   (setq org-superstar-headline-bullets-list '("🞅" "🞊" "✠" "🟅" "🞜" "🟉" "◆")
@@ -871,17 +628,6 @@ Autofill mode currently disabled
   :header        "#+header:"
   )
 #+end_src
-***** Align
-:PROPERTIES:
-:ID:       55a968b2-d069-4f54-a21a-35c9642eab03
-:END:
-#+begin_src emacs-lisp
-(use-package! valign
-  :defer t
-  :init
-  (setq valign-fancy-bar t
-        valign-mode 1))
-#+end_src
 **** Org-babel
 :PROPERTIES:
 :ID:       358e64de-54d2-436e-9070-4d229ce1dedd
@@ -889,17 +635,13 @@ Autofill mode currently disabled
 #+begin_src emacs-lisp
 ;; Org block templates
 (setq org-structure-template-alist
-      '(("e" . "src emacs-lisp")
-        ("p" . "jupyter-python")))
+      '(("e" . "src emacs-lisp")))
 
 
 (after! org
   (setq org-return-follows-link t
         org-babel-load-languages '((emacs-lisp . t)
-                             (python . t)
-                             (dot . t)
-                             (jupyter . t))
-        org-confirm-babel-evaluate nil))
+                             (dot . t))))
 #+end_src
 *** Bibtex
 :PROPERTIES:
@@ -918,7 +660,7 @@ Autofill mode currently disabled
         bibtex-completion-notes-template-multiple-files
         (concat
          "#+title: ${title}\n"
-         ;"#+roam_key: cite:${=key=}\n"
+         "#+roam_key: cite:${=key=}\n"
          "* TODO Notes\n"
          ":PROPERTIES:\n"
          ":Custom_ID: ${=key=}\n"
