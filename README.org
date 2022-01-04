@@ -96,7 +96,7 @@
 #+begin_src emacs-lisp
   (setq doom-font                (font-spec :family "CartographCF Nerd Font"     :size 16)
         doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"         :size 16)
-        doom-unicode-font        (font-spec :family "JuliaMono"))
+        doom-unicode-font        (font-spec :family "Symbola"))
   (setq doom-font-increment 1)
 #+end_src
 *** Theme
@@ -250,8 +250,8 @@
       org-use-property-inheritance t
       org-list-allow-alphabetical t
       org-catch-invisible-edits 'smart
-      org-startup-indented nil
-      org-adapt-indentation nil
+      org-startup-indented t
+      org-adapt-indentation t
       org-indent-indentation-per-level 1
       org-cycle-separator-lines 1
       org-blank-before-new-entry '((heading . nil)
@@ -273,23 +273,7 @@
 (setq-default org-display-custom-times t)
 ;(add-hook 'org-mode-hook #'org-element-cache-reset 'append)
 
-;;Keymap
-(map! :map evil-org-mode-map
-      :after evil-org
-      :n "g <up>" #'org-backward-heading-same-level
-      :n "g <down>" #'org-forward-heading-same-level
-      :n "g <left>" #'org-up-element
-      :n "g <right>" #'org-down-element)
-
-;; Add last edited timestap
-;(add-hook 'org-mode-hook (lambda ()
-;                             (setq-local time-stamp-active t
-;                                         time-stamp-line-limit 18
-;                                         time-stamp-start "^#\\+last_modified: [ \t]*"
-;                                         time-stamp-end "$"
-;                                         time-stamp-format "\[%Y-%m-%d %a %H:%M:%S\]")
-;                             (add-hook 'before-save-hook 'time-stamp nil 'local)))
-  ;; Update files with last modifed date, when #+lastmod: is available
+;; Update files with last modifed date, when #+lastmod: is available
   (setq time-stamp-active t
         time-stamp-line-limit 18
         time-stamp-start "#\\+lastmod:[ \t]*"
@@ -639,60 +623,6 @@ as returned by `org-export-new-reference'."
         citar-notes-paths '("~/org/roam/")
         bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 #+end_src
-**** Citar
-#+begin_src emacs-lisp :tangle no
-(use-package! citar
-  :when (featurep! :completion vertico)
-  :after bibtex-completion
-  :custom
-  (when (featurep! +roam2)
-    (citar-file-note-org-include '(org-id org-roam-ref))))
-
-(use-package! citeproc
-  :defer t)
-
-;;; Org-Cite configuration
-
-(use-package! oc
-  :after org bibtex-completion citar
-  :config
-  (require 'ox)
-  (map! :map org-mode-map
-        :localleader
-        :desc "Insert citation" "@" #'org-cite-insert)
-  (setq org-cite-global-bibliography
-        (let ((paths (or citar-bibliography
-                         bibtex-completion-bibliography)))
-          ;; Always return bibliography paths as list for org-cite.
-          (if (stringp paths) (list paths) paths)))
-  ;; setup export processor; default csl/citeproc-el, with biblatex for latex
-  (setq org-cite-export-processors
-        '((latex biblatex)
-          (t csl))))
-
-  ;;; Org-cite processors
-(use-package! oc-biblatex
-  :after oc)
-
-(use-package! oc-csl
-  :after oc)
-
-(use-package! oc-natbib
-  :after oc)
-
-;;;; Third-party
-
-(use-package! citar-org
-  :no-require
-  :custom
-  (org-cite-insert-processor 'citar)
-  (org-cite-follow-processor 'citar)
-  (org-cite-activate-processor 'citar)
-  (org-support-shift-select t)
-  (when (featurep! :lang org +roam2)
-    ;; Include property drawer metadata for 'org-roam' v2.
-    (citar-file-note-org-include '(org-id org-roam-ref))))
-#+end_src
 *** Roam
 **** Add Timestamp
 :PROPERTIES:
@@ -715,10 +645,6 @@ as returned by `org-export-new-reference'."
 #+begin_src emacs-lisp
 (use-package! websocket
     :after org-roam)
-
-;(use-package! org-roam-ui
-;    :after org-roam ;; or :after org
-;    :hook (org-roam . org-roam-ui-mode))
 
 (use-package! org-roam-ui
   :after org-roam
@@ -839,7 +765,7 @@ why I read this paper?
    :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
 #+end_src
 *** LaTeX
-**** LaTex Fragments
+**** LaTeX Fragments
 ***** Better Highlighting
 #+begin_src emacs-lisp
 (setq org-highlight-latex-and-related '(native script entities))
@@ -882,7 +808,6 @@ why I read this paper?
 (setq org-format-latex-options
       (plist-put org-format-latex-options :background "Transparent"))
 #+end_src
-
 **** Export
 #+begin_src emacs-lisp
 (use-package! ox-extra
@@ -1036,10 +961,6 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
                                         ;(add-hook 'text-mode-hook 'flyspell-mode)
                                         ;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 #+end_src
-**** Turn on flyspell
-#+begin_src emacs-lisp :tangle no
-(add-hook 'org-mode-hook 'turn-on-flyspell)
-#+end_src
 ** Exit
 *** Sync org files to dropbox
 :PROPERTIES:
@@ -1051,6 +972,6 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
   ;(setq shell-file-name "c:/msys64/usr/bin/bash.exe")
   (shell-command "rsync -avu --delete $HOME/org/ $HOME/Dropbox/org/"))
 
-(add-hook! 'after-save-hook 'rsync-drop)
-(add-hook! 'kill-emacs-hook 'rsync-drop)
+;(add-hook! 'after-save-hook 'rsync-drop)
+;(add-hook! 'kill-emacs-hook 'rsync-drop)
 #+end_src
