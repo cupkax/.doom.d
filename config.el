@@ -1,29 +1,8 @@
-#+title: Doom Emacs Configuration
-#+startup: fold
-#+property: header-args:emacs-lisp :tangle "config.el" :results silent
-#+property: header-args :tangle no :results silent
-* Doom Config
-** Lexical Bindings
-:PROPERTIES:
-:ID:       e78d7023-c327-4c42-b215-33769b9a577a
-:END:
-#+begin_src emacs-lisp
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-#+end_src
-** Startup
-*** Identity
-:PROPERTIES:
-:ID:       7cdd3dd6-987a-47e7-8c96-797f8bfbf54d
-:END:
-#+begin_src emacs-lisp
+
 (setq user-full-name    "cupkax"
       user-mail-address "vedant.sansare@protonmail.com")
-#+end_src
-*** Better Defaults
-:PROPERTIES:
-:ID:       5a264247-0daf-471a-b2c1-3a8f20f11c56
-:END:
-#+begin_src emacs-lisp
+
 ;Enable Dangerous Commands
 (setq disabled-command-function nil)
 (setq enable-local-eval t)
@@ -49,21 +28,11 @@
 (remove-hook 'doom-after-init-modules-hook #'general-auto-unbind-keys)
 (whitespace-mode -1)
 (global-auto-revert-mode 1)
-#+end_src
-*** =custom.el=
-:PROPERTIES:
-:ID:       306e1e6b-7594-48e5-b00f-277430f171de
-:END:
-#+begin_src emacs-lisp
+
 (setq-default custom-file (expand-file-name ".custom.el" doom-private-dir))
 (when (file-exists-p custom-file)
   (load custom-file))
-#+end_src
-*** =utf-8-unix= System
-:PROPERTIES:
-:ID:       8f3ea0f5-474e-41fe-80fa-1f969c678786
-:END:
-#+begin_src emacs-lisp
+
 (prefer-coding-system 'utf-8-unix)
 (set-default-coding-systems 'utf-8)
 
@@ -73,12 +42,7 @@
       (set-buffer-file-coding-system 'unix))))
 
 (add-hook 'find-file-hook 'cpkx/fuckoff-macwin)
-#+end_src
-*** WSL Default Application
-:PROPERTIES:
-:ID:       6d545e24-a17a-4bfa-8505-d6b53093ffcc
-:END:
-#+begin_src emacs-lisp
+
 (when (and (eq system-type 'gnu/linux)
            (string-match
             "Linux.*Microsoft.*Linux"
@@ -87,52 +51,18 @@
    browse-url-generic-program  "/mnt/c/Windows/System32/cmd.exe"
    browse-url-generic-args     '("/c" "start")
    browse-url-browser-function #'browse-url-generic))
-#+end_src
-** Visual Settings
-*** Fonts
-:PROPERTIES:
-:ID:       ea5d43f8-f5df-46ff-818f-81f930523365
-:END:
-#+begin_src emacs-lisp
+
   (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font"     :size 16)
         doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"         :size 16)
         doom-unicode-font        (font-spec :family "Symbola"))
   (setq doom-font-increment 1)
-#+end_src
-*** Theme
-**** Circadian
-:PROPERTIES:
-:ID:       ddd45a4b-803f-480f-a291-50040582a03d
-:END:
-#+begin_src emacs-lisp :tangle no
-(use-package circadian
-  :config
-  (setq circadian-themes '(("6:00"  . spacemacs-light)
-                           ("16:30" . spacemacs-dark)))
-  (circadian-setup))
-#+end_src
-*** Modeline
-**** Change red text
-:PROPERTIES:
-:ID:       e5dd40b0-2581-4215-aa82-62d1601bb600
-:END:
-#+begin_src emacs-lisp
+
 (custom-set-faces!
   '(doom-modeline-buffer-modified :foreground "orange"))
-#+end_src
-**** Show time
-:PROPERTIES:
-:ID:       1a12f845-e407-4bbd-82c2-002ecf22085e
-:END:
-#+begin_src emacs-lisp
+
 (setq display-time-24hr-format t)
 (display-time-mode 1)
-#+end_src
-**** Hide Redundant Stuff
-:PROPERTIES:
-:ID:       eacb75d2-f82f-48c5-85d7-ef60e80b23d2
-:END:
-#+begin_src emacs-lisp
+
 (setq-default display-time-default-load-average nil
               display-time-load-average nil)
 (defun doom-modeline-conditional-buffer-encoding ()
@@ -141,107 +71,47 @@
                           (eq buffer-file-coding-system 'utf-8)))))
 
 (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
-#+end_src
-*** Lines
-:PROPERTIES:
-:ID:       7f96d094-1ba4-4c2f-8478-b666ec76b319
-:END:
-#+begin_src emacs-lisp
+
 (setq display-line-numbers-type nil)
 (remove-hook 'doom-first-buffer-hook #'global-hl-line-mode)
-#+end_src
-*** Parens
-**** Smartparens
-:PROPERTIES:
-:ID:       19f5ca24-0e3d-4b6a-b151-def3e5c94f4d
-:END:
-#+begin_src emacs-lisp
+
 (after! smartparens
   (show-smartparens-global-mode 1))
-#+end_src
-** Keybindings
-*** Evil
-**** Move beyond eol
-:PROPERTIES:
-:ID:       9f8e1e28-5087-40f0-a49e-9f72923f538c
-:END:
-#+begin_src emacs-lisp
+
 (setq evil-move-beyond-eol t
       evil-move-cursor-back nil
       evil-kill-on-visual-paste nil
       evil-visual-region-expanded t)
 
 (defalias #'forward-evil-word #'forward-evil-symbol)
-#+end_src
-**** Global Substitute
-:PROPERTIES:
-:ID:       4768a91f-3e0c-47f4-8697-d8e82f4881d6
-:END:
-#+begin_src emacs-lisp
+
 (setq evil-ex-substitute-global t)
-#+end_src
-*** Which-key
-:PROPERTIES:
-:ID:       d473bb1b-eec9-4955-984b-949e1451980c
-:END:
-#+begin_src emacs-lisp
+
 (setq which-key-idle-delay 0.15)
-#+end_src
-** Buffer, Frame and Window Configuration
-*** Window Config
-**** Window Navigation
-:PROPERTIES:
-:ID:       85e57b67-6d43-4e2d-8ddf-76eef3a738e4
-:END:
-#+begin_src emacs-lisp
+
 (map!
  :leader
  :desc "Switch to Left Window"  "<left>"    #'evil-window-left
  :desc "Switch to Right Window" "<right>"   #'evil-window-right
  :desc "Switch to Up Window"    "<up>"      #'evil-window-up
  :desc "Switch to Down Window"  "<down>"    #'evil-window-down)
-#+end_src
-**** Window Split
-:PROPERTIES:
-:ID:       debd5820-4cc3-4bc9-b770-226eb54543f2
-:END:
-#+begin_src emacs-lisp
+
 (setq evil-vsplit-window-right t
       evil-split-window-below  t)
 (defadvice! prompt-for-buffer (&rest _)
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
-#+end_src
-** Productivity
-*** Company
-:PROPERTIES:
-:ID:       7d185450-3c75-4b49-ba0a-f29345e9749c
-:END:
-#+begin_src emacs-lisp
+
 (after! company
   (setq company-idle-delay 0
         company-minimum-prefix-length 2)
   (setq-default history-length 1000
                 prescient-history-length 1000))
-#+end_src
-*** File templates
-:PROPERTIES:
-:ID:       86ef9181-57b7-4603-84f7-8e002f98a91e
-:END:
-#+begin_src emacs-lisp
+
 (set-file-template! "\\.org$" :trigger "__" :mode 'org-mode)
-#+end_src
-*** Deft
-#+begin_src emacs-lisp
+
 (setq deft-directory "~/org/roam/")
-#+end_src
-** Org Mode
-*** Basic Config
-**** Defaults
-:PROPERTIES:
-:ID:       6eb1a924-79cd-4029-b602-e148b73c72a9
-:END:
-#+begin_src emacs-lisp
+
 (setq org-directory "~/org/"
       org-startup-folded 'overview
       org-startup-with-inline-images t
@@ -278,14 +148,7 @@
         time-stamp-end "$"
         time-stamp-format "\[%Y-%m-%d %a %H:%M:%S\]")
   (add-hook 'before-save-hook 'time-stamp nil)
-#+end_src
-**** Visuals
-***** Font Display
-****** Headings
-:PROPERTIES:
-:ID:       1b859e40-6e52-41e9-b06e-8821485e492b
-:END:
-#+begin_src emacs-lisp
+
 (custom-set-faces!
   '(outline-1 :weight extra-bold :height 1.35)
   '(outline-2 :weight bold       :height 1.30)
@@ -299,12 +162,7 @@
 
 (custom-set-faces!
   '(org-document-title :height 1.20))
-#+end_src
-****** Show /emphasis/ markers
-:PROPERTIES:
-:ID:       28e0d7da-55dc-4357-8845-ee4e693e22b5
-:END:
-#+begin_src emacs-lisp
+
 (use-package! org-appear
   :defer t
   :hook (org-mode . org-appear-mode)
@@ -312,12 +170,7 @@
   (setq org-appear-autoemphasis t
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
-#+end_src
-****** Defer Font Lock
-:PROPERTIES:
-:ID:       397850b5-fd09-48dd-bdf1-c9ab9045081b
-:END:
-#+begin_src emacs-lisp
+
 (defun locally-defer-font-lock ()
   "Set jit-lock defer and stealth, when buffer is over a certain size."
   (when (> (buffer-size) 50000)
@@ -325,13 +178,7 @@
                 jit-lock-stealth-time 1)))
 
 (add-hook 'org-mode-hook #'locally-defer-font-lock)
-#+end_src
-***** Symbols
-****** Bullets / Endings
-:PROPERTIES:
-:ID:       a99150d9-9842-4679-97df-e66f04ea3495
-:END:
-#+begin_src emacs-lisp
+
 (setq org-ellipsis "  "
       org-pretty-entities t
       org-priority-highest ?A
@@ -342,12 +189,7 @@
         (?C . 'all-the-icons-yellow)
         (?D . 'all-the-icons-green)
         (?E . 'all-the-icons-blue)))
-#+end_src
-****** Other Symbols
-:PROPERTIES:
-:ID:       ea95f08c-ff56-4eff-82dd-8443ea1662db
-:END:
-#+begin_src emacs-lisp
+
 (appendq! +ligatures-extra-symbols
           `(:checkbox      "☐"
             :pending       "🕑"
@@ -375,28 +217,16 @@
   :caption       "#+caption:"
   :header        "#+header:"
   )
-#+end_src
-****** List Bullets Sequence
-#+begin_src emacs-lisp
+
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
-#+end_src
-***** Tables
-:PROPERTIES:
-:ID:       b0bfdbe8-52ca-4581-8700-8a32afaa1aee
-:END:
-#+begin_src emacs-lisp
+
 ;(use-package! valign
 ;  :defer t
 ;  :init (setq valign-fancy-bar t))
 
 (use-package! org-pretty-table
   :commands (org-pretty-table-mode global-org-pretty-table-mode))
-#+end_src
-**** Org-babel
-:PROPERTIES:
-:ID:       1a069265-8ce2-42a5-9b03-980911818ba2
-:END:
-#+begin_src emacs-lisp
+
 ;; Org block templates
 (setq org-structure-template-alist
       '(("e" . "src emacs-lisp")))
@@ -406,9 +236,7 @@
   (setq org-return-follows-link t
         org-babel-load-languages '((emacs-lisp . t)
                              (dot . t))))
-#+end_src
-**** Better IDs
-#+begin_src emacs-lisp
+
 (defvar org-reference-contraction-max-words 3
   "Maximum number of words in a reference reference.")
 (defvar org-reference-contraction-max-length 35
@@ -597,20 +425,12 @@ REFERENCE is a either a number or a string representing a reference,
 as returned by `org-export-new-reference'."
   :override #'org-export-format-reference
   (if (stringp reference) reference (format "org%07x" reference)))
-#+end_src
-**** Problematic Hooks
-#+begin_src emacs-lisp
+
 (defadvice! shut-up-org-problematic-hooks (orig-fn &rest args)
   :around #'org-fancy-priorities-mode
   :around #'org-superstar-mode
   (ignore-errors (apply orig-fn args)))
-#+end_src
-*** Bibtex
-**** Bibtex Completion
-:PROPERTIES:
-:ID:       7e37adc6-8a1a-4f77-ac55-540997244a37
-:END:
-#+begin_src emacs-lisp
+
   (setq bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
         citar-bibliography '("~/Dropbox/research/zotLib.bib")
         bibtex-completion-additional-search-fields '(journal booktitle keywords)
@@ -620,13 +440,7 @@ as returned by `org-export-new-reference'."
         bibtex-completion-notes-path "~/org/roam/"
         citar-notes-paths '("~/org/roam/")
         bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
-#+end_src
-*** Roam
-**** Add Timestamp
-:PROPERTIES:
-:ID:       b9ac4f60-5138-45e8-8bd3-951da9aa155d
-:END:
-#+begin_src emacs-lisp
+
 (require 'time-stamp)  ;; for automatically add time stamp in org files
 (add-hook 'write-file-functions 'time-stamp)
 
@@ -635,12 +449,7 @@ as returned by `org-export-new-reference'."
       (concat "${title:80} " (propertize "${tags:20}" 'face 'org-tag))
       org-roam-node-annotation-function
       (lambda (node) (marginalia--time (org-roam-node-file-mtime node))))
-#+end_src
-**** Org-Roam UI
-:PROPERTIES:
-:ID:       3fdf7488-eace-4d25-be22-365ec3f7678e
-:END:
-#+begin_src emacs-lisp
+
 (use-package! websocket
     :after org-roam)
 
@@ -655,45 +464,7 @@ as returned by `org-export-new-reference'."
     (interactive)
     (unless org-roam-ui-mode (org-roam-ui-mode 1))
     (browse-url-xdg-open (format "http://localhost:%d" org-roam-ui-port))))
-#+end_src
-**** ORB
-:PROPERTIES:
-:ID:       1e833803-a5ee-47d8-9182-8f80fb24dfb8
-:END:
-#+begin_src emacs-lisp :tangle no
-(use-package! org-roam-bibtex
-  :after org-roam
-  :custom
-  (orb-note-actions-interface 'helm)
-  :config
-  (require 'org-ref)
-  (setq orb-preformat-keywords
-        '("citekey"
-          "entry-type"
-          "date"
-          "journaltitle"
-          "doi"
-          "url"
-          "pdf?"
-          "note?"
-          "file"
-          "author"
-          "editor"
-          "author-or-editor"
-          "author-abbrev"
-          "editor-abbrev"
-          "author-or-editor-abbrev"
-          "year")
-        orb-process-file-keyword t
-        orb-file-field-extensions '("pdf")
-        orb-insert-interface 'helm-bibtex))
-(org-roam-bibtex-mode)
-#+end_src
-**** Roam Config
-:PROPERTIES:
-:ID:       dfdeff53-4db7-4125-9fba-a07ffe01e4ba
-:END:
-#+begin_src emacs-lisp
+
 (use-package! org-roam
   :init
   (setq org-roam-db-gc-threshold most-positive-fixnum
@@ -716,7 +487,7 @@ as returned by `org-export-new-reference'."
            "%?"
            :if-new (file+head "${citekey}.org"
                               "#+title: ${title}
-,#+ROAM_KEY: ${ref}
+#+ROAM_KEY: ${ref}
 :PROPERTIES:
 :Custom_ID: ${citekey}
 :AUTHOR: ${author-abbrev}
@@ -727,13 +498,13 @@ as returned by `org-export-new-reference'."
 :END:
 
 - tags ::
-,** Why
+** Why
 why I read this paper?
 - background and related work?
-,** Synopsis
-,*** The Idea
-,*** Short Summary
-,* Reading Notes
+** Synopsis
+*** The Idea
+*** Short Summary
+* Reading Notes
 :PROPERTIES:
 :NOTER_DOCUMENT: ${file}
 :NOTER_PAGE:
@@ -741,12 +512,7 @@ why I read this paper?
            :unnarrowed t)))
   (set-company-backend! 'org-mode '(company-capf))
   (require 'org-roam-protocol))
-#+end_src
-*** Transclusion
-:PROPERTIES:
-:ID:       8f2439c8-1a2a-4a4a-9c9a-8041d3f24354
-:END:
-#+begin_src emacs-lisp
+
 (use-package! org-transclusion
   :defer
   :after org
@@ -756,17 +522,11 @@ why I read this paper?
    :leader
    :prefix "n"
    :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
-#+end_src
-*** LaTeX
-**** LaTeX Fragments
-***** Better Highlighting
-#+begin_src emacs-lisp
+
 (setq org-highlight-latex-and-related '(native script entities))
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
-#+end_src
-***** Better Rendering
-#+begin_src emacs-lisp
+
 (use-package! org-fragtog
   :hook (org-mode . org-fragtog-mode))
 
@@ -800,9 +560,7 @@ why I read this paper?
 ; Fragments transparent backrground face
 (setq org-format-latex-options
       (plist-put org-format-latex-options :background "Transparent"))
-#+end_src
-**** Export
-#+begin_src emacs-lisp
+
 (use-package! ox-extra
   :after org
   :config
@@ -825,35 +583,10 @@ why I read this paper?
 
   (unless (boundp 'org-latex-classes)
     (setq org-latex-classes nil)))
-#+end_src
-*** Misc
-**** Org Pandoc Import
-:PROPERTIES:
-:ID:       ee6cd468-ae9f-4636-91c5-8f6bdaa4003e
-:END:
-#+begin_src emacs-lisp
+
 (use-package! org-pandoc-import
   :after org)
-#+end_src
-** Writing
-*** Mixed Pitch Mode
-:PROPERTIES:
-:ID:       80bbae66-f912-4033-8f79-9279d8515874
-:END:
-Old mixed-pitch tangle
-#+begin_src emacs-lisp :tangle no
-(after! mixed-pitch
-  (dolist (f (-filter (lambda (sym)
-                        (s-prefix? "company-" (symbol-name sym)))
-                      (face-list)))
-    (pushnew! mixed-pitch-fixed-pitch-faces f))
-  (setq mixed-pitch-variable-pitch-cursor nil
-        mixed-pitch-set-height t)
-  (add-hook! 'org-mode-hook #'mixed-pitch-mode))
-#+end_src
 
-New mixed-pitch code
-#+begin_src emacs-lisp
 (defvar mixed-pitch-modes '(org-mode LaTeX-mode markdown-mode gfm-mode Info-mode)
   "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
 (defun init-mixed-pitch-h ()
@@ -881,12 +614,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
     (interactive)
     (let ((mixed-pitch-face 'variable-pitch-serif))
       (mixed-pitch-mode (or arg 'toggle)))))
-#+end_src
-*** Zen
-:PROPERTIES:
-:ID:       2898d995-7c9c-4579-924a-5794dfa95d1b
-:END:
-#+begin_src emacs-lisp
+
 (setq writeroom-mode-line t
       +zen-text-scale 1.50
       +zen-window-divider-size 2)
@@ -937,28 +665,17 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
                 (when +zen--original-org-indent-mode-p (org-indent-mode 1))
                 ;; (unless +zen--original-org-pretty-table-mode-p (org-pretty-table-mode -1))
                 ))))
-#+end_src
-*** Dictionary
-**** Aspell
-:PROPERTIES:
-:ID:       12cb62fd-a0f7-43ed-8437-97ed955a6efd
-:END:
-#+begin_src emacs-lisp
+
 (setq ispell-dictionary "en-custom"
       ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
       ispell-program-name "aspell"
       ispell-extra-args '("--sug-mode=ultra")
       ispell-local-dictionary-alist
       '(("en_custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
-(add-hook 'text-mode-hook 'flyspell-mode)
+
+                                        ;(add-hook 'text-mode-hook 'flyspell-mode)
                                         ;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
-#+end_src
-** Exit
-*** Sync org files to dropbox
-:PROPERTIES:
-:ID:       3a090a45-bf0c-460c-b5ab-b481a71625f2
-:END:
-#+begin_src emacs-lisp
+
 (defun rsync-drop ()
   (interactive)
   ;(setq shell-file-name "c:/msys64/usr/bin/bash.exe")
@@ -966,4 +683,3 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
 
 ;(add-hook! 'after-save-hook 'rsync-drop)
 ;(add-hook! 'kill-emacs-hook 'rsync-drop)
-#+end_src
