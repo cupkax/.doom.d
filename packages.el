@@ -1,13 +1,15 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-(package! circadian
-  :recipe (:host github
-           :repo "guidoschmidt/circadian.el"))
+;; Unpins
+(unpin! (:completion company vertico))
+(unpin! (:ui deft modeline unicode zen))
+(unpin! (:editor format snippets word-wrap))
+(unpin! (:checkers))
+(unpin! (:tools biblio pdf))
+(unpin! (:lang))
 
-(unpin! biblio)
-(unpin! org)
-(unpin! org-roam)
+;; New packages
 (package! org-roam-ui)
 (package! websocket)
 (package! simple-httpd)
@@ -23,3 +25,5 @@
   :recipe (:host github
            :repo "tecosaur/org-pandoc-import"
            :files ("*.el" "filters" "preprocessors")))
+
+(package! graphviz-dot-mode)

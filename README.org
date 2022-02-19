@@ -94,22 +94,11 @@
 :ID:       ea5d43f8-f5df-46ff-818f-81f930523365
 :END:
 #+begin_src emacs-lisp
-  (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font"     :size 16)
-        doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"         :size 16)
-        doom-unicode-font        (font-spec :family "Symbola"))
+  (setq doom-font                (font-spec :family "FiraCode Nerd Font"     :size 16)
+        doom-big-font            (font-spec :family "FiraCode Nerd Font"     :size 24)
+        doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"     :size 16)
+        doom-unicode-font        (font-spec :family "JuliaMono"))
   (setq doom-font-increment 1)
-#+end_src
-*** Theme
-**** Circadian
-:PROPERTIES:
-:ID:       ddd45a4b-803f-480f-a291-50040582a03d
-:END:
-#+begin_src emacs-lisp :tangle no
-(use-package circadian
-  :config
-  (setq circadian-themes '(("6:00"  . spacemacs-light)
-                           ("16:30" . spacemacs-dark)))
-  (circadian-setup))
 #+end_src
 *** Modeline
 **** Change red text
@@ -235,9 +224,10 @@
 #+begin_src emacs-lisp
 (setq deft-directory "~/org/roam/")
 #+end_src
-** Org Mode
-*** Basic Config
-**** Defaults
+** Languages
+*** Org Mode
+**** Basic Config
+***** Defaults
 :PROPERTIES:
 :ID:       6eb1a924-79cd-4029-b602-e148b73c72a9
 :END:
@@ -279,9 +269,9 @@
         time-stamp-format "\[%Y-%m-%d %a %H:%M:%S\]")
   (add-hook 'before-save-hook 'time-stamp nil)
 #+end_src
-**** Visuals
-***** Font Display
-****** Headings
+***** Visuals
+****** Font Display
+******* Headings
 :PROPERTIES:
 :ID:       1b859e40-6e52-41e9-b06e-8821485e492b
 :END:
@@ -300,7 +290,7 @@
 (custom-set-faces!
   '(org-document-title :height 1.20))
 #+end_src
-****** Show /emphasis/ markers
+******* Show /emphasis/ markers
 :PROPERTIES:
 :ID:       28e0d7da-55dc-4357-8845-ee4e693e22b5
 :END:
@@ -313,7 +303,7 @@
         org-appear-autosubmarkers t
         org-appear-autolinks nil))
 #+end_src
-****** Defer Font Lock
+******* Defer Font Lock
 :PROPERTIES:
 :ID:       397850b5-fd09-48dd-bdf1-c9ab9045081b
 :END:
@@ -326,8 +316,8 @@
 
 (add-hook 'org-mode-hook #'locally-defer-font-lock)
 #+end_src
-***** Symbols
-****** Bullets / Endings
+****** Symbols
+******* Bullets / Endings
 :PROPERTIES:
 :ID:       a99150d9-9842-4679-97df-e66f04ea3495
 :END:
@@ -343,7 +333,7 @@
         (?D . 'all-the-icons-green)
         (?E . 'all-the-icons-blue)))
 #+end_src
-****** Other Symbols
+******* Other Symbols
 :PROPERTIES:
 :ID:       ea95f08c-ff56-4eff-82dd-8443ea1662db
 :END:
@@ -376,11 +366,11 @@
   :header        "#+header:"
   )
 #+end_src
-****** List Bullets Sequence
+******* List Bullets Sequence
 #+begin_src emacs-lisp
 (setq org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+") ("1." . "a.")))
 #+end_src
-***** Tables
+****** Tables
 :PROPERTIES:
 :ID:       b0bfdbe8-52ca-4581-8700-8a32afaa1aee
 :END:
@@ -392,7 +382,7 @@
 (use-package! org-pretty-table
   :commands (org-pretty-table-mode global-org-pretty-table-mode))
 #+end_src
-**** Org-babel
+***** Org-babel
 :PROPERTIES:
 :ID:       1a069265-8ce2-42a5-9b03-980911818ba2
 :END:
@@ -407,7 +397,7 @@
         org-babel-load-languages '((emacs-lisp . t)
                              (dot . t))))
 #+end_src
-**** Better IDs
+***** Better IDs
 #+begin_src emacs-lisp
 (defvar org-reference-contraction-max-words 3
   "Maximum number of words in a reference reference.")
@@ -598,15 +588,15 @@ as returned by `org-export-new-reference'."
   :override #'org-export-format-reference
   (if (stringp reference) reference (format "org%07x" reference)))
 #+end_src
-**** Problematic Hooks
+***** Problematic Hooks
 #+begin_src emacs-lisp
 (defadvice! shut-up-org-problematic-hooks (orig-fn &rest args)
   :around #'org-fancy-priorities-mode
   :around #'org-superstar-mode
   (ignore-errors (apply orig-fn args)))
 #+end_src
-*** Bibtex
-**** Bibtex Completion
+**** Bibtex
+***** Bibtex Completion
 :PROPERTIES:
 :ID:       7e37adc6-8a1a-4f77-ac55-540997244a37
 :END:
@@ -621,8 +611,8 @@ as returned by `org-export-new-reference'."
         citar-notes-paths '("~/org/roam/")
         bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 #+end_src
-*** Roam
-**** Add Timestamp
+**** Roam
+***** Add Timestamp
 :PROPERTIES:
 :ID:       b9ac4f60-5138-45e8-8bd3-951da9aa155d
 :END:
@@ -636,7 +626,7 @@ as returned by `org-export-new-reference'."
       org-roam-node-annotation-function
       (lambda (node) (marginalia--time (org-roam-node-file-mtime node))))
 #+end_src
-**** Org-Roam UI
+***** Org-Roam UI
 :PROPERTIES:
 :ID:       3fdf7488-eace-4d25-be22-365ec3f7678e
 :END:
@@ -656,7 +646,7 @@ as returned by `org-export-new-reference'."
     (unless org-roam-ui-mode (org-roam-ui-mode 1))
     (browse-url-xdg-open (format "http://localhost:%d" org-roam-ui-port))))
 #+end_src
-**** ORB
+***** ORB
 :PROPERTIES:
 :ID:       1e833803-a5ee-47d8-9182-8f80fb24dfb8
 :END:
@@ -689,7 +679,7 @@ as returned by `org-export-new-reference'."
         orb-insert-interface 'helm-bibtex))
 (org-roam-bibtex-mode)
 #+end_src
-**** Roam Config
+***** Roam Config
 :PROPERTIES:
 :ID:       dfdeff53-4db7-4125-9fba-a07ffe01e4ba
 :END:
@@ -742,7 +732,7 @@ why I read this paper?
   (set-company-backend! 'org-mode '(company-capf))
   (require 'org-roam-protocol))
 #+end_src
-*** Transclusion
+**** Transclusion
 :PROPERTIES:
 :ID:       8f2439c8-1a2a-4a4a-9c9a-8041d3f24354
 :END:
@@ -757,15 +747,15 @@ why I read this paper?
    :prefix "n"
    :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
 #+end_src
-*** LaTeX
-**** LaTeX Fragments
-***** Better Highlighting
+**** LaTeX
+***** LaTeX Fragments
+****** Better Highlighting
 #+begin_src emacs-lisp
 (setq org-highlight-latex-and-related '(native script entities))
 (require 'org-src)
 (add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
 #+end_src
-***** Better Rendering
+****** Better Rendering
 #+begin_src emacs-lisp
 (use-package! org-fragtog
   :hook (org-mode . org-fragtog-mode))
@@ -801,7 +791,7 @@ why I read this paper?
 (setq org-format-latex-options
       (plist-put org-format-latex-options :background "Transparent"))
 #+end_src
-**** Export
+***** Export
 #+begin_src emacs-lisp
 (use-package! ox-extra
   :after org
@@ -826,14 +816,27 @@ why I read this paper?
   (unless (boundp 'org-latex-classes)
     (setq org-latex-classes nil)))
 #+end_src
-*** Misc
-**** Org Pandoc Import
+**** Misc
+***** Org Pandoc Import
 :PROPERTIES:
 :ID:       ee6cd468-ae9f-4636-91c5-8f6bdaa4003e
 :END:
 #+begin_src emacs-lisp
 (use-package! org-pandoc-import
   :after org)
+#+end_src
+*** Graphviz
+#+begin_src emacs-lisp
+(use-package! graphviz-dot-mode
+  :commands graphviz-dot-mode
+  :mode ("\\.dot\\'" "\\.gz\\'")
+  :init
+  (after! org
+    (setcdr (assoc "dot" org-src-lang-modes)
+            'graphviz-dot)))
+
+(use-package! company-graphviz-dot
+  :after graphviz-dot-mode)
 #+end_src
 ** Writing
 *** Mixed Pitch Mode
@@ -874,7 +877,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
     "A variable-pitch face with serifs."
     :group 'basic-faces)
   (setq mixed-pitch-set-height t)
-  (setq variable-pitch-serif-font (font-spec :family "Alegreya" :size 16 ))
+  (setq variable-pitch-serif-font (font-spec :family "Alegreya" :weight 'medium' :size 16 ))
   (set-face-attribute 'variable-pitch-serif nil :font variable-pitch-serif-font)
   (defun mixed-pitch-serif-mode (&optional arg)
     "Change the default face of the current buffer to a serifed variable pitch, while keeping some faces fixed pitch."
@@ -890,13 +893,13 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
 (setq writeroom-mode-line t
       +zen-text-scale 1.50
       +zen-window-divider-size 2)
+(setq visual-fill-column-width 60)
+(setq org-indent-mode 1)
 
 (defvar +zen-serif-p t
   "Whether to use a serifed font with `mixed-pitch-mode'.")
 (after! writeroom-mode
-  (defvar-local +zen--original-org-indent-mode-p nil)
   (defvar-local +zen--original-mixed-pitch-mode-p nil)
-  (defvar-local +zen--original-org-pretty-table-mode-p nil)
   (defun +zen-enable-mixed-pitch-mode-h ()
     "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
     (when (apply #'derived-mode-p +zen-mixed-pitch-modes)
@@ -904,39 +907,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
           (progn
             (setq +zen--original-mixed-pitch-mode-p mixed-pitch-mode)
             (funcall (if +zen-serif-p #'mixed-pitch-serif-mode #'mixed-pitch-mode) 1))
-        (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1)))))
-  (pushnew! writeroom--local-variables
-            'display-line-numbers
-            'visual-fill-column-width
-            'org-adapt-indentation)
-            ;'org-superstar-headline-bullets-list
-            ;'org-superstar-remove-leading-stars)
-  (add-hook 'writeroom-mode-enable-hook
-            (defun +zen-prose-org-h ()
-              "Reformat the current Org buffer appearance for prose."
-              (when (eq major-mode 'org-mode)
-                (setq display-line-numbers nil
-                      visual-fill-column-width 60
-                      org-adapt-indentation nil)
-                ;(when (featurep 'org-superstar)
-                ;  (setq-local org-superstar-headline-bullets-list '("??" "??" "??" "??")
-                ;              ;; org-superstar-headline-bullets-list '("??" "??" "??" "??" "??" "??" "??" "??")
-                ;              org-superstar-remove-leading-stars t)
-                ;  (org-superstar-restart))
-                (setq
-                 +zen--original-org-indent-mode-p org-indent-mode
-                 +zen--original-org-pretty-table-mode-p (bound-and-true-p org-pretty-table-mode))
-                (org-indent-mode -1)
-                (org-pretty-table-mode 1))))
-  (add-hook 'writeroom-mode-disable-hook
-            (defun +zen-nonprose-org-h ()
-              "Reverse the effect of `+zen-prose-org'."
-              (when (eq major-mode 'org-mode)
-                ;(when (featurep 'org-superstar)
-                ;  (org-superstar-restart))
-                (when +zen--original-org-indent-mode-p (org-indent-mode 1))
-                ;; (unless +zen--original-org-pretty-table-mode-p (org-pretty-table-mode -1))
-                ))))
+        (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1))))))
 #+end_src
 *** Dictionary
 **** Aspell

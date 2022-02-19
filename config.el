@@ -52,9 +52,10 @@
    browse-url-generic-args     '("/c" "start")
    browse-url-browser-function #'browse-url-generic))
 
-  (setq doom-font                (font-spec :family "JetBrainsMono Nerd Font"     :size 16)
-        doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"         :size 16)
-        doom-unicode-font        (font-spec :family "Symbola"))
+  (setq doom-font                (font-spec :family "FiraCode Nerd Font"     :size 16)
+        doom-big-font            (font-spec :family "FiraCode Nerd Font"     :size 24)
+        doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"     :size 16)
+        doom-unicode-font        (font-spec :family "JuliaMono"))
   (setq doom-font-increment 1)
 
 (custom-set-faces!
@@ -587,6 +588,17 @@ why I read this paper?
 (use-package! org-pandoc-import
   :after org)
 
+(use-package! graphviz-dot-mode
+  :commands graphviz-dot-mode
+  :mode ("\\.dot\\'" "\\.gz\\'")
+  :init
+  (after! org
+    (setcdr (assoc "dot" org-src-lang-modes)
+            'graphviz-dot)))
+
+(use-package! company-graphviz-dot
+  :after graphviz-dot-mode)
+
 (defvar mixed-pitch-modes '(org-mode LaTeX-mode markdown-mode gfm-mode Info-mode)
   "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
 (defun init-mixed-pitch-h ()
@@ -607,7 +619,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
     "A variable-pitch face with serifs."
     :group 'basic-faces)
   (setq mixed-pitch-set-height t)
-  (setq variable-pitch-serif-font (font-spec :family "Alegreya" :size 16 ))
+  (setq variable-pitch-serif-font (font-spec :family "Alegreya" :weight 'medium' :size 16 ))
   (set-face-attribute 'variable-pitch-serif nil :font variable-pitch-serif-font)
   (defun mixed-pitch-serif-mode (&optional arg)
     "Change the default face of the current buffer to a serifed variable pitch, while keeping some faces fixed pitch."
@@ -618,13 +630,13 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
 (setq writeroom-mode-line t
       +zen-text-scale 1.50
       +zen-window-divider-size 2)
+(setq visual-fill-column-width 60)
+(setq org-indent-mode 1)
 
 (defvar +zen-serif-p t
   "Whether to use a serifed font with `mixed-pitch-mode'.")
 (after! writeroom-mode
-  (defvar-local +zen--original-org-indent-mode-p nil)
   (defvar-local +zen--original-mixed-pitch-mode-p nil)
-  (defvar-local +zen--original-org-pretty-table-mode-p nil)
   (defun +zen-enable-mixed-pitch-mode-h ()
     "Enable `mixed-pitch-mode' when in `+zen-mixed-pitch-modes'."
     (when (apply #'derived-mode-p +zen-mixed-pitch-modes)
@@ -632,39 +644,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
           (progn
             (setq +zen--original-mixed-pitch-mode-p mixed-pitch-mode)
             (funcall (if +zen-serif-p #'mixed-pitch-serif-mode #'mixed-pitch-mode) 1))
-        (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1)))))
-  (pushnew! writeroom--local-variables
-            'display-line-numbers
-            'visual-fill-column-width
-            'org-adapt-indentation)
-            ;'org-superstar-headline-bullets-list
-            ;'org-superstar-remove-leading-stars)
-  (add-hook 'writeroom-mode-enable-hook
-            (defun +zen-prose-org-h ()
-              "Reformat the current Org buffer appearance for prose."
-              (when (eq major-mode 'org-mode)
-                (setq display-line-numbers nil
-                      visual-fill-column-width 60
-                      org-adapt-indentation nil)
-                ;(when (featurep 'org-superstar)
-                ;  (setq-local org-superstar-headline-bullets-list '("??" "??" "??" "??")
-                ;              ;; org-superstar-headline-bullets-list '("??" "??" "??" "??" "??" "??" "??" "??")
-                ;              org-superstar-remove-leading-stars t)
-                ;  (org-superstar-restart))
-                (setq
-                 +zen--original-org-indent-mode-p org-indent-mode
-                 +zen--original-org-pretty-table-mode-p (bound-and-true-p org-pretty-table-mode))
-                (org-indent-mode -1)
-                (org-pretty-table-mode 1))))
-  (add-hook 'writeroom-mode-disable-hook
-            (defun +zen-nonprose-org-h ()
-              "Reverse the effect of `+zen-prose-org'."
-              (when (eq major-mode 'org-mode)
-                ;(when (featurep 'org-superstar)
-                ;  (org-superstar-restart))
-                (when +zen--original-org-indent-mode-p (org-indent-mode 1))
-                ;; (unless +zen--original-org-pretty-table-mode-p (org-pretty-table-mode -1))
-                ))))
+        (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1))))))
 
 (setq ispell-dictionary "en-custom"
       ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
@@ -672,8 +652,7 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
       ispell-extra-args '("--sug-mode=ultra")
       ispell-local-dictionary-alist
       '(("en_custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
-
-                                        ;(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'text-mode-hook 'flyspell-mode)
                                         ;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 (defun rsync-drop ()
