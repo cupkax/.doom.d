@@ -16,7 +16,8 @@
 (package! f)
 
 (package! org-pretty-table
-  :recipe (:host github :repo "Fuco1/org-pretty-table"))
+  :recipe (:host github
+           :repo "Fuco1/org-pretty-table"))
 
 (package! org-fragtog)
 (package! org-appear)
@@ -27,3 +28,10 @@
            :files ("*.el" "filters" "preprocessors")))
 
 (package! graphviz-dot-mode)
+;(package! ink-mode
+;  :recipe (:host github
+;           :repo "Kungsgeten/ink-mode"))
+(package! org-super-agenda)
+(package! doct
+  :recipe (:host github
+           :repo "progfolio/doct"))

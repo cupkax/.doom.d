@@ -113,6 +113,11 @@
 
 (setq deft-directory "~/org/roam/")
 
+(setq org-re-reveal-root "/home/vedant/reveal.js"
+ org-re-reveal-theme "white"
+      org-re-reveal-transition "slide"
+      org-re-reveal-plugins '(markdown notes math search zoom))
+
 (setq org-directory "~/org/"
       org-startup-folded 'overview
       org-startup-with-inline-images t
@@ -432,6 +437,58 @@ as returned by `org-export-new-reference'."
   :around #'org-superstar-mode
   (ignore-errors (apply orig-fn args)))
 
+(use-package! org-super-agenda
+  :commands org-super-agenda-mode)
+
+(after! org-agenda
+  (org-super-agenda-mode))
+
+(setq org-agenda-skip-deadline-if-done nil
+      org-agenda-skip-scheduled-if-done nil
+      org-agenda-include-deadlines t
+      org-agenda-block-separator nil ;;TODO needs testing
+      org-agenda-tags-column 100 ;;TODO needs testing
+      org-agenda-compact-blocks t ;;TODO needs testing
+)
+
+(setq org-agenda-custom-commands
+      '(("o" "Overview"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                       '((:name "Today"
+                          :time-grid t
+                          :date today
+                          :todo "TODAY"
+                          :scheduled today
+                          :order 1)))))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '((:name "Next to do"
+                           :todo "NEXT"
+                           :order 1)
+                          (:name "Due Today"
+                           :deadline today
+                           :order 2)
+                          (:name "Due Soon"
+                           :deadline future
+                           :order 8)
+                          (:name "Important"
+                           :tag "Important"
+                           :priority "A"
+                           :order 6)
+                          (:name "Overdue"
+                           :deadline past
+                           :face error
+                           :order 7)
+                          (:name "Trivial"
+                           :priority<= "E"
+                           :tag ("Trivial" "Unimportant")
+                           :todo ("SOMEDAY" )
+                           :order 90)
+                          (:discard (:tag ("Chore" "Routine" "Daily")))))))))))
+
+(use-package! doct)
+
   (setq bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
         citar-bibliography '("~/Dropbox/research/zotLib.bib")
         bibtex-completion-additional-search-fields '(journal booktitle keywords)
@@ -661,4 +718,4 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
   (shell-command "rsync -avu --delete $HOME/org/ $HOME/Dropbox/org/"))
 
 ;(add-hook! 'after-save-hook 'rsync-drop)
-;(add-hook! 'kill-emacs-hook 'rsync-drop)
+(add-hook! 'kill-emacs-hook 'rsync-drop)
