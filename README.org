@@ -39,11 +39,22 @@
       uniquify-buffer-name-style 'forward
       window-combination-resize t
       x-stretch-cursor nil
-      scroll-margin 3
-      scroll-conservatively 1000
-      scroll-up-aggressively 0.001
-      scroll-down-aggressively 0.001
+      ;scroll-margin 3
+      ;scroll-conservatively 1000
+      ;scroll-up-aggressively 0.001
+      ;scroll-down-aggressively 0.001
       scroll-preserve-screen-position 'always)
+;; mouse
+(xterm-mouse-mode 1)
+(defun track-mouse (e))
+(setq mouse-sel-mode t)
+(setq mouse-wheel-scroll-amount
+      '(5
+        ((shift) . hscroll)
+        ((meta) . nil)
+        ((control) . text-scale)))
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode 1))
 ;(general-auto-unbind-keys)
 (general-auto-unbind-keys :off)
 (remove-hook 'doom-after-init-modules-hook #'general-auto-unbind-keys)
@@ -79,14 +90,16 @@
 :ID:       6d545e24-a17a-4bfa-8505-d6b53093ffcc
 :END:
 #+begin_src emacs-lisp
+;; WSL-specific setup
 (when (and (eq system-type 'gnu/linux)
-           (string-match
-            "Linux.*Microsoft.*Linux"
-            (shell-command-to-string "uname -a")))
-  (setq
-   browse-url-generic-program  "/mnt/c/Windows/System32/cmd.exe"
-   browse-url-generic-args     '("/c" "start")
-   browse-url-browser-function #'browse-url-generic))
+           (getenv "WSLENV"))
+(let ((cmd-exe "/mnt/c/Windows/System32/cmd.exe")
+      (cmd-args '("/c" "start")))
+  (when (file-exists-p cmd-exe)
+;; Enable emacs to open links in Windows
+    (setq browse-url-generic-program cmd-exe
+          browse-url-generic-args cmd-args
+          browse-url-browser-function 'browse-url-generic))))
 #+end_src
 ** Visual Settings
 *** Fonts
@@ -96,7 +109,7 @@
 #+begin_src emacs-lisp
   (setq doom-font                (font-spec :family "FiraCode Nerd Font"     :size 16)
         doom-big-font            (font-spec :family "FiraCode Nerd Font"     :size 24)
-        doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"     :size 16)
+        doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font"     :size 16)
         doom-unicode-font        (font-spec :family "JuliaMono"))
   (setq doom-font-increment 1)
 #+end_src
@@ -202,6 +215,29 @@
   (consult-buffer))
 #+end_src
 ** Productivity
+*** Dictionary
+**** Aspell
+Pull and install aspell dictionary with proper flags
+#+begin_src shell :tangle (if (file-expand-wildcards "/usr/lib64/aspell*/en-custom.multi") "no" "setup.sh")
+cd /tmp
+curl -o "aspell6-en-custom.tar.bz2" 'http://app.aspell.net/create?max_size=80&spelling=GBs&spelling=AU&max_variant=0&diacritic=keep&special=hacker&special=roman-numerals&encoding=utf-8&format=inline&download=aspell'
+tar -xjf "aspell6-en-custom.tar.bz2"
+
+cd aspell6-en-custom
+./configure && make && sudo make install
+#+end_src
+Aspell Config
+#+begin_src emacs-lisp
+(setq ispell-dictionary "en-custom"
+      company-ispell-dictionary "en-custom"
+      ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir))
+      ;ispell-program-name "aspell"
+      ;ispell-extra-args '("--sug-mode=ultra")
+      ;ispell-local-dictionary-alist
+      ;'(("en_custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+;(add-hook 'text-mode-hook 'flyspell-mode)
+                                        ;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+#+end_src
 *** Company
 :PROPERTIES:
 :ID:       7d185450-3c75-4b49-ba0a-f29345e9749c
@@ -209,9 +245,18 @@
 #+begin_src emacs-lisp
 (after! company
   (setq company-idle-delay 0
-        company-minimum-prefix-length 2)
+        company-minimum-prefix-length 2
+        company-show-numbers t)
   (setq-default history-length 1000
                 prescient-history-length 1000))
+(set-company-backend!
+  '(text-mode
+    markdown-mode
+    gfm-mode)
+  '(:seperate
+    company-ispell
+    company-files
+    company-yasnippet))
 #+end_src
 *** File templates
 :PROPERTIES:
@@ -603,7 +648,7 @@ as returned by `org-export-new-reference'."
   (ignore-errors (apply orig-fn args)))
 #+end_src
 **** Super Agenda
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package! org-super-agenda
   :commands org-super-agenda-mode)
 
@@ -675,6 +720,10 @@ as returned by `org-export-new-reference'."
         bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 #+end_src
 **** Roam
+***** ORP
+#+begin_src emacs-lisp
+(require 'org-roam-protocol)
+#+end_src
 ***** Add Timestamp
 :PROPERTIES:
 :ID:       b9ac4f60-5138-45e8-8bd3-951da9aa155d
@@ -810,75 +859,6 @@ why I read this paper?
    :prefix "n"
    :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
 #+end_src
-**** LaTeX
-***** LaTeX Fragments
-****** Better Highlighting
-#+begin_src emacs-lisp
-(setq org-highlight-latex-and-related '(native script entities))
-(require 'org-src)
-(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
-#+end_src
-****** Better Rendering
-#+begin_src emacs-lisp
-(use-package! org-fragtog
-  :hook (org-mode . org-fragtog-mode))
-
-; Fragments same size as text
-(setq org-format-latex-header "\\documentclass{article}
-\\usepackage[usenames]{xcolor}
-
-\\usepackage[T1]{fontenc}
-
-\\usepackage{booktabs}
-
-\\pagestyle{empty}             % do not remove
-% The settings below are copied from fullpage.sty
-\\setlength{\\textwidth}{\\paperwidth}
-\\addtolength{\\textwidth}{-3cm}
-\\setlength{\\oddsidemargin}{1.5cm}
-\\addtolength{\\oddsidemargin}{-2.54cm}
-\\setlength{\\evensidemargin}{\\oddsidemargin}
-\\setlength{\\textheight}{\\paperheight}
-\\addtolength{\\textheight}{-\\headheight}
-\\addtolength{\\textheight}{-\\headsep}
-\\addtolength{\\textheight}{-\\footskip}
-\\addtolength{\\textheight}{-3cm}
-\\setlength{\\topmargin}{1.5cm}
-\\addtolength{\\topmargin}{-2.54cm}
-% my custom stuff
-\\usepackage[nofont,plaindd]{bmc-maths}
-\\usepackage{arev}
-")
-
-; Fragments transparent backrground face
-(setq org-format-latex-options
-      (plist-put org-format-latex-options :background "Transparent"))
-#+end_src
-***** Export
-#+begin_src emacs-lisp
-(use-package! ox-extra
-  :after org
-  :config
-  (ox-extras-activate '(latex-header-blocks ignore-headlines)))
-
-(use-package! ox-latex
-  :after org
-  :config
-  (setq org-latex-pdf-process
-        '("pdflatex -interaction nonstopmode -output-directory %o %f"
-          "bibtex %b"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"))
-  (setq org-latex-hyperref-template nil) ;; stop org adding hypersetup{author..} to latex export
-  ;; (setq org-latex-prefer-user-labels t)
-
-  ;; deleted unwanted file extensions after latexMK
-  (setq org-latex-logfiles-extensions
-        (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf" "acn" "acr" "alg" "glg" "gls" "ist")))
-
-  (unless (boundp 'org-latex-classes)
-    (setq org-latex-classes nil)))
-#+end_src
 **** Misc
 ***** Org Pandoc Import
 :PROPERTIES:
@@ -907,7 +887,7 @@ why I read this paper?
 :ID:       80bbae66-f912-4033-8f79-9279d8515874
 :END:
 Old mixed-pitch tangle
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
 (after! mixed-pitch
   (dolist (f (-filter (lambda (sym)
                         (s-prefix? "company-" (symbol-name sym)))
@@ -919,7 +899,7 @@ Old mixed-pitch tangle
 #+end_src
 
 New mixed-pitch code
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defvar mixed-pitch-modes '(org-mode LaTeX-mode markdown-mode gfm-mode Info-mode)
   "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
 (defun init-mixed-pitch-h ()
@@ -972,21 +952,6 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
             (funcall (if +zen-serif-p #'mixed-pitch-serif-mode #'mixed-pitch-mode) 1))
         (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1))))))
 #+end_src
-*** Dictionary
-**** Aspell
-:PROPERTIES:
-:ID:       12cb62fd-a0f7-43ed-8437-97ed955a6efd
-:END:
-#+begin_src emacs-lisp
-(setq ispell-dictionary "en-custom"
-      ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
-      ispell-program-name "aspell"
-      ispell-extra-args '("--sug-mode=ultra")
-      ispell-local-dictionary-alist
-      '(("en_custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
-(add-hook 'text-mode-hook 'flyspell-mode)
-                                        ;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
-#+end_src
 ** Exit
 *** Sync org files to dropbox
 :PROPERTIES:
@@ -1000,4 +965,11 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
 
 ;(add-hook! 'after-save-hook 'rsync-drop)
 (add-hook! 'kill-emacs-hook 'rsync-drop)
+#+end_src
+
+#+begin_src emacs-lisp
+(defun rsync-drop ()
+  (interactive)
+  ;(setq shell-file-name "c:/msys64/usr/bin/bash.exe")
+  (shell-command "rsync -avu --delete $HOME/org/ $HOME/Dropbox/org/"))
 #+end_src

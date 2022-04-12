@@ -18,11 +18,22 @@
       uniquify-buffer-name-style 'forward
       window-combination-resize t
       x-stretch-cursor nil
-      scroll-margin 3
-      scroll-conservatively 1000
-      scroll-up-aggressively 0.001
-      scroll-down-aggressively 0.001
+      ;scroll-margin 3
+      ;scroll-conservatively 1000
+      ;scroll-up-aggressively 0.001
+      ;scroll-down-aggressively 0.001
       scroll-preserve-screen-position 'always)
+;; mouse
+(xterm-mouse-mode 1)
+(defun track-mouse (e))
+(setq mouse-sel-mode t)
+(setq mouse-wheel-scroll-amount
+      '(5
+        ((shift) . hscroll)
+        ((meta) . nil)
+        ((control) . text-scale)))
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode 1))
 ;(general-auto-unbind-keys)
 (general-auto-unbind-keys :off)
 (remove-hook 'doom-after-init-modules-hook #'general-auto-unbind-keys)
@@ -43,18 +54,20 @@
 
 (add-hook 'find-file-hook 'cpkx/fuckoff-macwin)
 
+;; WSL-specific setup
 (when (and (eq system-type 'gnu/linux)
-           (string-match
-            "Linux.*Microsoft.*Linux"
-            (shell-command-to-string "uname -a")))
-  (setq
-   browse-url-generic-program  "/mnt/c/Windows/System32/cmd.exe"
-   browse-url-generic-args     '("/c" "start")
-   browse-url-browser-function #'browse-url-generic))
+           (getenv "WSLENV"))
+(let ((cmd-exe "/mnt/c/Windows/System32/cmd.exe")
+      (cmd-args '("/c" "start")))
+  (when (file-exists-p cmd-exe)
+;; Enable emacs to open links in Windows
+    (setq browse-url-generic-program cmd-exe
+          browse-url-generic-args cmd-args
+          browse-url-browser-function 'browse-url-generic))))
 
   (setq doom-font                (font-spec :family "FiraCode Nerd Font"     :size 16)
         doom-big-font            (font-spec :family "FiraCode Nerd Font"     :size 24)
-        doom-variable-pitch-font (font-spec :family "Overpass Nerd Font"     :size 16)
+        doom-variable-pitch-font (font-spec :family "JetBrainsMono Nerd Font"     :size 16)
         doom-unicode-font        (font-spec :family "JuliaMono"))
   (setq doom-font-increment 1)
 
@@ -103,11 +116,30 @@
   :after '(evil-window-split evil-window-vsplit)
   (consult-buffer))
 
+(setq ispell-dictionary "en-custom"
+      company-ispell-dictionary "en-custom"
+      ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir))
+      ;ispell-program-name "aspell"
+      ;ispell-extra-args '("--sug-mode=ultra")
+      ;ispell-local-dictionary-alist
+      ;'(("en_custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
+;(add-hook 'text-mode-hook 'flyspell-mode)
+                                        ;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
 (after! company
   (setq company-idle-delay 0
-        company-minimum-prefix-length 2)
+        company-minimum-prefix-length 2
+        company-show-numbers t)
   (setq-default history-length 1000
                 prescient-history-length 1000))
+(set-company-backend!
+  '(text-mode
+    markdown-mode
+    gfm-mode)
+  '(:seperate
+    company-ispell
+    company-files
+    company-yasnippet))
 
 (set-file-template! "\\.org$" :trigger "__" :mode 'org-mode)
 
@@ -437,56 +469,6 @@ as returned by `org-export-new-reference'."
   :around #'org-superstar-mode
   (ignore-errors (apply orig-fn args)))
 
-(use-package! org-super-agenda
-  :commands org-super-agenda-mode)
-
-(after! org-agenda
-  (org-super-agenda-mode))
-
-(setq org-agenda-skip-deadline-if-done nil
-      org-agenda-skip-scheduled-if-done nil
-      org-agenda-include-deadlines t
-      org-agenda-block-separator nil ;;TODO needs testing
-      org-agenda-tags-column 100 ;;TODO needs testing
-      org-agenda-compact-blocks t ;;TODO needs testing
-)
-
-(setq org-agenda-custom-commands
-      '(("o" "Overview"
-         ((agenda "" ((org-agenda-span 'day)
-                      (org-super-agenda-groups
-                       '((:name "Today"
-                          :time-grid t
-                          :date today
-                          :todo "TODAY"
-                          :scheduled today
-                          :order 1)))))
-          (alltodo "" ((org-agenda-overriding-header "")
-                       (org-super-agenda-groups
-                        '((:name "Next to do"
-                           :todo "NEXT"
-                           :order 1)
-                          (:name "Due Today"
-                           :deadline today
-                           :order 2)
-                          (:name "Due Soon"
-                           :deadline future
-                           :order 8)
-                          (:name "Important"
-                           :tag "Important"
-                           :priority "A"
-                           :order 6)
-                          (:name "Overdue"
-                           :deadline past
-                           :face error
-                           :order 7)
-                          (:name "Trivial"
-                           :priority<= "E"
-                           :tag ("Trivial" "Unimportant")
-                           :todo ("SOMEDAY" )
-                           :order 90)
-                          (:discard (:tag ("Chore" "Routine" "Daily")))))))))))
-
 (use-package! doct)
 
   (setq bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
@@ -498,6 +480,8 @@ as returned by `org-export-new-reference'."
         bibtex-completion-notes-path "~/org/roam/"
         citar-notes-paths '("~/org/roam/")
         bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
+
+(require 'org-roam-protocol)
 
 (require 'time-stamp)  ;; for automatically add time stamp in org files
 (add-hook 'write-file-functions 'time-stamp)
@@ -581,67 +565,6 @@ why I read this paper?
    :prefix "n"
    :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))
 
-(setq org-highlight-latex-and-related '(native script entities))
-(require 'org-src)
-(add-to-list 'org-src-block-faces '("latex" (:inherit default :extend t)))
-
-(use-package! org-fragtog
-  :hook (org-mode . org-fragtog-mode))
-
-; Fragments same size as text
-(setq org-format-latex-header "\\documentclass{article}
-\\usepackage[usenames]{xcolor}
-
-\\usepackage[T1]{fontenc}
-
-\\usepackage{booktabs}
-
-\\pagestyle{empty}             % do not remove
-% The settings below are copied from fullpage.sty
-\\setlength{\\textwidth}{\\paperwidth}
-\\addtolength{\\textwidth}{-3cm}
-\\setlength{\\oddsidemargin}{1.5cm}
-\\addtolength{\\oddsidemargin}{-2.54cm}
-\\setlength{\\evensidemargin}{\\oddsidemargin}
-\\setlength{\\textheight}{\\paperheight}
-\\addtolength{\\textheight}{-\\headheight}
-\\addtolength{\\textheight}{-\\headsep}
-\\addtolength{\\textheight}{-\\footskip}
-\\addtolength{\\textheight}{-3cm}
-\\setlength{\\topmargin}{1.5cm}
-\\addtolength{\\topmargin}{-2.54cm}
-% my custom stuff
-\\usepackage[nofont,plaindd]{bmc-maths}
-\\usepackage{arev}
-")
-
-; Fragments transparent backrground face
-(setq org-format-latex-options
-      (plist-put org-format-latex-options :background "Transparent"))
-
-(use-package! ox-extra
-  :after org
-  :config
-  (ox-extras-activate '(latex-header-blocks ignore-headlines)))
-
-(use-package! ox-latex
-  :after org
-  :config
-  (setq org-latex-pdf-process
-        '("pdflatex -interaction nonstopmode -output-directory %o %f"
-          "bibtex %b"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"
-          "pdflatex -interaction nonstopmode -output-directory %o %f"))
-  (setq org-latex-hyperref-template nil) ;; stop org adding hypersetup{author..} to latex export
-  ;; (setq org-latex-prefer-user-labels t)
-
-  ;; deleted unwanted file extensions after latexMK
-  (setq org-latex-logfiles-extensions
-        (quote ("lof" "lot" "tex~" "aux" "idx" "log" "out" "toc" "nav" "snm" "vrb" "dvi" "fdb_latexmk" "blg" "brf" "fls" "entoc" "ps" "spl" "bbl" "xmpi" "run.xml" "bcf" "acn" "acr" "alg" "glg" "gls" "ist")))
-
-  (unless (boundp 'org-latex-classes)
-    (setq org-latex-classes nil)))
-
 (use-package! org-pandoc-import
   :after org)
 
@@ -656,33 +579,14 @@ why I read this paper?
 (use-package! company-graphviz-dot
   :after graphviz-dot-mode)
 
-(defvar mixed-pitch-modes '(org-mode LaTeX-mode markdown-mode gfm-mode Info-mode)
-  "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
-(defun init-mixed-pitch-h ()
-  "Hook `mixed-pitch-mode' into each mode in `mixed-pitch-modes'.
-Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
-  (when (memq major-mode mixed-pitch-modes)
-    (mixed-pitch-mode 1))
-  (dolist (hook mixed-pitch-modes)
-    (add-hook (intern (concat (symbol-name hook) "-hook")) #'mixed-pitch-mode)))
-(add-hook 'doom-init-ui-hook #'init-mixed-pitch-h)
-
-(autoload #'mixed-pitch-serif-mode "mixed-pitch"
-  "Change the default face of the current buffer to a serifed variable pitch, while keeping some faces fixed pitch." t)
-
 (after! mixed-pitch
-  (defface variable-pitch-serif
-    '((t (:family "serif")))
-    "A variable-pitch face with serifs."
-    :group 'basic-faces)
-  (setq mixed-pitch-set-height t)
-  (setq variable-pitch-serif-font (font-spec :family "Alegreya" :weight 'medium' :size 16 ))
-  (set-face-attribute 'variable-pitch-serif nil :font variable-pitch-serif-font)
-  (defun mixed-pitch-serif-mode (&optional arg)
-    "Change the default face of the current buffer to a serifed variable pitch, while keeping some faces fixed pitch."
-    (interactive)
-    (let ((mixed-pitch-face 'variable-pitch-serif))
-      (mixed-pitch-mode (or arg 'toggle)))))
+  (dolist (f (-filter (lambda (sym)
+                        (s-prefix? "company-" (symbol-name sym)))
+                      (face-list)))
+    (pushnew! mixed-pitch-fixed-pitch-faces f))
+  (setq mixed-pitch-variable-pitch-cursor nil
+        mixed-pitch-set-height t)
+  (add-hook! 'org-mode-hook #'mixed-pitch-mode))
 
 (setq writeroom-mode-line t
       +zen-text-scale 1.50
@@ -703,15 +607,6 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
             (funcall (if +zen-serif-p #'mixed-pitch-serif-mode #'mixed-pitch-mode) 1))
         (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1))))))
 
-(setq ispell-dictionary "en-custom"
-      ispell-personal-dictionary (expand-file-name ".ispell_personal" doom-private-dir)
-      ispell-program-name "aspell"
-      ispell-extra-args '("--sug-mode=ultra")
-      ispell-local-dictionary-alist
-      '(("en_custom" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
-(add-hook 'text-mode-hook 'flyspell-mode)
-                                        ;(add-hook 'prog-mode-hook 'flyspell-prog-mode)
-
 (defun rsync-drop ()
   (interactive)
   ;(setq shell-file-name "c:/msys64/usr/bin/bash.exe")
@@ -719,3 +614,8 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
 
 ;(add-hook! 'after-save-hook 'rsync-drop)
 (add-hook! 'kill-emacs-hook 'rsync-drop)
+
+(defun rsync-drop ()
+  (interactive)
+  ;(setq shell-file-name "c:/msys64/usr/bin/bash.exe")
+  (shell-command "rsync -avu --delete $HOME/org/ $HOME/Dropbox/org/"))
