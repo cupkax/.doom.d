@@ -3,11 +3,11 @@
 
 ;; Unpins
 (unpin! (:completion company vertico))
-(unpin! (:ui deft modeline unicode zen))
-(unpin! (:editor format snippets word-wrap))
-(unpin! (:checkers))
+;; (unpin! (:ui deft modeline unicode zen))
+;; (unpin! (:editor format snippets word-wrap))
+;; (unpin! (:checkers))
 (unpin! (:tools biblio pdf))
-(unpin! (:lang))
+(unpin! (:lang org emacs-lisp plantuml sh))
 
 ;; New packages
 (package! org-roam-ui)

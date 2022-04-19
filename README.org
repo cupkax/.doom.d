@@ -359,7 +359,7 @@ Aspell Config
 :PROPERTIES:
 :ID:       397850b5-fd09-48dd-bdf1-c9ab9045081b
 :END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun locally-defer-font-lock ()
   "Set jit-lock defer and stealth, when buffer is over a certain size."
   (when (> (buffer-size) 50000)
