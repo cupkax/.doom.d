@@ -267,7 +267,7 @@ Aspell Config
 #+end_src
 *** Deft
 #+begin_src emacs-lisp
-(setq deft-directory "~/org/roam/")
+(setq deft-directory "~/org/")
 #+end_src
 *** Presentation
 #+begin_src emacs-lisp
