@@ -143,7 +143,7 @@
 
 (set-file-template! "\\.org$" :trigger "__" :mode 'org-mode)
 
-(setq deft-directory "~/org/roam/")
+(setq deft-directory "~/org/")
 
 (setq org-re-reveal-root "/home/vedant/reveal.js"
  org-re-reveal-theme "white"
@@ -463,15 +463,22 @@ as returned by `org-export-new-reference'."
 
 (use-package! doct)
 
-  (setq bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
-        citar-bibliography '("~/Dropbox/research/zotLib.bib")
-        bibtex-completion-additional-search-fields '(journal booktitle keywords)
-        bibtex-completion-pdf-field "file"
-        bibtex-completion-library-path '("~/Dropbox/research/zotero-library/")
-        citar-library-paths '("~/Dropbox/research/zotero-library/")
-        bibtex-completion-notes-path "~/org/roam/"
-        citar-notes-paths '("~/org/roam/")
-        bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
+(defvar cpkx/bib '("~/Dropbox/research/zotLib.bib"))
+(defvar cpkx/notes '("~/org/roam/"))
+(defvar cpkx/pdfs '("~/Dropbox/research/zotero-library/"))
+
+(setq citar-bibliography cpkx/bib
+      citar-library-paths cpkx/pdfs
+      citar-notes-paths cpkx/notes
+      citar-default-action 'citar-open-notes
+      citar-symbol-seperator "  "
+      citar-format-reference-function 'citar-citeproc-format-reference)
+;; bibtex-completion-bibliography "~/Dropbox/research/zotLib.bib"
+;; bibtex-completion-library-path '("~/Dropbox/research/zotero-library/")
+;; bibtex-completion-notes-path "~/org/roam/"
+;; bibtex-completion-additional-search-fields '(journal booktitle keywords)
+;; bibtex-completion-pdf-field "file"
+;; bibtex-completion-display-formats '((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}"))
 
 (require 'org-roam-protocol)
 
@@ -598,6 +605,45 @@ why I read this paper?
             (setq +zen--original-mixed-pitch-mode-p mixed-pitch-mode)
             (funcall (if +zen-serif-p #'mixed-pitch-serif-mode #'mixed-pitch-mode) 1))
         (funcall #'mixed-pitch-mode (if +zen--original-mixed-pitch-mode-p 1 -1))))))
+
+(defun cpkx/unfill-para ()
+  "Unfill the paragraph at point.
+Calls 'join-line' until the whole para doesn't contain
+hard line breaks."
+  (interactive)
+  (forward-paragraph 1)
+  (forward-paragraph -1)
+  (while (looking-at paragraph-start)
+    (forward-line 1))
+  (let ((beg (point)))
+    (forward-paragraph 1)
+    (backward-char 1)
+    (while (> (point) beg)
+      (join-line)
+      (beginning-of-line))))
+
+(defun cpkx/fill-para ()
+  "Fill the current para until there is one sentence per line.
+
+Unfills the para and places hard line breaks after each sentence."
+  (interactive)
+  (save-excursion
+    (fill-paragraph)
+    (cpkx/unfill-para)
+
+    (let ((end-of-paragraph (make-marker)))
+      (save-excursion
+        (forward-paragraph)
+        (backward-sentence)
+        (forward-sentence)
+        (set-marker end-of-paragraph (point)))
+      (forward-sentence)
+      (while (< (point) end-of-paragraph)
+        (just-one-space)
+        (delete-char -1)
+        (newline)
+        (forward-sentence))
+      (set-marker end-of-paragraph nil))))
 
 (defun rsync-drop ()
   (interactive)
